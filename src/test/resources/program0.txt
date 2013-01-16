@@ -1,0 +1,3 @@
+BeginInput
+NotNullMVELFilter charValue() == 'a'
+EndInput

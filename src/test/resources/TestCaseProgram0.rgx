@@ -1,0 +1,8 @@
+# Match a character whose value is 'a'
+NotNullMVELFilter charValue() == 'a'
+
+# Match the end of the input
+EndInput
+
+# Match
+Match
