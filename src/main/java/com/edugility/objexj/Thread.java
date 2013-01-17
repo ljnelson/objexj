@@ -28,6 +28,7 @@
 package com.edugility.objexj;
 
 import java.util.Arrays;
+import java.util.Collection; // for javadoc only
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -80,42 +81,208 @@ import java.util.logging.Logger;
  * State#MATCH MATCH} state effectively cannot do anything.</li>
  *
  * </ul>
+ *
+ * @param <T> the type of items this {@link Thread} will {@linkplain #read() read}
  */
-public final class Thread<T> implements Runnable, ThreadScheduler<T> {
+public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
 
+  /**
+   * A legal value for a {@link Thread}'s {@linkplain
+   * #advanceItemPointer() item pointer}, provided that there is no
+   * input to read from.
+   */
   public static final int VALID_NO_INPUT_POINTER = Integer.MAX_VALUE;
 
+  /**
+   * A constant representing an {@linkplain #advanceItemPointer() item
+   * pointer} that is invalid in all cases.
+   */
   private static final int INVALID_INPUT_POINTER = -1;
 
+  /**
+   * An {@code enum} representing the possible states a {@link Thread}
+   * can be in.
+   */
   public enum State {
     CONSTRUCTING, MATCH, DEAD, VIABLE
   }
 
+  /**
+   * The {@link ThreadScheduler} used by this {@link Thread} to
+   * {@linkplain ThreadScheduler#newThread(Object, ProgramCounter,
+   * List, int, Map) spawn} and {@linkplain
+   * ThreadScheduler#schedule(Thread) schedule} new {@link Thread}s.
+   * This field is never {@code null}.
+   * 
+   * <p>This field is not deep cloned by the {@link #clone()} method.
+   * {@link Thread} clones will share {@link ThreadScheduler}
+   * references.</p>
+   */
   private final ThreadScheduler<T> threadScheduler;
 
+  /**
+   * A {@link List} of items that constitutes the <em>input</em> that
+   * can be {@linkplain #read() read} by this {@link Thread}.
+   *
+   * <p>This field may be {@code null} or {@linkplain
+   * Collection#isEmpty() empty}.</p>
+   *
+   * <p>This field is not deep cloned by the {@link #clone()} method.
+   * {@link Thread} clones will share {@code items} references.</p>
+   *
+   * @see #advanceItemPointer()
+   *
+   * @see #read()
+   */
   private final List<T> items;
 
+  /**
+   * The index used by the {@link #read()} method (and incremented by
+   * the {@link #advanceItemPointer()} method) to select a particular
+   * item from this {@link Thread}'s {@linkplain #items affiliated
+   * <tt>List</tt> of items}.
+   *
+   * <p>This field must have a minimum value of {@code 0}.</p>
+   *
+   * @see #advanceItemPointer()
+   *
+   * @see #read()
+   */
   private int itemPointer;
 
-  private final ProgramCounter<T> programCounter;
+  /**
+   * This {@link Thread}'s affiliated {@link ProgramCounter}.  This
+   * field must not be {@code null}.
+   *
+   * <p>This field is {@linkplain ProgramCounter#clone() deep cloned}
+   * by the {@link #clone()} method.
+   *
+   * @see #advanceProgramCounter()
+   *
+   * @see #getProgramCounter()
+   */
+  private ProgramCounter<T> programCounter;
 
+  /**
+   * The {@link State} this {@link Thread} is in.  This field is never
+   * {@code null}.
+   *
+   * <p>{@link Thread}s created by the {@link #clone()} method always
+   * start with a {@link State} of {@link State#VIABLE}.  In other
+   * words, this field is not cloned.</p>
+   */
   private State state;
 
-  private final Object id;
+  /**
+   * The identifier of this {@link Thread}.
+   *
+   * <p>This field may be {@code null}.</p>
+   *
+   * <p>This field is used simply for its {@link Object#toString()}
+   * output.</p>
+   *
+   * <p>This field is not deep cloned by the {@link #clone()} method.
+   * {@link Thread} clones will share {@code id} references.</p>
+   *
+   * @see #toString()
+   *
+   * @see #clone()
+   */
+  private Object id;
 
-  private final Map<Object, CaptureGroup<T>> captureGroups;
+  /**
+   * The {@link CaptureGroup}s affiliated with this {@link Thread}.
+   *
+   * <p>This field may be {@code null}.</p>
+   *
+   * <p>This field is {@linkplain #deepClone(Map) deep cloned}
+   * by the {@link #clone()} method.</p>
+   *
+   * @see #deepClone(Map)
+   *
+   * @see #clone()
+   *
+   * @see #getSubmatches()
+   *
+   * @see CaptureGroup
+   */
+  private Map<Object, CaptureGroup<T>> captureGroups;
 
-  Thread(final Object id, final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer, final ThreadScheduler<T> threadScheduler) {
+  /**
+   * Creates a new {@link Thread} without any {@link CaptureGroup}s.
+   *
+   * @param id the identifier for the new {@link Thread}; used only
+   * for its {@link Object#toString()} output; may be {@code null}
+   *
+   * @param programCounter the {@link ProgramCounter} that {@linkplain
+   * ProgramCounter#getProgram() houses} the {@link Program} that will
+   * be run by this {@link Thread}; must not be {@code null}
+   *
+   * @param items the input to read from; may be {@code null} in which
+   * case the supplied {@code itemPointer} must be equal to {@code 0}
+   * or {@link #VALID_NO_INPUT_POINTER}
+   *
+   * @param itemPointer the index within the supplied {@code items}
+   * {@link List} from which to begin {@linkplain #read() reading};
+   * must be zero or a positive integer less than the supplied {@code
+   * items} {@linkplain Collection#size() size}, or must be equal to
+   * {@link #VALID_NO_INPUT_POINTER} provided that the {@code items}
+   * {@link List} is {@code null} or {@linkplain Collection#isEmpty()
+   * empty}
+   *
+   * @param threadScheduler the {@link ThreadScheduler} this {@link
+   * Thread} will use to {@linkplain ThreadScheduler#newThread(Object,
+   * ProgramCounter, List, int, Map) spawn} and {@linkplain
+   * ThreadScheduler#schedule(Thread) schedule} new {@link Thread}s;
+   * must not be {@code null}
+   *
+   * @exception IllegalArgumentException if any of the preconditions
+   * outlined as part of the parameter descriptions is not fulfilled
+   */
+  protected Thread(final Object id, final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer, final ThreadScheduler<T> threadScheduler) {
     this(id, programCounter, items, itemPointer, null, threadScheduler);
   }
 
-  Thread(final Object id, final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer, final Map<Object, CaptureGroup<T>> captureGroups, final ThreadScheduler<T> threadScheduler) {
+  /**
+   * Creates a new {@link Thread}.
+   *
+   * @param id the identifier for the new {@link Thread}; used only
+   * for its {@link Object#toString()} output; may be {@code null}
+   *
+   * @param programCounter the {@link ProgramCounter} that {@linkplain
+   * ProgramCounter#getProgram() houses} the {@link Program} that will
+   * be run by this {@link Thread}; must not be {@code null}
+   *
+   * @param items the input to read from; may be {@code null} in which
+   * case the supplied {@code itemPointer} must be equal to {@code 0}
+   * or {@link #VALID_NO_INPUT_POINTER}
+   *
+   * @param itemPointer the index within the supplied {@code items}
+   * {@link List} from which to begin {@linkplain #read() reading};
+   * must be zero or a positive integer less than the supplied {@code
+   * items} {@linkplain Collection#size() size}, or must be equal to
+   * {@link #VALID_NO_INPUT_POINTER} provided that the {@code items}
+   * {@link List} is {@code null} or {@linkplain Collection#isEmpty()
+   * empty}
+   *
+   * @param captureGroups a {@link Map} of {@link CaptureGroup}s
+   * indexed by key that this new {@link Thread} will use to store
+   * {@linkplain #getSubmatches() submatches}; may be {@code null}
+   *
+   * @param threadScheduler the {@link ThreadScheduler} this {@link
+   * Thread} will use to {@linkplain ThreadScheduler#newThread(Object,
+   * ProgramCounter, List, int, Map) spawn} and {@linkplain
+   * ThreadScheduler#schedule(Thread) schedule} new {@link Thread}s;
+   * must not be {@code null}
+   *
+   * @exception IllegalArgumentException if any of the preconditions
+   * outlined as part of the parameter descriptions is not fulfilled
+   */
+  protected Thread(final Object id, final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer, final Map<Object, CaptureGroup<T>> captureGroups, final ThreadScheduler<T> threadScheduler) {
     super();
     this.state = State.CONSTRUCTING;
     this.id = id;
-    if (captureGroups == null) {
-      this.captureGroups = new HashMap<Object, CaptureGroup<T>>();
-    } else {
+    if (captureGroups != null) {
       this.captureGroups = captureGroups;
     }
     this.items = items;
@@ -134,7 +301,10 @@ public final class Thread<T> implements Runnable, ThreadScheduler<T> {
      * For checking the incoming itemPointer, we reject truly insane
      * values (like huge integers when a small items List is passed
      * in), but we accept an itemPointer that is "just off the end" of
-     * the incoming List.
+     * the incoming List (e.g. itemPointer == items.size()).  This
+     * state of affairs might come about when a Thread has just read
+     * the last item, but the subsequent instruction it's supposed to
+     * run doesn't actually need any input.
      *
      * It is certainly the case that if the caller decided to try to
      * read something with, say, an itemPointer of 0 from an empty
@@ -162,22 +332,28 @@ public final class Thread<T> implements Runnable, ThreadScheduler<T> {
     return this.id;
   }
 
-  public Map<Object, List<T>> getSubmatches() {
+  public void setId(final Object id) {
+    this.id = id;
+  }
+
+  public final Map<Object, List<T>> getSubmatches() {
     if (State.MATCH != this.getState()) {
       throw new IllegalStateException();
     }
     Map<Object, List<T>> returnValue = null;
-    final Set<Entry<Object, CaptureGroup<T>>> entries = this.captureGroups.entrySet();
-    if (entries != null) {
-      for (final Entry<Object, CaptureGroup<T>> entry : entries) {
-        assert entry != null;
-        final CaptureGroup<T> cg = entry.getValue();
-        if (cg != null) {
-          final Object key = entry.getKey();
-          if (returnValue == null) {
-            returnValue = new HashMap<Object, List<T>>();
+    if (this.captureGroups != null && !this.captureGroups.isEmpty()) {
+      final Set<Entry<Object, CaptureGroup<T>>> entries = this.captureGroups.entrySet();
+      if (entries != null) {
+        for (final Entry<Object, CaptureGroup<T>> entry : entries) {
+          assert entry != null;
+          final CaptureGroup<T> cg = entry.getValue();
+          if (cg != null) {
+            final Object key = entry.getKey();
+            if (returnValue == null) {
+              returnValue = new HashMap<Object, List<T>>();
+            }
+            returnValue.put(key, cg.getItems());
           }
-          returnValue.put(key, cg.getItems());
         }
       }
     }
@@ -194,11 +370,16 @@ public final class Thread<T> implements Runnable, ThreadScheduler<T> {
       throw new IllegalArgumentException("key", new NullPointerException("key"));
     }
     this.ensureViable();
-    final CaptureGroup<T> cg = this.captureGroups.get(key);
-    if (cg == null) {
+    if (this.captureGroups == null) {
+      this.captureGroups = new HashMap<Object, CaptureGroup<T>>();
       this.captureGroups.put(key, new CaptureGroup<T>(this.items, this.itemPointer));
     } else {
-      cg.setEndIndex(this.itemPointer);
+      final CaptureGroup<T> cg = this.captureGroups.get(key);
+      if (cg == null) {
+        this.captureGroups.put(key, new CaptureGroup<T>(this.items, this.itemPointer));
+      } else {
+        cg.setEndIndex(this.itemPointer);
+      }
     }
   }
 
@@ -207,9 +388,11 @@ public final class Thread<T> implements Runnable, ThreadScheduler<T> {
       throw new IllegalArgumentException("key", new NullPointerException("key"));
     }
     this.ensureViable();
-    final CaptureGroup<T> cg = this.captureGroups.get(key);
-    if (cg != null) {
-      cg.setEndIndex(this.itemPointer);
+    if (this.captureGroups != null) {
+      final CaptureGroup<T> cg = this.captureGroups.get(key);
+      if (cg != null) {
+        cg.setEndIndex(this.itemPointer);
+      }
     }
   }
 
@@ -235,6 +418,9 @@ public final class Thread<T> implements Runnable, ThreadScheduler<T> {
   @Override
   public final Thread<T> newThread(final Object id, final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer, final Map<Object, CaptureGroup<T>> captureGroups) {
     this.ensureViable();
+    if (this.threadScheduler == null) {
+      throw new IllegalStateException("threadScheduler == null");
+    }
     return this.threadScheduler.newThread(id, programCounter, items, itemPointer, captureGroups);
   }
 
@@ -256,6 +442,9 @@ public final class Thread<T> implements Runnable, ThreadScheduler<T> {
   @Override
   public final boolean schedule(final Thread<T> t) {
     this.ensureViable();
+    if (this.threadScheduler == null) {
+      throw new IllegalStateException("threadScheduler == null");
+    }
     return this.threadScheduler.schedule(t);
   }
 
@@ -296,7 +485,7 @@ public final class Thread<T> implements Runnable, ThreadScheduler<T> {
   /**
    * Reads (but does not "consume") the current item.
    *
-   * <p>This method may be invoked only when {@link #isViable()}
+   * <p>This method may be invoked only when {@link #canRead()}
    * returns {@code true}.</p>
    *
    * @return the current item which may be {@code null}
@@ -595,6 +784,36 @@ public final class Thread<T> implements Runnable, ThreadScheduler<T> {
     if (!this.isViable()) {
       throw new IllegalStateException("Thread is not viable");
     }
+  }
+
+  @Override
+  public Thread<T> clone() {
+    this.ensureViable();
+    Thread<T> clone = null;
+    try {
+      @SuppressWarnings("unchecked")
+      final Thread<T> temp = (Thread<T>)super.clone();
+      clone = temp;
+    } catch (final CloneNotSupportedException cannotHappen) {
+      throw (InternalError)new InternalError().initCause(cannotHappen);
+    }
+    assert clone != null;
+    
+    // Clone our ProgramCounter.
+    final ProgramCounter<T> programCounter = this.getProgramCounter();
+    if (programCounter != null) {
+      clone.programCounter = programCounter.clone();
+    }
+
+    // Clone our capture groups.
+    if (this.captureGroups != null) {
+      clone.captureGroups = deepClone(this.captureGroups);
+    }
+
+    // With all of his state set, make sure that he's VIABLE.
+    assert clone.isViable();
+
+    return clone;
   }
 
   @Override
