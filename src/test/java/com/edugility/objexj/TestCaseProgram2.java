@@ -27,42 +27,35 @@
  */
 package com.edugility.objexj;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
-public class Save<T> extends Instruction<T> {
+import org.junit.Test;
 
-  private static final long serialVersionUID = 1L;
+import com.edugility.objexj.Thread;
 
-  private final Object key;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-  public Save(final String key) {
+public class TestCaseProgram2 extends AbstractProgramTestCase<Character> {
+
+  public TestCaseProgram2() {
     super();
-    this.key = key;
   }
 
-  public Save(final Object key) {
-    super();
-    this.key = key;
-  }
-
-  @Override
-  public final void execute(final InstructionContext<T> context) {
-    if (context == null) {
-      throw new IllegalArgumentException("context");
-    }
-    context.save(this.key);
-    context.advanceProgramCounter();
-  }
-
-  @Override
-  public String toString() {
-    final StringBuilder sb = new StringBuilder(super.toString()).append(" ");
-    if (this.key == null) {
-      sb.append("null");
-    } else {
-      sb.append(this.key);
-    }
-    return sb.toString();
+  @Test
+  public void testMatchWithAAB() {
+    final Thread<Character> t = this.run(Arrays.asList('a', 'a', 'b'));
+    assertMatch(t);
+    final Map<Object, List<Character>> submatches = t.getSubmatches();
+    assertNotNull(submatches);
+    assertEquals(2, submatches.size());
+    assertTrue(submatches.containsKey("FIRST"));
+    assertTrue(submatches.containsKey("SECOND"));
+    assertEquals(Arrays.asList('a', 'a'), submatches.get("FIRST"));
+    assertEquals(Arrays.asList('b'), submatches.get("SECOND"));
   }
 
 }

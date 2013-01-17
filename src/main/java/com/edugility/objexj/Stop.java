@@ -29,18 +29,18 @@ package com.edugility.objexj;
 
 import java.util.List;
 
-public class Save<T> extends Instruction<T> {
+public class Stop<T> extends Instruction<T> {
 
   private static final long serialVersionUID = 1L;
 
   private final Object key;
 
-  public Save(final String key) {
+  public Stop(final String key) {
     super();
     this.key = key;
   }
 
-  public Save(final Object key) {
+  public Stop(final Object key) {
     super();
     this.key = key;
   }
@@ -50,7 +50,7 @@ public class Save<T> extends Instruction<T> {
     if (context == null) {
       throw new IllegalArgumentException("context");
     }
-    context.save(this.key);
+    context.stop(this.key);
     context.advanceProgramCounter();
   }
 

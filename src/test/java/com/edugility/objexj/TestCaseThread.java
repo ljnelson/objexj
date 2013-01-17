@@ -23,12 +23,12 @@ public class TestCaseThread extends BasicThreadScheduler<Character> {
 
   @Test(expected = IllegalArgumentException.class)
   public void testRejectsAllNullArguments() {
-    new Thread<Character>(null, null, 0, null);
+    new Thread<Character>("T0", null, null, 0, null);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testRejectsAllNullArgumentsExceptThreadScheduler() {
-    new Thread<Character>(null, null, 0, this);
+    new Thread<Character>("T0", null, null, 0, this);
   }
 
 
@@ -39,17 +39,17 @@ public class TestCaseThread extends BasicThreadScheduler<Character> {
 
   @Test
   public void testAcceptsNullItemsListWithValidNoInputPointer() {
-    new Thread<Character>(simpleProgramCounter, null, Thread.VALID_NO_INPUT_POINTER, this);
+    new Thread<Character>("T0", simpleProgramCounter, null, Thread.VALID_NO_INPUT_POINTER, this);
   }
 
   @Test
   public void testAcceptsNullItemsListWithZeroValuedItemPointer() {
-    new Thread<Character>(simpleProgramCounter, null, 0, this);
+    new Thread<Character>("T0", simpleProgramCounter, null, 0, this);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testRejectsNullItemsListWithPositiveItemPointerGreaterThanItemsSize() {
-    new Thread<Character>(simpleProgramCounter, null, 2 /* random integer greater than Collections.emptyList().size() */, this);
+    new Thread<Character>("T0", simpleProgramCounter, null, 2 /* random integer greater than Collections.emptyList().size() */, this);
   }
 
 
@@ -60,24 +60,24 @@ public class TestCaseThread extends BasicThreadScheduler<Character> {
 
   @Test
   public void testAcceptsEmptyItemsListWithValidNoInputPointer() {
-    new Thread<Character>(simpleProgramCounter, Collections.<Character>emptyList(), Thread.VALID_NO_INPUT_POINTER, this);
+    new Thread<Character>("T0", simpleProgramCounter, Collections.<Character>emptyList(), Thread.VALID_NO_INPUT_POINTER, this);
   }
 
   @Test
   public void testAcceptsEmptyItemsListWithZeroValuedItemPointer() {
-    new Thread<Character>(simpleProgramCounter, Collections.<Character>emptyList(), 0, this);
+    new Thread<Character>("T0", simpleProgramCounter, Collections.<Character>emptyList(), 0, this);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testRejectsEmptyItemsListWithPositiveItemPointerGreaterThanItemsSize() {
-    new Thread<Character>(simpleProgramCounter, Collections.<Character>emptyList(), 2 /* random integer greater than Collections.emptyList().size() */, this);
+    new Thread<Character>("T0", simpleProgramCounter, Collections.<Character>emptyList(), 2 /* random integer greater than Collections.emptyList().size() */, this);
   }
 
   @Test
   public void testThreadStep() {
     final List<Character> items = Arrays.asList('a', 'b');
 
-    final Thread<Character> thread = this.newThread(simpleProgramCounter, items, 0);
+    final Thread<Character> thread = this.newThread("T0", simpleProgramCounter, items, 0, null);
     assertNotNull(thread);
 
     // This thread is running a program with a single instruction that
@@ -93,7 +93,7 @@ public class TestCaseThread extends BasicThreadScheduler<Character> {
   public void testThreadStepPastDeath() {
     final List<Character> items = Arrays.asList('a', 'b');
 
-    final Thread<Character> thread = this.newThread(simpleProgramCounter, items, 0);
+    final Thread<Character> thread = this.newThread("T0", simpleProgramCounter, items, 0, null);
     assertNotNull(thread);
     thread.step();
     assertSame(Thread.State.DEAD, thread.getState());

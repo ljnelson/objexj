@@ -13,7 +13,7 @@ public class TestCaseInstructionParsing {
 
   @Test
   public void testParseSplit() throws Exception {
-    final Instruction<Character> i = Instruction.valueOf("Split 4, 8");
+    final Instruction<Character> i = Instruction.valueOf("split 4, 8");
     assertNotNull(i);
     assertTrue(i instanceof Split);
     final Split<Character> s = (Split<Character>)i;

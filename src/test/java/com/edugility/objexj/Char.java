@@ -27,42 +27,40 @@
  */
 package com.edugility.objexj;
 
-import java.util.List;
-
-public class Save<T> extends Instruction<T> {
-
+public class Char extends Filter<Character> {
+  
   private static final long serialVersionUID = 1L;
 
-  private final Object key;
+  private final char c;
 
-  public Save(final String key) {
+  public Char(final String operands) {
     super();
-    this.key = key;
+    if (operands == null) {
+      throw new IllegalArgumentException("operands", new NullPointerException("operands"));
+    } else if (operands.isEmpty()) {
+      throw new IllegalArgumentException("operands.isEmpty()");
+    }
+    this.c = operands.charAt(0);
   }
 
-  public Save(final Object key) {
+  public Char(final char x) {
     super();
-    this.key = key;
+    this.c = x;
   }
 
   @Override
-  public final void execute(final InstructionContext<T> context) {
-    if (context == null) {
-      throw new IllegalArgumentException("context");
+  public boolean accept(final InstructionContext<Character> context) {
+    boolean returnValue = false;
+    if (context != null && context.canRead()) {
+      final Character x = context.read();
+      returnValue = x != null && x.charValue() == this.c;
     }
-    context.save(this.key);
-    context.advanceProgramCounter();
+    return returnValue;
   }
 
   @Override
   public String toString() {
-    final StringBuilder sb = new StringBuilder(super.toString()).append(" ");
-    if (this.key == null) {
-      sb.append("null");
-    } else {
-      sb.append(this.key);
-    }
-    return sb.toString();
+    return new StringBuilder(super.toString()).append(" ").append(this.c).toString();
   }
 
 }

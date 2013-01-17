@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 
+import java.util.Map;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 import java.lang.reflect.InvocationTargetException;
@@ -69,8 +71,8 @@ public abstract class AbstractProgramTestCase<T> implements ThreadScheduler<T> {
   }
 
   @Override
-  public Thread<T> newThread(final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer) {
-    return new Thread<T>(String.format("T%d", ids.getAndIncrement()), programCounter, items, itemPointer, this);
+  public Thread<T> newThread(final Object id, final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer, final Map<Object, CaptureGroup<T>> captureGroups) {
+    return new Thread<T>(id, programCounter, items, itemPointer, captureGroups, this);
   }
 
   @Override
@@ -98,7 +100,7 @@ public abstract class AbstractProgramTestCase<T> implements ThreadScheduler<T> {
     } else {
       inputPointer = 0;
     }
-    final Thread<T> t = this.newThread(new ProgramCounter<T>(this.program), input, inputPointer);
+    final Thread<T> t = this.newThread(String.format("T%d", this.ids.getAndIncrement()), new ProgramCounter<T>(this.program), input, inputPointer, null);
     assertNotNull(t);
     return t;
   }

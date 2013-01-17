@@ -1,3 +1,30 @@
+/* -*- mode: Java; c-basic-offset: 2; indent-tabs-mode: nil -*-
+ *
+ * Copyright (c) 2013 Edugility LLC.
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without
+ * restriction, including without limitation the rights to use, copy,
+ * modify, merge, publish, distribute, sublicense and/or sell copies
+ * of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ *
+ * The original copy of this license is available at
+ * http://www.opensource.org/license/mit-license.html.
+ */
 package com.edugility.objexj;
 
 import java.util.Arrays;
@@ -56,7 +83,7 @@ import java.util.logging.Logger;
  */
 public final class Thread<T> implements Runnable, ThreadScheduler<T> {
 
-  public static final int VALID_NO_INPUT_POINTER = Integer.MIN_VALUE;
+  public static final int VALID_NO_INPUT_POINTER = Integer.MAX_VALUE;
 
   private static final int INVALID_INPUT_POINTER = -1;
 
@@ -78,15 +105,19 @@ public final class Thread<T> implements Runnable, ThreadScheduler<T> {
 
   private final Map<Object, CaptureGroup<T>> captureGroups;
 
-  Thread(final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer, final ThreadScheduler<T> threadScheduler) {
-    this(null, programCounter, items, itemPointer, threadScheduler);
+  Thread(final Object id, final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer, final ThreadScheduler<T> threadScheduler) {
+    this(id, programCounter, items, itemPointer, null, threadScheduler);
   }
 
-  Thread(final Object id, final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer, final ThreadScheduler<T> threadScheduler) {
+  Thread(final Object id, final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer, final Map<Object, CaptureGroup<T>> captureGroups, final ThreadScheduler<T> threadScheduler) {
     super();
     this.state = State.CONSTRUCTING;
     this.id = id;
-    this.captureGroups = new HashMap<Object, CaptureGroup<T>>();
+    if (captureGroups == null) {
+      this.captureGroups = new HashMap<Object, CaptureGroup<T>>();
+    } else {
+      this.captureGroups = captureGroups;
+    }
     this.items = items;
 
     if (programCounter == null) {
@@ -171,17 +202,28 @@ public final class Thread<T> implements Runnable, ThreadScheduler<T> {
     }
   }
 
+  public final void stop(final Object key) {
+    if (key == null) {
+      throw new IllegalArgumentException("key", new NullPointerException("key"));
+    }
+    this.ensureViable();
+    final CaptureGroup<T> cg = this.captureGroups.get(key);
+    if (cg != null) {
+      cg.setEndIndex(this.itemPointer);
+    }
+  }
+
   /**
    * @exception IllegalStateException if this {@link Thread}
    * {@linkplain #isViable() is not viable}
    */
-  public final Thread<T> newThread(final int programCounterIndex) {
+  public final Thread<T> newThread(final Object id, final int programCounterIndex) {
     this.ensureViable();
     ProgramCounter<T> programCounter = this.getProgramCounter();
     if (programCounter != null) {
       programCounter = programCounter.clone(programCounterIndex);
     }
-    return this.newThread(programCounter, this.items, this.itemPointer);
+    return this.newThread(id, programCounter, this.items, this.itemPointer, deepClone(this.captureGroups));
   }
 
   /**
@@ -191,9 +233,9 @@ public final class Thread<T> implements Runnable, ThreadScheduler<T> {
    * {@linkplain #isViable() is not viable}
    */
   @Override
-  public final Thread<T> newThread(final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer) {
+  public final Thread<T> newThread(final Object id, final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer, final Map<Object, CaptureGroup<T>> captureGroups) {
     this.ensureViable();
-    return this.threadScheduler.newThread(programCounter, items, itemPointer);
+    return this.threadScheduler.newThread(id, programCounter, items, itemPointer, captureGroups);
   }
 
   /**
@@ -563,6 +605,35 @@ public final class Thread<T> implements Runnable, ThreadScheduler<T> {
     } else {
       return id.toString();
     }
+  }
+
+
+  /*
+   * Static methods.
+   */
+
+
+  private static final <T> Map<Object, CaptureGroup<T>> deepClone(final Map<Object, CaptureGroup<T>> suppliedCaptureGroups) {
+    final Map<Object, CaptureGroup<T>> captureGroups;
+    if (suppliedCaptureGroups != null) {
+      captureGroups = new HashMap<Object, CaptureGroup<T>>(suppliedCaptureGroups.size());
+      final Set<Entry<Object, CaptureGroup<T>>> entries = suppliedCaptureGroups.entrySet();
+      if (entries != null && !entries.isEmpty()) {
+        for (final Entry<Object, CaptureGroup<T>> entry : entries) {
+          if (entry != null) {
+            final CaptureGroup<T> cg = entry.getValue();
+            if (cg == null) {
+              captureGroups.put(entry.getKey(), null);
+            } else {
+              captureGroups.put(entry.getKey(), cg.clone());
+            }
+          }
+        }
+      }
+    } else {
+      captureGroups = null;
+    }
+    return captureGroups;
   }
 
 }

@@ -1,0 +1,9 @@
+save FIRST
+char a
+split 1, 3
+stop FIRST
+save SECOND
+char b
+split 5, 7
+stop SECOND
+match
