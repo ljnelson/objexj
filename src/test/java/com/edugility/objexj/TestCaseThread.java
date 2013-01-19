@@ -77,7 +77,7 @@ public class TestCaseThread extends BasicThreadScheduler<Character> {
   public void testThreadStep() {
     final List<Character> items = Arrays.asList('a', 'b');
 
-    final Thread<Character> thread = this.newThread("T0", simpleProgramCounter, items, 0, null);
+    final Thread<Character> thread = this.newThread("T0", simpleProgramCounter, items, 0, null, null);
     assertNotNull(thread);
 
     // This thread is running a program with a single instruction that
@@ -93,7 +93,7 @@ public class TestCaseThread extends BasicThreadScheduler<Character> {
   public void testThreadStepPastDeath() {
     final List<Character> items = Arrays.asList('a', 'b');
 
-    final Thread<Character> thread = this.newThread("T0", simpleProgramCounter, items, 0, null);
+    final Thread<Character> thread = this.newThread("T0", simpleProgramCounter, items, 0, null, null);
     assertNotNull(thread);
     thread.step();
     assertSame(Thread.State.DEAD, thread.getState());

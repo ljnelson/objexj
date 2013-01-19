@@ -66,14 +66,15 @@ public class MVELFilter<T> extends Filter<T> {
     if (this.mvelExpression == null) {
       returnValue = true; // no MVEL expression means no additional constraints
     } else {
-      final Map<Object, Object> variables = new HashMap<Object, Object>(); // XXX TODO FIXME get from context
-      returnValue = context.canRead() && this.accept(context.read(), variables);
+      returnValue = context.canRead() && this.accept(context.read(), context.getVariables());
     }
     return returnValue;
   }
 
-  public final boolean accept(final T item) {
-    return this.accept(item, null);
+  
+
+  final boolean accept(final T item) {
+    return this.accept(item, new HashMap<Object, Object>());
   }
   
   public boolean accept(final T item, Map<Object, Object> variables) {

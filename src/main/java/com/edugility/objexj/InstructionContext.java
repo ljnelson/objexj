@@ -32,6 +32,7 @@ import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import java.util.List;
+import java.util.Map;
 
 public class InstructionContext<T> implements Serializable {
 
@@ -47,6 +48,10 @@ public class InstructionContext<T> implements Serializable {
       throw new IllegalArgumentException("thread == null");
     }
     this.thread = thread;
+  }
+
+  public Map<Object, Object> getVariables() {
+    return this.thread.getVariables();
   }
 
   public final boolean scheduleNewThread(final int programCounterIndex) {

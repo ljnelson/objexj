@@ -64,10 +64,11 @@ public final class CaptureGroup<T> implements Cloneable, Serializable {
   }
 
   public final List<T> getItems() {
-    if (items == null) {
-      throw new IllegalStateException();
+    if (this.items == null) {
+      return Collections.emptyList();
+    } else {
+      return Collections.unmodifiableList(items.subList(this.startIndex, this.endIndex < 0 ? items.size() : this.endIndex));
     }
-    return Collections.unmodifiableList(items.subList(this.startIndex, this.endIndex < 0 ? items.size() : this.endIndex));
   }
 
   private final void setItems(final List<T> items) {
@@ -82,7 +83,7 @@ public final class CaptureGroup<T> implements Cloneable, Serializable {
       throw new IllegalArgumentException("endIndex < startIndex: " + endIndex + " < " + this.startIndex);
     }
     if (this.items == null) {
-      throw new IllegalStateException();
+      throw new IllegalArgumentException("endIndex", new IllegalStateException("items == null; endIndex == " + endIndex));
     }
     this.endIndex = endIndex;
   }
@@ -98,16 +99,24 @@ public final class CaptureGroup<T> implements Cloneable, Serializable {
       throw (InternalError)new InternalError().initCause(severeError);
     }
     assert clone != null;
-    clone.setItems(new ArrayList<T>(this.items));
+    if (this.items != null) {
+      clone.setItems(new ArrayList<T>(this.items));
+    }
     return clone;
   }
 
   @Override
   public final int hashCode() {
     int result = 17;
+
+    // startIndex
     result = 37 * result + startIndex;
+
+    // endIndex
     result = 37 * result + endIndex;
-    // this.items ignored on purpose
+
+    // items ignored on purpose
+
     return result;
   }
 
@@ -128,7 +137,7 @@ public final class CaptureGroup<T> implements Cloneable, Serializable {
         return false;
       }
 
-      // this.items ignored on purpose
+      // items ignored on purpose
 
       // All tests pass
       return true;

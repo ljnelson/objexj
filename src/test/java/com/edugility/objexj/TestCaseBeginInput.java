@@ -32,7 +32,7 @@ public class TestCaseBeginInput extends BasicThreadScheduler<Character> {
     p.add(new BeginInput<Character>());
     assertNotNull(p);
 
-    final Thread<Character> t = this.newThread("T0", new ProgramCounter<Character>(p), null /* no input */, Thread.VALID_NO_INPUT_POINTER, null);
+    final Thread<Character> t = this.newThread("T0", new ProgramCounter<Character>(p), null /* no input */, Thread.VALID_NO_INPUT_POINTER, null, null);
     assertNotNull(t);
 
     t.step();
@@ -59,7 +59,7 @@ public class TestCaseBeginInput extends BasicThreadScheduler<Character> {
     p.add(new BeginInput<Character>());
     assertNotNull(p);
 
-    final Thread<Character> t = this.newThread("T0", new ProgramCounter<Character>(p), Collections.<Character>emptyList() /* empty input */, Thread.VALID_NO_INPUT_POINTER, null);
+    final Thread<Character> t = this.newThread("T0", new ProgramCounter<Character>(p), Collections.<Character>emptyList() /* empty input */, Thread.VALID_NO_INPUT_POINTER, null, null);
     assertNotNull(t);
     t.step();
     assertEquals(Thread.State.VIABLE, t.getState());
@@ -77,7 +77,7 @@ public class TestCaseBeginInput extends BasicThreadScheduler<Character> {
 
     final List<Character> input = Arrays.asList('a', 'b', 'c', 'd');
 
-    final Thread<Character> t = this.newThread("T0", new ProgramCounter<Character>(p), input, 0, null);
+    final Thread<Character> t = this.newThread("T0", new ProgramCounter<Character>(p), input, 0, null, null);
     assertNotNull(t);
 
     t.step();

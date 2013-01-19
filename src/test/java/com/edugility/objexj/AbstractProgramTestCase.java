@@ -71,8 +71,8 @@ public abstract class AbstractProgramTestCase<T> implements ThreadScheduler<T> {
   }
 
   @Override
-  public Thread<T> newThread(final Object id, final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer, final Map<Object, CaptureGroup<T>> captureGroups) {
-    return new Thread<T>(id, programCounter, items, itemPointer, captureGroups, this);
+  public Thread<T> newThread(final Object id, final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer, final Map<Object, CaptureGroup<T>> captureGroups, final Map<Object, Object> variables) {
+    return new Thread<T>(id, programCounter, items, itemPointer, captureGroups, variables, this);
   }
 
   @Override
@@ -100,7 +100,7 @@ public abstract class AbstractProgramTestCase<T> implements ThreadScheduler<T> {
     } else {
       inputPointer = 0;
     }
-    final Thread<T> t = this.newThread(String.format("T%d", this.ids.getAndIncrement()), new ProgramCounter<T>(this.program), input, inputPointer, null);
+    final Thread<T> t = this.newThread(String.format("T%d", this.ids.getAndIncrement()), new ProgramCounter<T>(this.program), input, inputPointer, null, null);
     assertNotNull(t);
     return t;
   }

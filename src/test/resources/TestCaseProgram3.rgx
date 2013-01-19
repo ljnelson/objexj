@@ -1,0 +1,2 @@
+NotNullMVELFilter foo = "bar"; charValue() == 'a'
+Match

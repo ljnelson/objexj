@@ -1,6 +1,6 @@
 /* -*- mode: Java; c-basic-offset: 2; indent-tabs-mode: nil -*-
  *
- * Copyright (c) 2013 Edugility LLC.
+ * Copyright (c) 2012-2013 Edugility LLC.
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -49,8 +49,8 @@ import java.util.logging.Logger;
  *
  * <li><strong>{@linkplain State#VIABLE Viable}</strong>.  A {@link
  * Thread} is <em>viable</em> when its {@linkplain #getState() state}
- * is {@link State#VIABLE VIABLE} and when it has a valid {@linkplain
- * ProgramCounter program counter}.</li>
+ * is {@link State#VIABLE VIABLE} and when it {@linkplain
+ * #getProgramCounter has a valid program counter}.</li>
  *
  * <li><strong>{@linkplain State#DEAD Dead}</strong>.  A {@link
  * Thread} is <em>{@linkplain State#DEAD dead}</em> when its
@@ -69,20 +69,30 @@ import java.util.logging.Logger;
  *
  * </ul>
  *
- * Additionally, a dead {@link Thread} will throw an {@link
- * IllegalStateException} from any other method that is invoked.</li>
+ * Additionally, a {@linkplain State#DEAD dead} {@link Thread} will
+ * throw an {@link IllegalStateException} from any other method that
+ * is invoked.</li>
  *
  * <li><strong>{@linkplain State#MATCH Match}</strong>.  A {@link
  * Thread} is a <em>match</em> when its {@link #getState()} method
- * returns a {@link State} that is equal to {@link State#MATCH MATCH}.
- * A {@link Thread} is placed in the {@link State#MATCH MATCH} state
- * by invoking the {@link #match()} method.  Like a {@linkplain
- * State#DEAD dead} {@link Thread}, a {@link Thread} in the {@link
- * State#MATCH MATCH} state effectively cannot do anything.</li>
+ * returns {@link State#MATCH MATCH}.  A {@link Thread} is placed in
+ * the {@link State#MATCH MATCH} state by invoking the {@link
+ * #match()} method.  A {@link Thread} in the {@link State#MATCH
+ * MATCH} state effectively cannot do anything other than {@linkplain
+ * #getSubmatches() report its submatches}.</li>
  *
  * </ul>
  *
- * @param <T> the type of items this {@link Thread} will {@linkplain #read() read}
+ * @param <T> the type of items this {@link Thread} will {@linkplain
+ * #read() read}
+ *
+ * @author <a href="mailto:ljnelson@gmail.com">Laird Nelson</a>
+ *
+ * @see <a
+ * href="http://swtch.com/~rsc/regexp/regexp2.html">R. S. Cox. (2009,
+ * December). <span style="font-style: italic;">Regular Expression Matching: the Virtual Machine
+ * Approach</span> [Online]. Available:
+ * http://swtch.com/~rsc/regexp/regexp2.html</a>
  */
 public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
 
@@ -104,13 +114,13 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
    * can be in.
    */
   public enum State {
-    CONSTRUCTING, MATCH, DEAD, VIABLE
+    DEAD, MATCH, VIABLE
   }
 
   /**
    * The {@link ThreadScheduler} used by this {@link Thread} to
    * {@linkplain ThreadScheduler#newThread(Object, ProgramCounter,
-   * List, int, Map) spawn} and {@linkplain
+   * List, int, Map, Map) spawn} and {@linkplain
    * ThreadScheduler#schedule(Thread) schedule} new {@link Thread}s.
    * This field is never {@code null}.
    * 
@@ -208,8 +218,11 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
    */
   private Map<Object, CaptureGroup<T>> captureGroups;
 
+  private Map<Object, Object> variables;
+
   /**
-   * Creates a new {@link Thread} without any {@link CaptureGroup}s.
+   * Creates a new {@link Thread} without any {@link CaptureGroup}s or
+   * variables.
    *
    * @param id the identifier for the new {@link Thread}; used only
    * for its {@link Object#toString()} output; may be {@code null}
@@ -232,7 +245,7 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
    *
    * @param threadScheduler the {@link ThreadScheduler} this {@link
    * Thread} will use to {@linkplain ThreadScheduler#newThread(Object,
-   * ProgramCounter, List, int, Map) spawn} and {@linkplain
+   * ProgramCounter, List, int, Map, Map) spawn} and {@linkplain
    * ThreadScheduler#schedule(Thread) schedule} new {@link Thread}s;
    * must not be {@code null}
    *
@@ -240,7 +253,7 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
    * outlined as part of the parameter descriptions is not fulfilled
    */
   protected Thread(final Object id, final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer, final ThreadScheduler<T> threadScheduler) {
-    this(id, programCounter, items, itemPointer, null, threadScheduler);
+    this(id, programCounter, items, itemPointer, null, null, threadScheduler);
   }
 
   /**
@@ -269,22 +282,36 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
    * indexed by key that this new {@link Thread} will use to store
    * {@linkplain #getSubmatches() submatches}; may be {@code null}
    *
+   * @param variables a {@link Map} of variables this {@link Thread}
+   * will be initialized with; may be {@code null}
+   *
    * @param threadScheduler the {@link ThreadScheduler} this {@link
    * Thread} will use to {@linkplain ThreadScheduler#newThread(Object,
-   * ProgramCounter, List, int, Map) spawn} and {@linkplain
+   * ProgramCounter, List, int, Map, Map) spawn} and {@linkplain
    * ThreadScheduler#schedule(Thread) schedule} new {@link Thread}s;
    * must not be {@code null}
    *
    * @exception IllegalArgumentException if any of the preconditions
    * outlined as part of the parameter descriptions is not fulfilled
+   *
+   * @see #getSubmatches()
+   *
+   * @see #getVariables()
    */
-  protected Thread(final Object id, final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer, final Map<Object, CaptureGroup<T>> captureGroups, final ThreadScheduler<T> threadScheduler) {
+  protected Thread(final Object id, final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer, final Map<Object, CaptureGroup<T>> captureGroups, final Map<Object, Object> variables, final ThreadScheduler<T> threadScheduler) {
     super();
-    this.state = State.CONSTRUCTING;
+    this.state = State.VIABLE;
+
     this.id = id;
+
     if (captureGroups != null) {
       this.captureGroups = captureGroups;
     }
+
+    if (variables != null) {
+      this.variables = variables;
+    }
+
     this.items = items;
 
     if (programCounter == null) {
@@ -324,18 +351,54 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
       throw new IllegalArgumentException("itemPointer > items.size(): " + itemPointer + " > " + this.items.size());
     }
     this.itemPointer = itemPointer;
-
-    this.state = State.VIABLE;
   }
 
-  public final Object getId() {
+  /**
+   * Returns the identifier of this {@link Thread}.
+   *
+   * <p>This method may return {@code null}.</p>
+   *
+   * @return the identifier of this {@link Thread}, or {@code null}
+   *
+   * @see #setId(Object)
+   *
+   * @see #toString()
+   */
+  public Object getId() {
     return this.id;
   }
 
+  /**
+   * Sets the identifier of this {@link Thread}.  The supplied {@code
+   * id} may be {@code null} and is used only for its {@link
+   * Object#toString() toString()} return value, which must be
+   * non-{@code null}.
+   *
+   * @param id the new identifier; may be {@code null}
+   *
+   * @see #getId()
+   *
+   * @see #toString()
+   */
   public void setId(final Object id) {
     this.id = id;
   }
 
+  /**
+   * Returns an {@linkplain Collections#unmodifiableMap(Map)
+   * unmodifiable <tt>Map</tt>} of submatches found by this {@link
+   * Thread}.
+   *
+   * <p>This method never returns {@code null}.</p>
+   *
+   * <p>The {@linkplain Map#values() values} in the {@link Map} that
+   * is returned are guaranteed not to be {@code null} and are
+   * {@linkplain Collections#unmodifiableList(List) unmodifiable}.</p>
+   *
+   * @return a non-{@code null} {@link Map} of submatches indexed by
+   * the keys they were stored under as a result of the {@link
+   * #save(Object)} and {@link #stop(Object)} operations
+   */
   public final Map<Object, List<T>> getSubmatches() {
     if (State.MATCH != this.getState()) {
       throw new IllegalStateException();
@@ -365,6 +428,22 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
     return returnValue;
   }
 
+  public Map<Object, Object> getVariables() {
+    if (this.variables == null) {
+      this.variables = new HashMap<Object, Object>();
+    }
+    return this.variables;
+  }
+
+  /**
+   * Marks a position in the input such that corresponding items
+   * {@linkplain #getSubmatches() can be retrieved later}.
+   *
+   * @param key the {@link Object} under which to index the position;
+   * may be {@code null}
+   *
+   * @see #getSubmatches()
+   */
   public final void save(final Object key) {
     if (key == null) {
       throw new IllegalArgumentException("key", new NullPointerException("key"));
@@ -383,6 +462,13 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
     }
   }
 
+  /**
+   * Marks the end of a region in the input such that corresponding
+   * items {@linkplain #getSubmatches() can be retrieved later}.
+   *
+   * @param key the {@link Object} that was passed to a previous
+   * {@link #save(Object)} call; may be {@code null}
+   */
   public final void stop(final Object key) {
     if (key == null) {
       throw new IllegalArgumentException("key", new NullPointerException("key"));
@@ -406,7 +492,8 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
     if (programCounter != null) {
       programCounter = programCounter.clone(programCounterIndex);
     }
-    return this.newThread(id, programCounter, this.items, this.itemPointer, deepClone(this.captureGroups));
+    // TODO: we're not cloning the variables; is that OK?
+    return this.newThread(id, programCounter, this.items, this.itemPointer, deepClone(this.captureGroups), this.variables);
   }
 
   /**
@@ -416,12 +503,12 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
    * {@linkplain #isViable() is not viable}
    */
   @Override
-  public final Thread<T> newThread(final Object id, final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer, final Map<Object, CaptureGroup<T>> captureGroups) {
+  public final Thread<T> newThread(final Object id, final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer, final Map<Object, CaptureGroup<T>> captureGroups, final Map<Object, Object> variables) {
     this.ensureViable();
     if (this.threadScheduler == null) {
       throw new IllegalStateException("threadScheduler == null");
     }
-    return this.threadScheduler.newThread(id, programCounter, items, itemPointer, captureGroups);
+    return this.threadScheduler.newThread(id, programCounter, items, itemPointer, captureGroups, variables);
   }
 
   /**
@@ -764,8 +851,7 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
 
   /**
    * Returns the {@link State} of this {@link Thread}.  This method
-   * never returns {@code null} and never returns {@link
-   * State#CONSTRUCTING}.
+   * never returns {@code null}.
    *
    * @return a non-{@code null} {@link State}
    */
@@ -804,6 +890,8 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
     if (programCounter != null) {
       clone.programCounter = programCounter.clone();
     }
+
+    // TODO: Clone our variables?
 
     // Clone our capture groups.
     if (this.captureGroups != null) {

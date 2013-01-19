@@ -31,7 +31,7 @@ public class TestCaseEndInput extends BasicThreadScheduler<Character> {
     p.add(new EndInput<Character>());
     assertNotNull(p);
 
-    final Thread<Character> t = this.newThread(0, new ProgramCounter<Character>(p), null /* no input */, Thread.VALID_NO_INPUT_POINTER, null);
+    final Thread<Character> t = this.newThread(0, new ProgramCounter<Character>(p), null /* no input */, Thread.VALID_NO_INPUT_POINTER, null, null);
     assertNotNull(t);
 
     t.step();
