@@ -91,6 +91,7 @@ public class Tokenizer implements Iterator<Token> {
           break;
 
         case '(':
+          // just peekin'
           reader.unread(c);
           this.state = State.OPERATOR;
           break;
@@ -177,6 +178,7 @@ public class Tokenizer implements Iterator<Token> {
           if (Character.isWhitespace(c)) {
             token = new Token(Token.Type.FILTER, sb.toString());
             sb.setLength(0);
+            this.state = State.SEQUENCE;
             go = false;
           } else if (c == '.') {
             sb.append('.');
@@ -207,6 +209,7 @@ public class Tokenizer implements Iterator<Token> {
         case '/':
         case '|':
         case ')':
+          // just peekin'
           this.reader.unread(c);
           this.state = State.OPERATOR;
           break;

@@ -19,6 +19,17 @@ public class TestCaseTokenizer {
     super();
   }
 
+  @Test
+  public void testInitialCaret() throws IOException {
+    final PushbackReader pbr = new PushbackReader(new StringReader("^"));
+    final Tokenizer tokenizer = new Tokenizer(pbr);
+    assertTrue(tokenizer.hasNext());
+    final Token token = tokenizer.next();
+    assertNotNull(token);
+    assertSame(Token.Type.BEGIN_INPUT, token.getType());
+    assertFalse(tokenizer.hasNext());
+  }
+
   @Test(expected = IllegalStateException.class)
   public void testInitialConcatenationIsImpossible() throws IOException {
     final PushbackReader pbr = new PushbackReader(new StringReader("/"));
@@ -97,6 +108,60 @@ public class TestCaseTokenizer {
     } catch (final NoSuchElementException expected) {
       // fine
     }
+  }
+
+  @Test
+  public void testAnchoredCatnenationOfNonQualifiedFilters() throws IOException {
+    final PushbackReader pbr = new PushbackReader(new StringReader("^java.lang.Character/java.lang.Integer"));
+    final Tokenizer tokenizer = new Tokenizer(pbr);
+    assertTrue(tokenizer.hasNext());
+    Token token = tokenizer.next();
+    assertNotNull(token);
+    assertSame(Token.Type.BEGIN_INPUT, token.getType());
+
+    assertTrue(tokenizer.hasNext());
+    token = tokenizer.next();
+    assertNotNull(token);
+    assertSame(Token.Type.FILTER, token.getType());
+
+    assertTrue(tokenizer.hasNext());
+    token = tokenizer.next();
+    assertNotNull(token);
+    assertSame(Token.Type.CATENATION, token.getType());
+
+    assertTrue(tokenizer.hasNext());
+    token = tokenizer.next();
+    assertNotNull(token);
+    assertSame(Token.Type.FILTER, token.getType());
+
+    assertFalse(tokenizer.hasNext());    
+  }
+
+  @Test
+  public void testAnchoredCatnenationOfNonQualifiedFiltersWithWhitespace() throws IOException {
+    final PushbackReader pbr = new PushbackReader(new StringReader("^  java.lang.Character /   java.lang.Integer  "));
+    final Tokenizer tokenizer = new Tokenizer(pbr);
+    assertTrue(tokenizer.hasNext());
+    Token token = tokenizer.next();
+    assertNotNull(token);
+    assertSame(Token.Type.BEGIN_INPUT, token.getType());
+
+    assertTrue(tokenizer.hasNext());
+    token = tokenizer.next();
+    assertNotNull(token);
+    assertSame(Token.Type.FILTER, token.getType());
+
+    assertTrue(tokenizer.hasNext());
+    token = tokenizer.next();
+    assertNotNull(token);
+    assertSame(Token.Type.CATENATION, token.getType());
+
+    assertTrue(tokenizer.hasNext());
+    token = tokenizer.next();
+    assertNotNull(token);
+    assertSame(Token.Type.FILTER, token.getType());
+
+    assertFalse(tokenizer.hasNext());    
   }
 
   @Test
