@@ -250,7 +250,7 @@
     <mavenCompilerPluginVersion>3.0</mavenCompilerPluginVersion>
     <mavenDependencyPluginVersion>2.4</mavenDependencyPluginVersion>
     <mavenDeployPluginVersion>2.7</mavenDeployPluginVersion>
-    <mavenEnforcerPluginVersion>1.1.1</mavenEnforcerPluginVersion>
+    <mavenEnforcerPluginVersion>1.2</mavenEnforcerPluginVersion>
     <mavenGpgPluginVersion>1.4</mavenGpgPluginVersion>
     <mavenInstallPluginVersion>2.3.1</mavenInstallPluginVersion>
     <mavenJarPluginVersion>2.4</mavenJarPluginVersion>
