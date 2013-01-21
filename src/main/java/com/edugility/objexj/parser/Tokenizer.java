@@ -36,12 +36,39 @@ import java.util.NoSuchElementException;
 
 import com.edugility.objexj.Program;
 
+/**
+ * An {@link Iterator} of {@link Token}s that produces the iteration
+ * by reading a {@link PushbackReader}, character by character.
+ *
+ * <h2>Design Notes</h2>
+ *
+ * <ul>
+ *
+ * <li>The {@code $} character is a {@linkplain
+ * Character#isJavaIdentifierPart(char) legal Java identifier part},
+ * but we treat it as meaning end-of-input.  This will prevent some
+ * class names from being tokenized properly.</li>
+ *
+ * </ul>
+ *
+ * <h3>Tasks</h3>
+ *
+ * <ul>
+ *
+ * <li>Implement escaping</li>
+ *
+ * </ul>
+ *
+ * @author <a href="mailto:ljnelson@gmail.com">Laird Nelson</a>
+ *
+ * @since 1.0-SNAPSHOT
+ */
 public class Tokenizer implements Iterator<Token> {
 
   private static final long serialVersionUID = 1L;
 
   private enum State {
-    START, START_SAVING_OR_FILTER, INVALID, UNDECIDED, FILTER, MVEL, OPERATOR, SEQUENCE, END
+    START, START_SAVING_OR_FILTER, INVALID, FILTER, MVEL, OPERATOR, SEQUENCE, END
   }
 
   private transient final PushbackReader reader;
@@ -96,6 +123,11 @@ public class Tokenizer implements Iterator<Token> {
           this.state = State.OPERATOR;
           break;
 
+        case '$':
+          // $ is a valid Java identifier start so we have to special
+          // case it here.
+          throw new IllegalStateException(buildIllegalStateExceptionMessage(this.reader, c, this.position));
+
         default:
           if (Character.isWhitespace(c)) {
             // don't do anything
@@ -116,6 +148,11 @@ public class Tokenizer implements Iterator<Token> {
           reader.unread(c);
           this.state = State.OPERATOR;
           break;
+
+        case '$':
+          // $ is a valid Java identifier start so we have to special
+          // case it here
+          throw new IllegalStateException(buildIllegalStateExceptionMessage(this.reader, c, this.position));
           
         default:
           if (Character.isWhitespace(c)) {
@@ -126,25 +163,6 @@ public class Tokenizer implements Iterator<Token> {
           } else {
             throw new IllegalStateException(buildIllegalStateExceptionMessage(this.reader, c, this.position));
           }
-          break;
-        }
-        break;
-
-
-        // UNDECIDED
-      case UNDECIDED:
-        switch (c) {
-        case '(':
-        case ')':
-        case '+':
-        case '*':
-        case '?':
-        case '|':
-        case '/':
-          this.reader.unread(c);
-          this.state = State.OPERATOR;
-          break;
-        default:
           break;
         }
         break;
@@ -176,7 +194,9 @@ public class Tokenizer implements Iterator<Token> {
           break;
 
         default:
-          if (Character.isWhitespace(c)) {
+          if (Character.isJavaIdentifierPart(c)) {
+            sb.append((char)c);
+          } else if (Character.isWhitespace(c)) {
             token = new Token(Token.Type.FILTER, sb.toString());
             sb.setLength(0);
             this.state = State.SEQUENCE;
@@ -192,8 +212,6 @@ public class Tokenizer implements Iterator<Token> {
             } else {
               throw new IllegalStateException(buildIllegalStateExceptionMessage(this.reader, c, this.position));
             }
-          } else if (Character.isJavaIdentifierPart(c)) {
-            sb.append((char)c);
           } else {
             throw new IllegalStateException(buildIllegalStateExceptionMessage(this.reader, c, this.position));
           }
@@ -229,6 +247,7 @@ public class Tokenizer implements Iterator<Token> {
       case OPERATOR:
         switch (c) {
         case '$':
+          
           this.token = new Token(Token.Type.END_INPUT);
           sb.setLength(0);
           go = false;
@@ -344,6 +363,10 @@ public class Tokenizer implements Iterator<Token> {
         break;
       case END:
         // Everything is OK
+        if ("$".equals(sb.toString())) {
+          token = new Token(Token.Type.END_INPUT);
+          sb.setLength(0);
+        }
         break;
       default:
         throw new IllegalStateException("Unhandled cleanup; state is: " + this.state);

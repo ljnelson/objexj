@@ -137,6 +137,23 @@ public class TestCaseTokenizer {
     assertFalse(tokenizer.hasNext());    
   }
 
+  @Test(expected = IllegalStateException.class)
+  public void testBadInitialDollar() throws IOException {
+    final PushbackReader pbr = new PushbackReader(new StringReader("$"));
+    final Tokenizer tokenizer = new Tokenizer(pbr);
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testStupidDoubleCaret() throws IOException {
+    final PushbackReader pbr = new PushbackReader(new StringReader("^^"));
+    final Tokenizer tokenizer = new Tokenizer(pbr);
+    assertTrue(tokenizer.hasNext());
+    final Token token = tokenizer.next();
+    assertNotNull(token);
+    assertSame(Token.Type.BEGIN_INPUT, token.getType());
+    tokenizer.hasNext(); // will throw IllegalStateException
+  }
+
   @Test
   public void testSimpleFilterAnchoredAtEnd() throws IOException {
     final PushbackReader pbr = new PushbackReader(new StringReader("x$"));
