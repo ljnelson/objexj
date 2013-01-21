@@ -138,6 +138,38 @@ public class TestCaseTokenizer {
   }
 
   @Test
+  public void testSimpleFilterAnchoredAtEnd() throws IOException {
+    final PushbackReader pbr = new PushbackReader(new StringReader("x$"));
+    final Tokenizer tokenizer = new Tokenizer(pbr);
+    assertTrue(tokenizer.hasNext());
+    Token token = tokenizer.next();
+    assertNotNull(token);
+    assertSame(Token.Type.FILTER, token.getType());
+    assertEquals("x", token.getFilterType());
+    assertTrue(tokenizer.hasNext());
+    token = tokenizer.next();
+    assertNotNull(token);
+    assertSame(Token.Type.END_INPUT, token.getType());
+    assertFalse(tokenizer.hasNext());
+  }
+
+  @Test
+  public void testSimpleFilterAnchoredAtEndWithWhitespace() throws IOException {
+    final PushbackReader pbr = new PushbackReader(new StringReader(" x  $ "));
+    final Tokenizer tokenizer = new Tokenizer(pbr);
+    assertTrue(tokenizer.hasNext());
+    Token token = tokenizer.next();
+    assertNotNull(token);
+    assertSame(Token.Type.FILTER, token.getType());
+    assertEquals("x", token.getFilterType());
+    assertTrue(tokenizer.hasNext());
+    token = tokenizer.next();
+    assertNotNull(token);
+    assertSame(Token.Type.END_INPUT, token.getType());
+    assertFalse(tokenizer.hasNext());
+  }
+
+  @Test
   public void testAnchoredCatnenationOfNonQualifiedFiltersWithWhitespace() throws IOException {
     final PushbackReader pbr = new PushbackReader(new StringReader("^  java.lang.Character /   java.lang.Integer  "));
     final Tokenizer tokenizer = new Tokenizer(pbr);

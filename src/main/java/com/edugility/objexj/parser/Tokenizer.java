@@ -167,6 +167,7 @@ public class Tokenizer implements Iterator<Token> {
         case '?':
         case '|':
         case '/':
+        case '$':
           token = new Token(Token.Type.FILTER, sb.toString());
           sb.setLength(0);
           reader.unread(c);
@@ -308,6 +309,14 @@ public class Tokenizer implements Iterator<Token> {
         default:
           sb.append((char)c);
           break;
+        }
+        break;
+
+
+        // END
+      case END:
+        if (!Character.isWhitespace(c)) {
+          throw new IllegalStateException(buildIllegalStateExceptionMessage(this.reader, c, this.position));
         }
         break;
 
