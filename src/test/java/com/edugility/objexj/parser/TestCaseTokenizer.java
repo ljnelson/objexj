@@ -143,6 +143,36 @@ public class TestCaseTokenizer {
     final Tokenizer tokenizer = new Tokenizer(pbr);
   }
 
+  @Test
+  public void testWhitespaceBeforeUnaryOperator() throws IOException {
+    final PushbackReader pbr = new PushbackReader(new StringReader("fred +"));
+    final Tokenizer tokenizer = new Tokenizer(pbr);
+    assertTrue(tokenizer.hasNext());
+    Token token = tokenizer.next();
+    assertNotNull(token);
+    assertSame(Token.Type.FILTER, token.getType());
+    assertTrue(tokenizer.hasNext());
+    token = tokenizer.next();
+    assertNotNull(token);
+    assertSame(Token.Type.ONE_OR_MORE, token.getType());
+    assertFalse(tokenizer.hasNext());
+  }
+
+  @Test
+  public void testMvelFilterWithOperator() throws IOException {
+    final PushbackReader pbr = new PushbackReader(new StringReader("fred(xyz)+"));
+    final Tokenizer tokenizer = new Tokenizer(pbr);
+    assertTrue(tokenizer.hasNext());
+    Token token = tokenizer.next();
+    assertNotNull(token);
+    assertSame(Token.Type.FILTER, token.getType());
+    assertTrue(tokenizer.hasNext());
+    token = tokenizer.next();
+    assertNotNull(token);
+    assertSame(Token.Type.ONE_OR_MORE, token.getType());
+    assertFalse(tokenizer.hasNext());
+  }
+
   @Test(expected = IllegalStateException.class)
   public void testStupidDoubleCaret() throws IOException {
     final PushbackReader pbr = new PushbackReader(new StringReader("^^"));

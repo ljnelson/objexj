@@ -30,10 +30,78 @@ package com.edugility.objexj.parser;
 import java.io.IOException;
 import java.io.Reader;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Iterator;
+
+import com.edugility.objexj.BeginInput;
+import com.edugility.objexj.EndInput;
 import com.edugility.objexj.Program;
 
 public class Parser {
 
-  
+  public <T> Program<T> parse(final Iterator<Token> tokenizer) {
+    if (tokenizer == null) {
+      throw new IllegalStateException();
+    }
+    final Deque<T> stack = new ArrayDeque<T>();
+    final Program<T> program = new Program<T>();
+    for (int tokenCount = 0;tokenizer.hasNext(); tokenCount++) {
+      final Token token = tokenizer.next();
+      if (token != null) {
+        final Token.Type tokenType = token.getType();
+        assert tokenType != null;
+        switch (tokenType) {
+        case ALTERNATION:
+          break;
+        case BEGIN_INPUT:
+          this.beginInput(program, tokenCount);
+          break;
+        case CATENATION:
+          this.catenate(program);
+          break;
+        case END_INPUT:
+          this.endInput(program, tokenCount);
+          break;
+        case FILTER:
+          
+          break;
+        case ONE_OR_MORE:
+          break;
+        case START_SAVING:
+          break;
+        case STOP_SAVING:
+          break;
+        case ZERO_OR_MORE:
+          break;
+        case ZERO_OR_ONE:
+          break;
+        default:
+          throw new IllegalStateException("Unknown token type: " + tokenType);
+        }
+      }
+    }
+    return program;
+  }
+
+  private <T> void beginInput(final Program<T> program, final int tokenCount) {
+    if (tokenCount == 0) {
+      program.add(new BeginInput<T>());
+    } else {
+      throw new IllegalStateException(); // TODO message
+    }
+  }
+
+  private <T> void endInput(final Program<T> program, final int tokenCount) {
+    if (tokenCount == 0) {
+      throw new IllegalStateException(); // TODO message
+    } else {
+      program.add(new EndInput<T>());
+    }
+  }
+
+  private <T> void catenate(final Program<T> program) {
+    
+  }
 
 }

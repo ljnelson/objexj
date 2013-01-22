@@ -68,7 +68,7 @@ public class Tokenizer implements Iterator<Token> {
   private static final long serialVersionUID = 1L;
 
   private enum State {
-    START, START_SAVING_OR_FILTER, INVALID, FILTER, MVEL, OPERATOR, SEQUENCE, END
+    START, START_SAVING_OR_FILTER, INVALID, FILTER, MVEL, END_OF_FILTER, OPERATOR, STOP_SAVING_OR_END_OF_INPUT_OR_NEXT_IN_SEQUENCE, END
   }
 
   private transient final PushbackReader reader;
@@ -95,14 +95,18 @@ public class Tokenizer implements Iterator<Token> {
     return String.format("Unexpected character (%c) at position %d in Reader %s", c, position, r);
   }
 
-  void prime() throws IOException {
+  private final void prime() throws IOException {
     if (this.state == State.INVALID) {
       throw new IllegalStateException();
     }
+
     final StringBuilder sb = new StringBuilder();
     int parenCount = 0;
     int c = -1;
-    for (boolean go = true; go && (c = reader.read()) != -1; this.position++) {
+
+    READ_LOOP:
+    for (; (c = reader.read()) != -1; this.position++) {
+
       switch (this.state) {
 
 
@@ -113,25 +117,24 @@ public class Tokenizer implements Iterator<Token> {
         case '^':
           this.token = new Token(Token.Type.BEGIN_INPUT);
           sb.setLength(0);
-          go = false;
           this.state = State.START_SAVING_OR_FILTER;
-          break;
+          break READ_LOOP;
 
         case '(':
-          // just peekin'
           reader.unread(c);
           this.state = State.OPERATOR;
           break;
 
         case '$':
           // $ is a valid Java identifier start so we have to special
-          // case it here.
+          // case it here as end-of-input
           throw new IllegalStateException(buildIllegalStateExceptionMessage(this.reader, c, this.position));
 
         default:
           if (Character.isWhitespace(c)) {
-            // don't do anything
+            continue READ_LOOP;
           } else if (Character.isJavaIdentifierStart(c)) {
+            assert c != '$';
             sb.append((char)c);
             this.state = State.FILTER;
           } else {
@@ -141,10 +144,12 @@ public class Tokenizer implements Iterator<Token> {
         }
         break;
 
+
+        // START_SAVING_OR_FILTER
       case START_SAVING_OR_FILTER:
         switch (c) {
+
         case '(':
-          // just peekin'
           reader.unread(c);
           this.state = State.OPERATOR;
           break;
@@ -156,8 +161,9 @@ public class Tokenizer implements Iterator<Token> {
           
         default:
           if (Character.isWhitespace(c)) {
-            // don't do anything
+            continue READ_LOOP;
           } else if (Character.isJavaIdentifierStart(c)) {
+            assert c != '$';
             sb.append((char)c);
             this.state = State.FILTER;
           } else {
@@ -173,6 +179,8 @@ public class Tokenizer implements Iterator<Token> {
         switch (c) {
 
         case '(':
+          // Create the token, but don't return it yet.  Transition to
+          // the MVEL state and have it fill in the details.
           this.token = new Token(Token.Type.FILTER, sb.toString());
           parenCount = 1;
           sb.setLength(0);
@@ -185,28 +193,28 @@ public class Tokenizer implements Iterator<Token> {
         case '?':
         case '|':
         case '/':
+        case ',':
         case '$':
-          token = new Token(Token.Type.FILTER, sb.toString());
+          this.token = new Token(Token.Type.FILTER, sb.toString());
           sb.setLength(0);
           reader.unread(c);
-          go = false;
           this.state = State.OPERATOR;
-          break;
+          break READ_LOOP;
 
         default:
           if (Character.isJavaIdentifierPart(c)) {
             sb.append((char)c);
           } else if (Character.isWhitespace(c)) {
-            token = new Token(Token.Type.FILTER, sb.toString());
-            sb.setLength(0);
-            this.state = State.SEQUENCE;
-            go = false;
+            continue READ_LOOP;
           } else if (c == '.') {
             sb.append('.');
+
+            this.position++;
             c = reader.read();
+
             if (c == -1) {
-              // never mind, just peeking
               reader.unread(c);
+              this.position--;
             } else if (Character.isJavaIdentifierStart(c)) {
               sb.append((char)c);
             } else {
@@ -220,22 +228,63 @@ public class Tokenizer implements Iterator<Token> {
         break;
 
 
-        // SEQUENCE
-      case SEQUENCE:
+        // END_OF_FILTER
+      case END_OF_FILTER:
         switch (c) {
 
-        case '$':
-        case '/':
-        case '|':
         case ')':
-          // just peekin'
+        case '+':
+        case '*':
+        case '?':
+        case '|':
+        case '/':
+        case ',':
+        case '$':
+          sb.setLength(0);
+          reader.unread(c);
+          this.state = State.OPERATOR;
+          break;
+
+        default:
+          if (Character.isWhitespace(c)) {
+            continue READ_LOOP;
+          } else {
+            throw new IllegalStateException(buildIllegalStateExceptionMessage(this.reader, c, this.position));
+          }
+
+        }
+        break;
+
+
+        // STOP_SAVING_OR_END_OF_INPUT_OR_NEXT_IN_SEQUENCE
+        //
+        // STOP_SAVING_OR_END_OF_INPUT_OR_NEXT_IN_SEQUENCE permits
+        // only those operators that come after a (potentially
+        // augmented) filter token, or a group of such tokens, and
+        // weeds out others before proceeding to the OPERATOR state.
+        //
+        // This handles closing of submatches (")") and end-of-input
+        // ("$") as special (legal) cases.  Otherwise the operator has
+        // to be catenation or alternation.
+        //
+        // In these cases we forward to the OPERATOR state.
+        //
+        // Any other character causes an IllegalStateException.
+      case STOP_SAVING_OR_END_OF_INPUT_OR_NEXT_IN_SEQUENCE:
+        switch (c) {
+
+        case ')': // stop saving
+        case '$': // end of input
+        case '/': // catenation
+        case ',': // catenation
+        case '|': // alternation
           this.reader.unread(c);
           this.state = State.OPERATOR;
           break;
 
         default:
           if (Character.isWhitespace(c)) {
-            // don't do anything
+            continue READ_LOOP;
           } else {
             throw new IllegalStateException(buildIllegalStateExceptionMessage(this.reader, c, this.position));
           }
@@ -245,72 +294,72 @@ public class Tokenizer implements Iterator<Token> {
 
         // OPERATOR
       case OPERATOR:
+        sb.setLength(0);
+
         switch (c) {
+
         case '$':
-          
           this.token = new Token(Token.Type.END_INPUT);
-          sb.setLength(0);
-          go = false;
           this.state = State.END; // XXX TODO FIXME: verify
-          break;
+          break READ_LOOP;
+
         case '+':
           this.token = new Token(Token.Type.ONE_OR_MORE);
-          sb.setLength(0);
-          go = false;
-          this.state = State.SEQUENCE;
-          break;
+          this.state = State.STOP_SAVING_OR_END_OF_INPUT_OR_NEXT_IN_SEQUENCE;
+          break READ_LOOP;
+
         case '*':
           this.token = new Token(Token.Type.ZERO_OR_MORE);
-          sb.setLength(0);
-          go = false;
-          this.state = State.SEQUENCE;
-          break;
+          this.state = State.STOP_SAVING_OR_END_OF_INPUT_OR_NEXT_IN_SEQUENCE;
+          break READ_LOOP;
+
         case '?':
           this.token = new Token(Token.Type.ZERO_OR_ONE);
-          sb.setLength(0);
-          go = false;
-          this.state = State.SEQUENCE;
-          break;
+          this.state = State.STOP_SAVING_OR_END_OF_INPUT_OR_NEXT_IN_SEQUENCE;
+          break READ_LOOP;
+
         case '|':
           this.token = new Token(Token.Type.ALTERNATION);
-          sb.setLength(0);
-          go = false;
           this.state = State.START_SAVING_OR_FILTER;
-          break;
+          break READ_LOOP;
+
         case '/':
+        case ',':
           this.token = new Token(Token.Type.CATENATION);
-          sb.setLength(0);
-          go = false;
           this.state = State.START_SAVING_OR_FILTER;
-          break;
+          break READ_LOOP;
+
         case '(':
           this.token = new Token(Token.Type.START_SAVING);
-          sb.setLength(0);
-          go = false;
           this.state = State.START_SAVING_OR_FILTER;
-          break;
+          break READ_LOOP;
+
         case ')':
           this.token = new Token(Token.Type.STOP_SAVING);
-          sb.setLength(0);
-          go = false;
-          this.state = State.SEQUENCE;
-          break;
+          this.state = State.STOP_SAVING_OR_END_OF_INPUT_OR_NEXT_IN_SEQUENCE;
+          break READ_LOOP;
+
         default:
-          if (!Character.isWhitespace(c)) {
+          if (Character.isWhitespace(c)) {
+            continue READ_LOOP;
+          } else {
             throw new IllegalStateException(buildIllegalStateExceptionMessage(this.reader, c, this.position));
           }
-          break;
+
         }
-        break;
+
 
 
         // MVEL
       case MVEL:
+        assert parenCount > 0;
         switch (c) {
+
         case '(':
           parenCount++;
           sb.append((char)c);
           break;
+
         case ')':
           parenCount--;
           if (parenCount == 0) {
@@ -319,12 +368,13 @@ public class Tokenizer implements Iterator<Token> {
             assert this.token.getType() == Token.Type.FILTER;
             this.token.setValue(sb.toString());
             sb.setLength(0);
-            go = false;
-            this.state = State.SEQUENCE;
+            this.state = State.END_OF_FILTER;
+            break READ_LOOP;
           } else {
             sb.append((char)c);
           }
           break;
+
         default:
           sb.append((char)c);
           break;
@@ -333,11 +383,12 @@ public class Tokenizer implements Iterator<Token> {
 
 
         // END
-      case END:
-        if (!Character.isWhitespace(c)) {
+      case END:        
+        if (Character.isWhitespace(c)) {
+          continue READ_LOOP;
+        } else {
           throw new IllegalStateException(buildIllegalStateExceptionMessage(this.reader, c, this.position));
         }
-        break;
 
 
         // DEFAULT
@@ -345,12 +396,13 @@ public class Tokenizer implements Iterator<Token> {
         throw new IllegalStateException("Unexpected state: " + this.state);
 
       }
-    }
+
+    } // READ_LOOP
 
     if (c == -1) {
       // Ran off the end; clean up
       switch (this.state) {
-      case SEQUENCE:
+      case STOP_SAVING_OR_END_OF_INPUT_OR_NEXT_IN_SEQUENCE:
         this.state = State.END;
         break;
       case START_SAVING_OR_FILTER:
@@ -373,9 +425,9 @@ public class Tokenizer implements Iterator<Token> {
       }
     }
   }
-  
+
   @Override
-  public boolean hasNext() {
+    public boolean hasNext() {
     if (this.error != null) {
       throw new IllegalStateException(this.error);
     } else {
@@ -384,7 +436,7 @@ public class Tokenizer implements Iterator<Token> {
   }
 
   @Override
-  public Token next() {
+    public Token next() {
     if (this.error != null) {
       throw (NoSuchElementException)new NoSuchElementException().initCause(this.error);
     }
@@ -410,7 +462,7 @@ public class Tokenizer implements Iterator<Token> {
   }
 
   @Override
-  public void remove() {
+    public void remove() {
     throw new UnsupportedOperationException();
   }
 }
