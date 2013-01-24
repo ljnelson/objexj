@@ -90,6 +90,28 @@ public class InstanceOfMVELFilter<T> extends MVELFilter<T> {
     }
   }
 
+  public InstanceOfMVELFilter(final String className, final String mvel) {
+    super();
+    if (className == null) {
+      throw new IllegalArgumentException("className", new NullPointerException("className"));
+    }
+    Class<?> c = null;
+    try {
+      c = this.loadClass(className);
+    } catch (final ClassNotFoundException cnfe) {
+      throw new IllegalArgumentException("className", cnfe);
+    } finally {
+      this.cls = c;
+    }
+    if (mvel == null) {
+      this.mvelExpression = null;
+      this.mvelExpressionSource = null;
+    } else {
+      this.mvelExpression = MVEL.compileExpression(mvel);
+      this.mvelExpressionSource = mvel;
+    }
+  }
+
   public InstanceOfMVELFilter(final Class<?> c, final String mvel) {
     super();
     if (c == null) {

@@ -31,9 +31,26 @@ public class TestCaseTokenizer {
   }
 
   @Test(expected = IllegalStateException.class)
+  public void testStupidDoubleCaret() throws IOException {
+    final PushbackReader pbr = new PushbackReader(new StringReader("^^"));
+    final Tokenizer tokenizer = new Tokenizer(pbr);
+    assertTrue(tokenizer.hasNext());
+    final Token token = tokenizer.next();
+    assertNotNull(token);
+    assertSame(Token.Type.BEGIN_INPUT, token.getType());
+    tokenizer.hasNext(); // will throw IllegalStateException
+  }
+
+  @Test(expected = IllegalStateException.class)
   public void testInitialConcatenationIsImpossible() throws IOException {
     final PushbackReader pbr = new PushbackReader(new StringReader("/"));
-    final Tokenizer tokenizer = new Tokenizer(pbr);
+    final Tokenizer tokenizer = new Tokenizer(pbr); // will throw IllegalStateException
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testInitialAlternationIsImpossible() throws IOException {
+    final PushbackReader pbr = new PushbackReader(new StringReader("|"));
+    final Tokenizer tokenizer = new Tokenizer(pbr); // will throw IllegalStateException
   }
 
   @Test
@@ -102,6 +119,10 @@ public class TestCaseTokenizer {
 
     // No more parens
     assertFalse(tokenizer.hasNext());
+
+    // Just for kicks throw in the fact that if we now call next() a
+    // NoSuchElementException will be thrown in accordance with the
+    // Iterator contract.
     try {
       tokenizer.next();
       fail();
@@ -173,15 +194,19 @@ public class TestCaseTokenizer {
     assertFalse(tokenizer.hasNext());
   }
 
-  @Test(expected = IllegalStateException.class)
-  public void testStupidDoubleCaret() throws IOException {
-    final PushbackReader pbr = new PushbackReader(new StringReader("^^"));
+  @Test
+  public void testMvelFilterWithOperatorAndWhitespace() throws IOException {
+    final PushbackReader pbr = new PushbackReader(new StringReader("fred (xyz) + "));
     final Tokenizer tokenizer = new Tokenizer(pbr);
     assertTrue(tokenizer.hasNext());
-    final Token token = tokenizer.next();
+    Token token = tokenizer.next();
     assertNotNull(token);
-    assertSame(Token.Type.BEGIN_INPUT, token.getType());
-    tokenizer.hasNext(); // will throw IllegalStateException
+    assertSame(Token.Type.FILTER, token.getType());
+    assertTrue(tokenizer.hasNext());
+    token = tokenizer.next();
+    assertNotNull(token);
+    assertSame(Token.Type.ONE_OR_MORE, token.getType());
+    assertFalse(tokenizer.hasNext());
   }
 
   @Test

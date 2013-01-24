@@ -370,6 +370,8 @@ public class Tokenizer implements Iterator<Token> {
             sb.setLength(0);
             this.state = State.END_OF_FILTER;
             break READ_LOOP;
+          } else if (parenCount < 0) {
+            throw new IllegalStateException("Mismatched parentheses");
           } else {
             sb.append((char)c);
           }
@@ -406,6 +408,9 @@ public class Tokenizer implements Iterator<Token> {
         this.state = State.END;
         break;
       case START_SAVING_OR_FILTER:
+        this.state = State.END;
+        break;
+      case END_OF_FILTER:
         this.state = State.END;
         break;
       case FILTER:

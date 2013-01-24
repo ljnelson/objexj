@@ -31,6 +31,11 @@ public class Token implements Serializable {
     public final boolean hasValue() {
       return this.hasValue;
     }
+
+    public final boolean isOperator() {
+      return !this.hasValue();
+    }
+
   }
  
   private final Type type;
@@ -64,6 +69,11 @@ public class Token implements Serializable {
     }
     this.filterType = filterType;
     this.value = value;
+  }
+
+  public final boolean isOperator() {
+    final Type type = this.getType();
+    return type != null && type.isOperator();
   }
 
   public final Type getType() {

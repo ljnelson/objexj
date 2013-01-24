@@ -37,21 +37,23 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public final class Program<T> {
+public final class Program<T> extends ArrayList<Instruction<T>> {
 
-  private final List<Instruction<T>> instructions;
+  private static final long serialVersionUID = 1L;
+
+  private static final String LS = System.getProperty("line.separator", "\n");
 
   private String name;
 
   public Program() {
     super();
-    this.instructions = new ArrayList<Instruction<T>>();
   }
 
   public Program(final Instruction<T> instruction) {
@@ -61,14 +63,10 @@ public final class Program<T> {
     }
   }
 
-  public Program(final Iterable<Instruction<T>> instructions) {
+  public Program(final Collection<? extends Instruction<T>> instructions) {
     this();
     if (instructions != null) {
-      for (final Instruction<T> instruction : instructions) {
-        if (instruction != null) {
-          this.add(instruction);
-        }
-      }
+      this.addAll(instructions);
     }
   }
 
@@ -80,36 +78,73 @@ public final class Program<T> {
     this.name = name;
   }
 
-  public final boolean isEmpty() {
-    return this.instructions.isEmpty();
-  }
-
-  public final int size() {
-    return this.instructions.size();
-  }
-
   public final boolean isValidProgramCounter(final int programCounter) {
     return programCounter >= 0 && programCounter < this.size();
   }
 
   /**
-   * @exception InvvalidProgramCounterException if {@code index} is
+   * @exception InvalidProgramCounterException if {@code index} is
    * less than {@code 0} or greater than or equal to {@linkplain
    * #size() this <tt>Program</tt>'s size}
    */
+  @Override
   public final Instruction<T> get(final int index) {
     if (!isValidProgramCounter(index)) {
       throw new InvalidProgramCounterException();
     }
-    final Instruction<T> instruction = this.instructions.get(index);
+    final Instruction<T> instruction = super.get(index);
     assert instruction != null;
     return instruction;
   }
 
+  @Override
+  public final int indexOf(final Object o) {
+    int returnValue = -1;
+    if (o != null) {
+      returnValue = super.indexOf(o);
+    }
+    return returnValue;
+  }
+
+  @Override
+  public final int lastIndexOf(final Object o) {
+    int returnValue = -1;
+    if (o != null) {
+      returnValue = super.lastIndexOf(o);
+    }
+    return returnValue;
+  }
+
+  @Override
   public final boolean add(final Instruction<T> instruction) {
     boolean returnValue = false;
     if (instruction != null) {
-      returnValue = this.instructions.add(instruction);
+      returnValue = super.add(instruction);
+    }
+    return returnValue;
+  }
+  
+  @Override
+  public final void add(final int index, final Instruction<T> instruction) {
+    if (instruction != null) {
+      super.add(index, instruction);
+    }
+  }
+
+  @Override
+  public final boolean addAll(final Collection<? extends Instruction<T>> instructions) {
+    boolean returnValue = false;
+    if (instructions != null && !instructions.isEmpty()) {
+      returnValue = super.addAll(instructions);
+    }
+    return returnValue;
+  }
+
+  @Override
+  public final boolean addAll(final int index, final Collection<? extends Instruction<T>> instructions) {
+    boolean returnValue = false;
+    if (instructions != null && !instructions.isEmpty()) {
+      returnValue = super.addAll(index, instructions);
     }
     return returnValue;
   }
@@ -117,12 +152,59 @@ public final class Program<T> {
   @Override
   public String toString() {
     final String name = this.getName();
-    if (name == null) {
-      return super.toString();
-    } else {
+    if (name != null) {
       return name;
     }
+    final StringBuilder sb = new StringBuilder();
+    final Iterator<Instruction<T>> iterator = this.iterator();
+    assert iterator != null;
+    if (iterator.hasNext()) {
+      for (int i = 0; iterator.hasNext(); i++) {
+        sb.append(String.format("%3d: %s", i, iterator.next()));
+        if (iterator.hasNext()) {
+          sb.append(LS);
+        }
+      }      
+    }
+    return sb.toString();
   }
+  
+
+  /*
+   * Unsupported operations.
+   */
+
+
+  @Override
+  public final void clear() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public final boolean remove(final Object o) {
+    throw new UnsupportedOperationException("remove");
+  }
+
+  @Override
+  public final Instruction<T> remove(final int index) {
+    throw new UnsupportedOperationException("remove");
+  }
+
+  @Override
+  public final boolean removeAll(final Collection<?> stuff) {
+    throw new UnsupportedOperationException("removeAll");
+  }
+
+  @Override
+  public final boolean retainAll(final Collection<?> stuff) {
+    throw new UnsupportedOperationException("retainAll");
+  }
+
+  @Override
+  public final Instruction<T> set(final int index, final Instruction<T> instruction) {
+    throw new UnsupportedOperationException("set");
+  }
+
 
   /*
    * Static methods.
