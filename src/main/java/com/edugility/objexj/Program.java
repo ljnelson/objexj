@@ -151,11 +151,11 @@ public final class Program<T> extends ArrayList<Instruction<T>> {
 
   @Override
   public String toString() {
+    final StringBuilder sb = new StringBuilder();
     final String name = this.getName();
     if (name != null) {
-      return name;
+      sb.append(String.format("%s:%n", name));
     }
-    final StringBuilder sb = new StringBuilder();
     final Iterator<Instruction<T>> iterator = this.iterator();
     assert iterator != null;
     if (iterator.hasNext()) {

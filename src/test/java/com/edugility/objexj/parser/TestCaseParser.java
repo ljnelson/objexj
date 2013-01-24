@@ -34,6 +34,44 @@ public class TestCaseParser {
   }
 
   @Test
+  public void testParseLongCatenation() throws IOException {
+    final StringBuilder sb = new StringBuilder();
+    sb.append("java.lang.Character(charValue() == 'a')/");
+    sb.append("java.lang.Character(charValue() == 'b')/");
+    sb.append("java.lang.Character(charValue() == 'c')/");
+    sb.append("java.lang.Character(charValue() == 'c')/");
+    sb.append("java.lang.Character(charValue() == 'c')/");
+    sb.append("java.lang.Character(charValue() == 'c')/");
+    sb.append("java.lang.Character(charValue() == 'c')/");
+    sb.append("java.lang.Character(charValue() == 'c')/");
+    sb.append("java.lang.Character(charValue() == 'c')/");
+    sb.append("java.lang.Character(charValue() == 'c')/");
+    sb.append("java.lang.Character(charValue() == 'c')/");
+    sb.append("java.lang.Character(charValue() == 'c')/");
+    sb.append("java.lang.Character(charValue() == 'c')/");
+    sb.append("java.lang.Character(charValue() == 'c')/");
+    sb.append("java.lang.Character(charValue() == 'c')/");
+    sb.append("java.lang.Character(charValue() == 'c')/");
+    sb.append("java.lang.Character(charValue() == 'c')/");
+    sb.append("java.lang.Character(charValue() == 'c')/");
+    sb.append("java.lang.Character(charValue() == 'c')/");
+    sb.append("java.lang.Character(charValue() == 'c')/");
+    sb.append("java.lang.Character(charValue() == 'c')/");
+    sb.append("java.lang.Character(charValue() == 'c')/");
+    sb.append("java.lang.Character(charValue() == 'c')/");
+    sb.append("java.lang.Character(charValue() == 'c')/");
+    sb.append("java.lang.Character(charValue() == 'c')/");
+    final String source = sb.toString();
+    final PushbackReader reader = new PushbackReader(new StringReader(source));
+    final Tokenizer tokenizer = new Tokenizer(reader);
+    final Parser parser = new Parser();
+    final Program<Character> p = parser.parse(tokenizer);
+    reader.close();
+    assertNotNull(p);
+    assertEquals(source.split("/").length + 1, p.size());
+  }
+
+  @Test
   public void testParseSimpleAlternation() throws IOException {
     final PushbackReader reader = new PushbackReader(new StringReader("java.lang.Character(charValue() == 'a')|java.lang.Character(charValue() == 'b')"));
     final Tokenizer tokenizer = new Tokenizer(reader);
@@ -41,6 +79,25 @@ public class TestCaseParser {
     final Program<Character> p = parser.parse(tokenizer);
     reader.close();
     assertNotNull(p);
+    p.setName("Simple alternation");
+    System.out.println(p);
+  }
+
+  @Test
+  public void testParseLongAlternation() throws IOException {
+    final StringBuilder sb = new StringBuilder();
+    sb.append("java.lang.Character(charValue() == 'a')|");
+    sb.append("java.lang.Character(charValue() == 'b')|");
+    sb.append("java.lang.Character(charValue() == 'c')|");
+    sb.append("java.lang.Character(charValue() == 'c')");
+    final String source = sb.toString();
+    final PushbackReader reader = new PushbackReader(new StringReader(source));
+    final Tokenizer tokenizer = new Tokenizer(reader);
+    final Parser parser = new Parser();
+    final Program<Character> p = parser.parse(tokenizer);
+    reader.close();
+    assertNotNull(p);
+    p.setName("Long Alternation");
     System.out.println(p);
   }
 

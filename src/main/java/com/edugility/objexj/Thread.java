@@ -486,11 +486,17 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
    * @exception IllegalStateException if this {@link Thread}
    * {@linkplain #isViable() is not viable}
    */
-  public final Thread<T> newThread(final Object id, final int programCounterIndex) {
+  public final Thread<T> newThread(final Object id, final int programCounterIndex, final boolean relative) {
     this.ensureViable();
     ProgramCounter<T> programCounter = this.getProgramCounter();
     if (programCounter != null) {
-      programCounter = programCounter.clone(programCounterIndex);
+      final int absoluteProgramCounterIndex;
+      if (relative) {
+        absoluteProgramCounterIndex = programCounter.getIndex() + programCounterIndex;
+      } else {
+        absoluteProgramCounterIndex = programCounterIndex;
+      }
+      programCounter = programCounter.clone(absoluteProgramCounterIndex);
     }
     // TODO: we're not cloning the variables; is that OK?
     return this.newThread(id, programCounter, this.items, this.itemPointer, deepClone(this.captureGroups), this.variables);
@@ -690,6 +696,8 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
    *
    * @param programCounter
    *
+   * @param relative
+   *
    * @return {@code true} if the program counter was actually set;
    * {@code false} if it was not (thus indicating that this {@link
    * Thread} is now dead)
@@ -700,12 +708,18 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
    * @exception IllegalStateException if this {@link Thread}
    * {@linkplain #isViable() is not viable}
    */
-  public final boolean jump(final int programCounter) {
+  public final boolean jump(final int programCounter, final boolean relative) {
     this.ensureViable();
     final boolean returnValue;
     final ProgramCounter<T> pc = this.getProgramCounter();
-    if (pc != null && pc.isValid(programCounter)) {
-      pc.setIndex(programCounter);
+    final int absoluteProgramCounter;
+    if (relative) {
+      absoluteProgramCounter = pc.getIndex() + programCounter;
+    } else {
+      absoluteProgramCounter = programCounter;
+    }
+    if (pc != null && pc.isValid(absoluteProgramCounter)) {
+      pc.setIndex(absoluteProgramCounter);
       returnValue = true;
     } else {
       this.die();

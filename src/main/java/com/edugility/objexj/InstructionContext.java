@@ -54,12 +54,18 @@ public class InstructionContext<T> implements Serializable {
     return this.thread.getVariables();
   }
 
-  public final boolean scheduleNewThread(final int programCounterIndex) {
-    return this.thread.schedule(this.thread.newThread(idGenerator.getAndIncrement(), programCounterIndex));
+  public final int getProgramCounterIndex() {
+    final ProgramCounter<T> pc = this.thread.getProgramCounter();
+    assert pc != null;
+    return pc.getIndex();
   }
 
-  public final boolean jump(final int programCounter) {
-    return this.thread.jump(programCounter);
+  public final boolean scheduleNewThread(final int programCounterIndex, final boolean relative) {
+    return this.thread.schedule(this.thread.newThread(idGenerator.getAndIncrement(), programCounterIndex, relative));
+  }
+
+  public final boolean jump(final int programCounter, final boolean relative) {
+    return this.thread.jump(programCounter, relative);
   }
 
   public final void save(final Object key) {

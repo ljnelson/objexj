@@ -38,7 +38,9 @@ public class Split<T> extends Jump<T> {
 
   public final int newThreadProgramLocation;
 
-  private static final Pattern OPERAND_PATTERN = Pattern.compile("^\\s*\\d+\\s*,\\s*(\\d+)");
+  private final boolean relative;
+
+  private static final Pattern OPERAND_PATTERN = Pattern.compile("^\\s*\\+?\\d+\\s*,\\s*(\\+?)(\\d+)");
 
   public Split(String operands) {
     super(operands);
@@ -48,7 +50,8 @@ public class Split<T> extends Jump<T> {
     if (!m.find()) {
       throw new IllegalArgumentException("Bad operands: " + operands);
     } else {
-      this.newThreadProgramLocation = Integer.parseInt(m.group(1));
+      this.relative = "+".equals(m.group(1));
+      this.newThreadProgramLocation = Integer.parseInt(m.group(2));
     }
     if (this.newThreadProgramLocation < 0) {
       throw new IllegalArgumentException("this.newThreadProgramLocation < 0: " + this.newThreadProgramLocation);
@@ -59,7 +62,11 @@ public class Split<T> extends Jump<T> {
   }
 
   public Split(final int programLocation, final int newThreadProgramLocation) {
-    super(programLocation);
+    this(programLocation, newThreadProgramLocation, false);
+  }
+
+  public Split(final int programLocation, final int newThreadProgramLocation, final boolean relative) {
+    super(programLocation, relative);
     assert programLocation >= 0;
     if (newThreadProgramLocation < 0) {
       throw new IllegalArgumentException("newThreadProgramLocation < 0: " + newThreadProgramLocation);
@@ -67,6 +74,7 @@ public class Split<T> extends Jump<T> {
     if (programLocation == newThreadProgramLocation) {
       throw new IllegalArgumentException("programLocation == newThreadProgramLocation: " + programLocation);
     }
+    this.relative = relative;
     this.newThreadProgramLocation = newThreadProgramLocation;
   }
 
@@ -76,12 +84,17 @@ public class Split<T> extends Jump<T> {
       throw new IllegalArgumentException("context");
     }
     super.execute(context);
-    context.scheduleNewThread(this.newThreadProgramLocation);
+    context.scheduleNewThread(this.newThreadProgramLocation, this.relative);
   }
 
   @Override
   public String toString() {
-    return new StringBuilder(super.toString()).append(", ").append(this.newThreadProgramLocation).toString();
+    final StringBuilder sb = new StringBuilder(super.toString()).append(", ");
+    if (this.relative) {
+      sb.append("+");
+    }
+    sb.append(this.newThreadProgramLocation);
+    return sb.toString();
   }
 
 

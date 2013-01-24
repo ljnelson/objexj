@@ -275,14 +275,28 @@ public class Parser {
 
     final Program<T> p2 = parsingState.pop();
     assert p2 != null;
+    assert !p2.isEmpty();
 
     final Program<T> p1 = parsingState.pop();
     assert p1 != null;
+    assert !p1.isEmpty();
+
+    /*
+     * Alternation program:
+     *
+     *  47: split +1, +(p1.size() + 2)
+     *  48: (p1)
+     *  49: (p1)
+     *  50: jump +(p2.size() + 1)
+     *  51: (p2)
+     *  52: (p2)
+     *  53: ...
+     */
 
     final Program<T> p0 = new Program<T>();
-    p0.add(new Split<T>(1 /* next instruction (to be added) */, 1 + p1.size() /* we'll add a jump, then p1 */));
+    p0.add(new Split<T>(1, p1.size() + 2, true));
     p0.addAll(p1);
-    p0.add(new Jump<T>(1 /* split instruction */ + p1.size() + 1 /* Jump instruction */ + p2.size()));
+    p0.add(new Jump<T>(p2.size() + 1, true));
     p0.addAll(p2);
 
     parsingState.push(p0);

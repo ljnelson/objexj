@@ -36,7 +36,9 @@ public class Jump<T> extends Instruction<T> {
 
   private static final long serialVersionUID = 1L;
 
-  private static final Pattern OPERAND_PATTERN = Pattern.compile("^\\s*(\\d+)");
+  private static final Pattern OPERAND_PATTERN = Pattern.compile("^\\s*(\\+?)(\\d+)");
+
+  private final boolean relative;
 
   public final int programLocation;
   
@@ -47,7 +49,8 @@ public class Jump<T> extends Instruction<T> {
     }
     final Matcher m = OPERAND_PATTERN.matcher(operand);
     if (m.find()) {
-      this.programLocation = Integer.parseInt(m.group(1));
+      this.relative = "+".equals(m.group(1));
+      this.programLocation = Integer.parseInt(m.group(2));
     } else {
       throw new IllegalArgumentException("Bad operand: " + operand);
     }
@@ -57,10 +60,15 @@ public class Jump<T> extends Instruction<T> {
   }
 
   public Jump(final int programLocation) {
+    this(programLocation, false);
+  }
+
+  public Jump(final int programLocation, final boolean relative) {
     super();
     if (programLocation < 0) {
       throw new IllegalArgumentException("programLocation < 0: " + programLocation);
     }
+    this.relative = relative;
     this.programLocation = programLocation;
   }
 
@@ -69,12 +77,17 @@ public class Jump<T> extends Instruction<T> {
     if (context == null) {
       throw new IllegalArgumentException("context");
     }
-    context.jump(this.programLocation);
+    context.jump(this.programLocation, this.relative);
   }
 
   @Override
   public String toString() {
-    return new StringBuilder(super.toString()).append(" ").append(this.programLocation).toString();
+    final StringBuilder sb = new StringBuilder(super.toString()).append(" ");
+    if (this.relative) {
+      sb.append("+");
+    }
+    sb.append(this.programLocation);
+    return sb.toString();
   }
 
 }
