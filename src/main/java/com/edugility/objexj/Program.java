@@ -39,12 +39,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public final class Program<T> extends ArrayList<Instruction<T>> {
+public final class Program<T> extends LinkedList<Instruction<T>> {
 
   private static final long serialVersionUID = 1L;
 

@@ -140,4 +140,14 @@ public class InstanceOfMVELFilter<T> extends MVELFilter<T> {
     return item != null && this.cls != null && this.cls.isInstance(item) && super.accept(item, variables);
   }
 
+  @Override
+  public String toString() {
+    final StringBuilder sb = new StringBuilder(this.getClass().getName());
+    sb.append(" ").append(this.cls.getName());
+    if (this.mvelExpressionSource != null) {
+      sb.append(" ").append(this.mvelExpressionSource);
+    }
+    return sb.toString();
+  }
+
 }

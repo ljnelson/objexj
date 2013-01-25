@@ -54,7 +54,7 @@ public class Jump<T> extends Instruction<T> {
     } else {
       throw new IllegalArgumentException("Bad operand: " + operand);
     }
-    if (this.programLocation < 0) {
+    if (!this.relative && this.programLocation < 0) {
       throw new IllegalArgumentException("this.programLocation < 0: " + this.programLocation);
     }
   }
@@ -65,10 +65,10 @@ public class Jump<T> extends Instruction<T> {
 
   public Jump(final int programLocation, final boolean relative) {
     super();
-    if (programLocation < 0) {
+    this.relative = relative;
+    if (!relative && programLocation < 0) {
       throw new IllegalArgumentException("programLocation < 0: " + programLocation);
     }
-    this.relative = relative;
     this.programLocation = programLocation;
   }
 
@@ -83,7 +83,7 @@ public class Jump<T> extends Instruction<T> {
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder(super.toString()).append(" ");
-    if (this.relative) {
+    if (this.relative && this.programLocation >= 0) {
       sb.append("+");
     }
     sb.append(this.programLocation);

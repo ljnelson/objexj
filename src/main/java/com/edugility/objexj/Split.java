@@ -67,14 +67,13 @@ public class Split<T> extends Jump<T> {
 
   public Split(final int programLocation, final int newThreadProgramLocation, final boolean relative) {
     super(programLocation, relative);
-    assert programLocation >= 0;
-    if (newThreadProgramLocation < 0) {
+    this.relative = relative;
+    if (!relative && newThreadProgramLocation < 0) {
       throw new IllegalArgumentException("newThreadProgramLocation < 0: " + newThreadProgramLocation);
     }
     if (programLocation == newThreadProgramLocation) {
       throw new IllegalArgumentException("programLocation == newThreadProgramLocation: " + programLocation);
     }
-    this.relative = relative;
     this.newThreadProgramLocation = newThreadProgramLocation;
   }
 
@@ -90,7 +89,7 @@ public class Split<T> extends Jump<T> {
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder(super.toString()).append(", ");
-    if (this.relative) {
+    if (this.relative && this.newThreadProgramLocation >= 0) {
       sb.append("+");
     }
     sb.append(this.newThreadProgramLocation);

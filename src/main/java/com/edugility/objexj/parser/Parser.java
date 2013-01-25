@@ -28,12 +28,17 @@
 package com.edugility.objexj.parser;
 
 import java.io.IOException;
+import java.io.PushbackReader;
 import java.io.Reader;
+import java.io.StringReader;
 
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.Iterator;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.edugility.objexj.BeginInput;
 import com.edugility.objexj.EndInput;
@@ -134,9 +139,29 @@ public class Parser {
     super();
   }
 
+  public <T> Program<T> parse(final String input) throws IOException {
+    if (input == null) {
+      throw new IllegalArgumentException("input", new NullPointerException("input"));
+    }
+    final PushbackReader reader = new PushbackReader(new StringReader(input));
+    try {
+      return this.parse(new State<T>(new Tokenizer(new PushbackReader(new StringReader(input)))));
+    } finally {
+      try {
+        reader.close();
+      } catch (final IOException logMe) {
+        final Logger logger = Logger.getLogger(this.getClass().getName());
+        assert logger != null;
+        if (logger.isLoggable(Level.SEVERE)) {
+          logger.logp(Level.SEVERE, this.getClass().getName(), "parse", "Error closing reader", logMe);
+        }
+      }
+    }
+  }
+
   public <T> Program<T> parse(final Tokenizer tokenizer) {
     if (tokenizer == null) {
-      throw new IllegalStateException();
+      throw new IllegalArgumentException("tokenizer", new NullPointerException("tokenizer"));
     }
     return this.parse(new State<T>(tokenizer));
   }
@@ -168,15 +193,25 @@ public class Parser {
           this.catenation(parsingState);
           break;
 
+        case END_INPUT:
+          this.endInput(parsingState);
+          break;
+
         case FILTER:
           this.filter(parsingState);
           break;
 
-        case END_INPUT:
         case ONE_OR_MORE:
+          this.oneOrMore(parsingState);
+          break;
+
+        case ZERO_OR_MORE:
+          this.zeroOrMore(parsingState);
+          break;
+
         case START_SAVING:
         case STOP_SAVING:
-        case ZERO_OR_MORE:
+
         case ZERO_OR_ONE:
           throw new UnsupportedOperationException("Not yet handled: " + token);
 
@@ -186,9 +221,26 @@ public class Parser {
       }
 
     }
-    assert parsingState.stackSize() == 1;
-    final Program<T> program = parsingState.pop();
-    assert program != null;
+    Program<T> program = null;
+    final int stackSize = parsingState.stackSize();
+    switch (stackSize) {
+    case 0:
+      throw new IllegalStateException();
+    case 1:
+      program = parsingState.pop();
+      assert program != null;
+      break;
+    case 2:
+      program = parsingState.pop();
+      assert program != null;
+      final Program<T> beginInputProgram = parsingState.pop();
+      assert beginInputProgram != null;
+      assert beginInputProgram.size() == 1;
+      program.addAll(0, beginInputProgram);
+      break;
+    default:
+      throw new IllegalStateException("Unexpected stack size: " + parsingState);
+    }
     program.add(new Match<T>());
     return program;
   }
@@ -222,6 +274,13 @@ public class Parser {
     assert token == operator;
   }
 
+  private final <T> void endInput(final State<T> parsingState) {
+    if (parsingState == null) {
+      throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));
+    }
+    parsingState.push(Program.singleton(new EndInput<T>()));
+  }
+
   private final <T> void filter(final State<T> parsingState) {
     if (parsingState == null) {
       throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));
@@ -234,15 +293,13 @@ public class Parser {
     parsingState.push(Program.singleton(new InstanceOfMVELFilter<T>(token.getFilterType(), token.getValue())));
 
     final Token operator = parsingState.getOperator();
-    if (operator == null) {
-      if (parsingState.stackSize() > 1) {
-        this.catenate(parsingState);
-      }
-    } else {
+    if (operator != null) {
       final Token.Type type = operator.getType();
       switch (type) {
       case ALTERNATION:
         this.alternate(parsingState);
+        break;
+      case BEGIN_INPUT:
         break;
       case CATENATION:
         this.catenate(parsingState);
@@ -251,27 +308,37 @@ public class Parser {
         throw new IllegalStateException("Unexpected operator in filter(): " + operator);
       }
     }
-    assert parsingState.stackSize() == 1;
   }
 
   private final <T> void catenate(final State<T> parsingState) {
     if (parsingState == null) {
       throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));
     }
-    assert parsingState.stackSize() == 2;
+    assert parsingState.stackSize() >= 2;
+
     final Program<T> p2 = parsingState.pop();
     assert p2 != null;
+
     final Program<T> p1 = parsingState.peek();
     assert p1 != null;
+
+    /*
+     * Catenation program fragment:
+     *
+     * 34: ...
+     * 35: (p1)
+     * 36: (p2)
+     * 37: ...
+     */
+
     p1.addAll(p2);
-    assert parsingState.stackSize() == 1;
   }
 
   private final <T> void alternate(final State<T> parsingState) {
     if (parsingState == null) {
       throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));
     }
-    assert parsingState.stackSize() == 2;
+    assert parsingState.stackSize() >= 2;
 
     final Program<T> p2 = parsingState.pop();
     assert p2 != null;
@@ -282,15 +349,14 @@ public class Parser {
     assert !p1.isEmpty();
 
     /*
-     * Alternation program:
+     * Alternation program fragment:
      *
+     *  46: ...
      *  47: split +1, +(p1.size() + 2)
      *  48: (p1)
-     *  49: (p1)
-     *  50: jump +(p2.size() + 1)
-     *  51: (p2)
-     *  52: (p2)
-     *  53: ...
+     *  49: jump +(p2.size() + 1)
+     *  50: (p2)
+     *  51: ...
      */
 
     final Program<T> p0 = new Program<T>();
@@ -300,8 +366,78 @@ public class Parser {
     p0.addAll(p2);
 
     parsingState.push(p0);
-    assert parsingState.stackSize() == 1;
   }
 
+  private final <T> void zeroOrMore(final State<T> parsingState) {
+    if (parsingState == null) {
+      throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));
+    }
+    assert parsingState.stackSize() >= 1;
+
+    final Program<T> p1 = parsingState.pop();
+    assert p1 != null;
+
+    /*
+     * Zero or more program fragment
+     *
+     * 24 ...
+     * 25 split +1, +(p1.size() + 2)
+     * 26 (p1)
+     * 27 jump -(p1.size() + 1)
+     * 28 ...
+     */
+
+    final Program<T> p0 = new Program<T>();
+    p0.add(0, new Split<T>(1, p1.size() + 2, true));
+    p0.addAll(p1);
+    p0.add(new Jump<T>(-(p1.size() + 1), true));
+    
+    parsingState.push(p0);
+  }
+
+  private final <T> void zeroOrOne(final State<T> parsingState) {
+    if (parsingState == null) {
+      throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));
+    }
+    assert parsingState.stackSize() >= 1;
+
+    final Program<T> p1 = parsingState.peek();
+    assert p1 != null;
+    assert !p1.isEmpty();
+
+    /*
+     * Zero or one program fragment:
+     *
+     * 17 ...
+     * 18 split +1, +(p1.size() + 1)
+     * 19 (p1)
+     * 20 ...
+     */
+
+    p1.add(0, new Split<T>(1, p1.size() + 1, true));
+    
+  }
+
+  private final <T> void oneOrMore(final State<T> parsingState) {
+    if (parsingState == null) {
+      throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));
+    }
+    assert parsingState.stackSize() >= 1;
+    
+    final Program<T> p1 = parsingState.peek();
+    assert p1 != null;
+    assert !p1.isEmpty();
+
+    /*
+     * One or more program fragment:
+     *
+     * 66: ...
+     * 67: (p1)
+     * 68: split -(p1.size()), +1
+     * 69: ...
+     */
+
+    p1.add(new Split<T>(-p1.size(), 1, true));
+  }
 
 }
