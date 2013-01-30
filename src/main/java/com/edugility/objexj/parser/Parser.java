@@ -47,23 +47,25 @@ import com.edugility.objexj.Instruction;
 import com.edugility.objexj.Jump;
 import com.edugility.objexj.Match;
 import com.edugility.objexj.Program;
+import com.edugility.objexj.Save;
 import com.edugility.objexj.Split;
+import com.edugility.objexj.Stop;
 
 public class Parser {
 
   private static final class State<T> implements Iterator<Token> {
-    
-    private Token operator;
 
+    private int groupIndex;
+    
     private Token token;
 
     private int position;
 
     private final Deque<Program<T>> stack;
 
-    private final Tokenizer tokenizer;
+    private final PostfixTokenizer tokenizer;
 
-    private State(final Tokenizer tokenizer) {
+    private State(final PostfixTokenizer tokenizer) {
       super();
       if (tokenizer == null) {
         throw new IllegalArgumentException("tokenizer", new NullPointerException("tokenizer"));
@@ -77,23 +79,6 @@ public class Parser {
       return this.token;
     }
 
-    public final Token getOperator() {
-      return this.operator;
-    }
-
-    public final void setOperator(final Token operator) {
-      if (operator != null) {
-        final Token.Type type = operator.getType();
-        switch (type) {
-        case FILTER:
-          throw new IllegalArgumentException("operator");
-        default:
-          break;
-        }
-      }
-      this.operator = operator;
-    }
-
     @Override
     public final boolean hasNext() {
       return this.tokenizer.hasNext();
@@ -103,9 +88,6 @@ public class Parser {
     public final Token next() {
       this.token = this.tokenizer.next();
       this.position++;
-      if (this.token.isOperator()) {
-        this.operator = this.token;
-      }
       return this.token;
     }
 
@@ -145,7 +127,7 @@ public class Parser {
     }
     final PushbackReader reader = new PushbackReader(new StringReader(input));
     try {
-      return this.parse(new State<T>(new Tokenizer(new PushbackReader(new StringReader(input)))));
+      return this.parse(new State<T>(new PostfixTokenizer(new PushbackReader(new StringReader(input)))));
     } finally {
       try {
         reader.close();
@@ -159,7 +141,7 @@ public class Parser {
     }
   }
 
-  public <T> Program<T> parse(final Tokenizer tokenizer) {
+  public <T> Program<T> parse(final PostfixTokenizer tokenizer) {
     if (tokenizer == null) {
       throw new IllegalArgumentException("tokenizer", new NullPointerException("tokenizer"));
     }
@@ -182,18 +164,18 @@ public class Parser {
         switch (tokenType) {          
 
         case ALTERNATION:
-          this.alternation(parsingState);
+          this.alternate(parsingState);
           break;
 
-        case BEGIN_INPUT:
+        case BEGIN_ATOM:
           this.beginInput(parsingState);
           break;
 
         case CATENATION:
-          this.catenation(parsingState);
+          this.catenate(parsingState);
           break;
 
-        case END_INPUT:
+        case END_ATOM:
           this.endInput(parsingState);
           break;
 
@@ -218,7 +200,8 @@ public class Parser {
           break;
 
         case STOP_SAVING:
-          throw new UnsupportedOperationException("Not yet handled: " + token);
+          this.stopSaving(parsingState);
+          break;
 
         default:
           throw new IllegalStateException("Unknown token type: " + tokenType);
@@ -250,33 +233,11 @@ public class Parser {
     return program;
   }
 
-  private final <T> void alternation(final State<T> parsingState) {
-    if (parsingState == null) {
-      throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));
-    }
-    final Token operator = parsingState.getOperator();
-    assert operator != null;
-    assert operator.getType() == Token.Type.ALTERNATION;
-    final Token token = parsingState.getToken();
-    assert token == operator;
-  }
-
   private final <T> void beginInput(final State<T> parsingState) {
     if (parsingState == null) {
       throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));
     }
     parsingState.push(Program.singleton(new BeginInput<T>()));
-  }
-
-  private final <T> void catenation(final State<T> parsingState) {
-    if (parsingState == null) {
-      throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));
-    }
-    final Token operator = parsingState.getOperator();
-    assert operator != null;
-    assert operator.getType() == Token.Type.CATENATION;
-    final Token token = parsingState.getToken();
-    assert token == operator;
   }
 
   private final <T> void endInput(final State<T> parsingState) {
@@ -290,29 +251,11 @@ public class Parser {
     if (parsingState == null) {
       throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));
     }
-
     final Token token = parsingState.getToken();
     assert token != null;
     assert Token.Type.FILTER == token.getType();
 
     parsingState.push(Program.singleton(new InstanceOfMVELFilter<T>(token.getFilterType(), token.getValue())));
-
-    final Token operator = parsingState.getOperator();
-    if (operator != null) {
-      final Token.Type type = operator.getType();
-      switch (type) {
-      case ALTERNATION:
-        this.alternate(parsingState);
-        break;
-      case BEGIN_INPUT:
-        break;
-      case CATENATION:
-        this.catenate(parsingState);
-        break;
-      default:
-        throw new IllegalStateException("Unexpected operator in filter(): " + operator);
-      }
-    }
   }
 
   private final <T> void catenate(final State<T> parsingState) {
@@ -449,13 +392,14 @@ public class Parser {
     if (parsingState == null) {
       throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));
     }
-    final Token operator = parsingState.getOperator();
-    assert operator != null;
-    assert Token.Type.START_SAVING == operator.getType();
-    parsingState.setOperator(null);
-    final Program<T> subProgram = this.parse(parsingState); // RECURSIVE CALL; watch the stack depth
-    parsingState.setOperator(operator);
+    parsingState.push(Program.singleton(new Save<T>(Integer.valueOf(parsingState.groupIndex++))));
+  }
 
+  private final <T> void stopSaving(final State<T> parsingState) {
+    if (parsingState == null) {
+      throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));
+    }
+    parsingState.push(Program.singleton(new Stop<T>(Integer.valueOf(parsingState.groupIndex--))));
   }
 
 }

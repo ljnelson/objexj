@@ -48,6 +48,7 @@ import static com.edugility.objexj.parser.Token.Type.FILTER;
 import static com.edugility.objexj.parser.Token.Type.ONE_OR_MORE;
 import static com.edugility.objexj.parser.Token.Type.START_SAVING;
 import static com.edugility.objexj.parser.Token.Type.STOP_SAVING;
+import static com.edugility.objexj.parser.Token.Type.ZERO_OR_MORE;
 
 public class TestCasePostfixTokenizer {
 
@@ -70,6 +71,29 @@ public class TestCasePostfixTokenizer {
   public void nullOutTokenizer() {
     this.pft = null;
     this.pbr = null;
+  }
+
+  @Test
+  public void testZeroOrMoreInRepresentativeInput() throws IOException {
+    build("^java.lang.Character(charValue() == 'a')*/java.lang.Character");
+    
+    /*
+     * Translated:
+     *
+     *   ^ / java.lang.Character(charValue() == 'a') * / java.lang.Character
+     *
+     * In tokens:
+     *
+     * BEGIN_ATOM FILTER ZERO_OR_MORE CATENATION FILTER
+     */
+    assertNextIs(BEGIN_ATOM);
+    assertNextIs(FILTER);
+    assertNextIs(ZERO_OR_MORE);
+    assertNextIs(CATENATION);
+    assertNextIs(FILTER);
+    assertNextIs(CATENATION);
+
+    assertNoMoreTokens();
   }
 
   @Test

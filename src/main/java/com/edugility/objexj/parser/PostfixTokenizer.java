@@ -181,7 +181,7 @@ public class PostfixTokenizer implements Iterator<Token> {
          * TENTATIVE: since it's an atom, we also need to pretend we
          * found a concatenation operator right afterwards.
          */
-        
+
         // First find a START_SAVING (atom) token and add it to the output.
         this.output.add(new Token(Token.Type.START_SAVING));
 
@@ -227,7 +227,7 @@ public class PostfixTokenizer implements Iterator<Token> {
         // In regular expressions, they are also atoms.  So they
         // belong in the output queue. We already added the
         // START_SAVING token, so now we need to add the STOP_SAVING.
-        
+
         // Concatenate...
         this.handleOperator(this.tokenFor('/'));
 
@@ -490,7 +490,7 @@ public class PostfixTokenizer implements Iterator<Token> {
         assert top != null;
         final Token.Type type = top.getType();
         assert type != null;
-        
+
         if (type == Token.Type.START_GROUP || type == Token.Type.STOP_GROUP) {
           throw new IllegalStateException("Mismatched parentheses");
         }
@@ -510,7 +510,7 @@ public class PostfixTokenizer implements Iterator<Token> {
     boolean added = false;
     while (!this.stack.isEmpty() && this.assertIsOperator(o2 = this.stack.peek())) {
       if (o1.compareTo(o2) <= 0) {
-        added = added || this.output.add(this.stack.pop());
+        added = this.output.add(this.stack.pop()) || added;
       } else {
         break;
       }
