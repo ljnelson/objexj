@@ -182,17 +182,22 @@ public class PostfixTokenizer implements Iterator<Token> {
          * found a concatenation operator right afterwards.
          */
 
-        // First find a START_SAVING (atom) token and add it to the output.
-        this.output.add(new Token(Token.Type.START_SAVING));
+        // First find a START_SAVING (atom) token.
+        final Token token = new Token(Token.Type.START_SAVING);
+        
+        // TODO: support named capture groups
+
+        // Add it to the output (it's an atom):
+        this.output.add(token);
 
         // Then pretend we found a concatenation.
         this.handleOperator(this.tokenFor('/'));
-        assert this.state == State.START_SAVING_OR_FILTER;
 
         // Then pretend we found a START_GROUP.
         final Token t = new Token(Token.Type.START_GROUP);
         assert t != null;
         this.push(t);
+
         this.state = State.START_SAVING_OR_FILTER;
         break READ_LOOP;
 
@@ -231,7 +236,7 @@ public class PostfixTokenizer implements Iterator<Token> {
         // Concatenate...
         this.handleOperator(this.tokenFor('/'));
 
-        // ...with stop saving
+        // ...with stop saving:
         this.output.add(new Token(Token.Type.STOP_SAVING));
 
         this.state = State.STOP_SAVING_OR_END_OF_INPUT_OR_NEXT_IN_SEQUENCE;
@@ -335,11 +340,11 @@ public class PostfixTokenizer implements Iterator<Token> {
         case ')': // Maybe a paren inside an MVEL block; maybe the paren that closes it; OK
           parenCount--;
           if (parenCount == 0) {
-            final Token token = this.output.getLast();
-            assert token != null;
-            assert token.getFilterType() != null;
-            assert token.getType() == Token.Type.FILTER;
-            token.setValue(sb.toString());
+            final Token filter = this.output.getLast();
+            assert filter != null;
+            assert filter.getFilterType() != null;
+            assert filter.getType() == Token.Type.FILTER;
+            filter.setValue(sb.toString());
             sb.setLength(0);
             this.state = State.END_OF_FILTER;
             break READ_LOOP;
