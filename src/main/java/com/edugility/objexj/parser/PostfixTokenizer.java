@@ -43,8 +43,6 @@ import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.edugility.objexj.Program;
-
 public class PostfixTokenizer implements Iterator<Token> {
 
   private static final long serialVersionUID = 1L;

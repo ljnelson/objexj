@@ -14,7 +14,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-import com.edugility.objexj.Program;
+import com.edugility.objexj.engine.Program;
 
 public class TestCaseParser {
 

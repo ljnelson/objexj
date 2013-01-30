@@ -40,16 +40,16 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.edugility.objexj.BeginInput;
-import com.edugility.objexj.EndInput;
-import com.edugility.objexj.InstanceOfMVELFilter;
-import com.edugility.objexj.Instruction;
-import com.edugility.objexj.Jump;
-import com.edugility.objexj.Match;
-import com.edugility.objexj.Program;
-import com.edugility.objexj.Save;
-import com.edugility.objexj.Split;
-import com.edugility.objexj.Stop;
+import com.edugility.objexj.engine.BeginInput;
+import com.edugility.objexj.engine.EndInput;
+import com.edugility.objexj.engine.InstanceOfMVELFilter;
+import com.edugility.objexj.engine.Instruction;
+import com.edugility.objexj.engine.Jump;
+import com.edugility.objexj.engine.Match;
+import com.edugility.objexj.engine.Program;
+import com.edugility.objexj.engine.Save;
+import com.edugility.objexj.engine.Split;
+import com.edugility.objexj.engine.Stop;
 
 public class Parser {
 
