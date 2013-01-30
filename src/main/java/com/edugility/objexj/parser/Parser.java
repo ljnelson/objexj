@@ -205,14 +205,19 @@ public class Parser {
           this.oneOrMore(parsingState);
           break;
 
+        case START_SAVING:
+          this.startSaving(parsingState);
+          break;
+
         case ZERO_OR_MORE:
           this.zeroOrMore(parsingState);
           break;
 
-        case START_SAVING:
-        case STOP_SAVING:
-
         case ZERO_OR_ONE:
+          this.zeroOrOne(parsingState);
+          break;
+
+        case STOP_SAVING:
           throw new UnsupportedOperationException("Not yet handled: " + token);
 
         default:
@@ -438,6 +443,19 @@ public class Parser {
      */
 
     p1.add(new Split<T>(-p1.size(), 1, true));
+  }
+
+  private final <T> void startSaving(final State<T> parsingState) {
+    if (parsingState == null) {
+      throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));
+    }
+    final Token operator = parsingState.getOperator();
+    assert operator != null;
+    assert Token.Type.START_SAVING == operator.getType();
+    parsingState.setOperator(null);
+    final Program<T> subProgram = this.parse(parsingState); // RECURSIVE CALL; watch the stack depth
+    parsingState.setOperator(operator);
+
   }
 
 }

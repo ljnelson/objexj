@@ -51,7 +51,7 @@
         <role>architect</role>
         <role>developer</role>
       </roles>
-      <timezone>-5</timezone>
+      <timezone>-8</timezone>
     </developer>
   </developers>
 
@@ -66,7 +66,6 @@
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>${junitVersion}</version>
-        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.mvel</groupId>
@@ -80,10 +79,12 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.mvel</groupId>
       <artifactId>mvel2</artifactId>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
 
@@ -211,12 +212,6 @@
 
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
-          <artifactId>javancss-maven-plugin</artifactId>
-          <version>${javaNCSSMavenPluginVersion}</version>
-        </plugin>
-
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
           <artifactId>versions-maven-plugin</artifactId>
           <version>${versionsMavenPluginVersion}</version>
         </plugin>
@@ -243,7 +238,6 @@
   <properties>
 
     <!-- Versions -->
-    <javaNCSSMavenPluginVersion>2.0</javaNCSSMavenPluginVersion>
     <junitVersion>4.11</junitVersion>
     <mavenAssemblyPluginVersion>2.3</mavenAssemblyPluginVersion>
     <mavenCleanPluginVersion>2.4.1</mavenCleanPluginVersion>
@@ -304,11 +298,6 @@
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>${mavenJavadocPluginVersion}</version>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>javancss-maven-plugin</artifactId>
-        <version>${javaNCSSMavenPluginVersion}</version>
       </plugin>
     </plugins>
   </reporting>
