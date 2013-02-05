@@ -46,7 +46,7 @@ public class InstanceOfMVELFilter<T> extends MVELFilter<T> {
 
   private static final long serialVersionUID = 1L;
 
-  private static final Pattern OPERAND_PATTERN = Pattern.compile("^\\s*([^\\s]+)\\s+(.*)");
+  private static final Pattern OPERAND_PATTERN = Pattern.compile("^\\s*([^\\s]+)\\s*(.*)");
 
   private final Class<?> cls;
 
@@ -110,6 +110,10 @@ public class InstanceOfMVELFilter<T> extends MVELFilter<T> {
       this.mvelExpression = MVEL.compileExpression(mvel);
       this.mvelExpressionSource = mvel;
     }
+  }
+
+  public InstanceOfMVELFilter(final Class<?> c) {
+    this(c, null);
   }
 
   public InstanceOfMVELFilter(final Class<?> c, final String mvel) {

@@ -638,4 +638,9 @@ public class PostfixTokenizer implements Iterator<Token> {
     throw new UnsupportedOperationException();
   }
 
+  @Override
+  public String toString() {
+    return this.reader.toString();
+  }
+
 }

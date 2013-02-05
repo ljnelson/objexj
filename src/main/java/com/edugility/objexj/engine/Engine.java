@@ -47,56 +47,72 @@ public class Engine<T> {
     super();
   }
 
-  public boolean run(final String program, final List<T> items) throws IOException {
-    if (program == null) {
-      throw new IllegalArgumentException("program", new NullPointerException("program"));
-    }
-    return this.run(new Parser().<T>parse(program), items);
-  }
-
-  public boolean run(final Program<T> program, final List<T> items) {
+  public MatchResult<T> run(final Program<T> program, final List<T> items) {
     if (program == null) {
       throw new IllegalArgumentException("program", new NullPointerException("program"));
     }
     final AtomicInteger idGenerator = new AtomicInteger();
-    final Set<Thread<? extends T>> threadSet = new LinkedHashSet<Thread<? extends T>>();
-    final class Scheduler<X extends T> implements ThreadScheduler<X> {
-      @Override
-      public final Thread<X> newThread(Object id, final ProgramCounter<X> programCounter, final List<X> items, final int itemPointer, final Map<Object, CaptureGroup<X>> captureGroups, final Map<Object, Object> variables) {
-        if (id == null) {
-          id = String.format("T%d", idGenerator.getAndIncrement());
-        }
-        return new Thread<X>(id, programCounter, items, itemPointer, captureGroups, variables, this);
-      }
-      
-      @Override
-      public final boolean schedule(final Thread<X> t) {
-        if (t == null) {
-          throw new IllegalArgumentException("t", new NullPointerException("t"));
-        }
-        return threadSet.add(t);
-      }
-    };
-    final Scheduler<T> scheduler = new Scheduler<T>();
+    final Set<Thread<T>> threadSet = new LinkedHashSet<Thread<T>>();
+    final Scheduler<T> scheduler = new Scheduler<T>(threadSet, idGenerator);
+
     scheduler.schedule(scheduler.newThread(String.format("T%d", idGenerator.getAndIncrement()),
                                            new ProgramCounter<T>(program),
                                            items,
                                            0,
                                            null,
                                            null));
-    final Iterator<Thread<? extends T>> threads = threadSet.iterator();
+    MatchResult<T> result = null;
+    final Iterator<Thread<T>> threads = threadSet.iterator();
     assert threads != null;
     assert threads.hasNext();
     while (threads.hasNext()) {
-      final Thread<? extends T> thread = threads.next();
+      final Thread<T> thread = threads.next();
       assert thread != null;
       threads.remove();
       thread.run();
       if (Thread.State.MATCH == thread.getState()) {
-        return true;
+        result = new MatchResult<T>(thread);
+        break;
       }
     }
-    return false;
+    return result;
+  }
+
+  private static final class Scheduler<T> implements ThreadScheduler<T> {
+
+    private final Set<Thread<T>> threadSet;
+
+    private final AtomicInteger idGenerator;
+
+    private Scheduler(final Set<Thread<T>> threadSet) {
+      this(threadSet, new AtomicInteger());
+    }
+
+    private Scheduler(final Set<Thread<T>> threadSet, final AtomicInteger idGenerator) {
+      super();
+      this.threadSet = threadSet;
+      if (idGenerator == null) {
+        this.idGenerator = new AtomicInteger();
+      } else {
+        this.idGenerator = idGenerator;
+      }
+    }
+
+    @Override
+    public final Thread<T> newThread(Object id, final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer, final Map<Object, CaptureGroup<T>> captureGroups, final Map<Object, Object> variables) {
+      if (id == null) {
+        id = String.format("T%d", this.idGenerator.getAndIncrement());
+      }
+      return new Thread<T>(id, programCounter, items, itemPointer, captureGroups, variables, this);
+    }
+      
+    @Override
+    public final boolean schedule(final Thread<T> t) {
+      if (t == null) {
+        throw new IllegalArgumentException("t", new NullPointerException("t"));
+      }
+      return this.threadSet != null && this.threadSet.add(t);
+    }
   }
 
 }

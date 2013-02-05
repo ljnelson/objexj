@@ -220,6 +220,8 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
 
   private Map<Object, Object> variables;
 
+  private InstructionContext<T> ic;
+
   /**
    * Creates a new {@link Thread} without any {@link CaptureGroup}s or
    * variables.
@@ -252,7 +254,7 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
    * @exception IllegalArgumentException if any of the preconditions
    * outlined as part of the parameter descriptions is not fulfilled
    */
-  protected Thread(final Object id, final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer, final ThreadScheduler<T> threadScheduler) {
+  public Thread(final Object id, final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer, final ThreadScheduler<T> threadScheduler) {
     this(id, programCounter, items, itemPointer, null, null, threadScheduler);
   }
 
@@ -298,7 +300,7 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
    *
    * @see #getVariables()
    */
-  protected Thread(final Object id, final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer, final Map<Object, CaptureGroup<T>> captureGroups, final Map<Object, Object> variables, final ThreadScheduler<T> threadScheduler) {
+  public Thread(final Object id, final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer, final Map<Object, CaptureGroup<T>> captureGroups, final Map<Object, Object> variables, final ThreadScheduler<T> threadScheduler) {
     super();
     this.state = State.VIABLE;
 
@@ -428,6 +430,10 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
     return returnValue;
   }
 
+  private final int getItemPointer() {
+    return this.itemPointer;
+  }
+
   public Map<Object, Object> getVariables() {
     if (this.variables == null) {
       this.variables = new HashMap<Object, Object>();
@@ -451,13 +457,13 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
     this.ensureViable();
     if (this.captureGroups == null) {
       this.captureGroups = new HashMap<Object, CaptureGroup<T>>();
-      this.captureGroups.put(key, new CaptureGroup<T>(this.items, this.itemPointer));
+      this.captureGroups.put(key, new CaptureGroup<T>(this.items, this.getItemPointer()));
     } else {
       final CaptureGroup<T> cg = this.captureGroups.get(key);
       if (cg == null) {
-        this.captureGroups.put(key, new CaptureGroup<T>(this.items, this.itemPointer));
+        this.captureGroups.put(key, new CaptureGroup<T>(this.items, this.getItemPointer()));
       } else {
-        cg.setEndIndex(this.itemPointer);
+        cg.setEndIndex(this.getItemPointer());
       }
     }
   }
@@ -477,7 +483,7 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
     if (this.captureGroups != null) {
       final CaptureGroup<T> cg = this.captureGroups.get(key);
       if (cg != null) {
-        cg.setEndIndex(this.itemPointer);
+        cg.setEndIndex(this.getItemPointer());
       }
     }
   }
@@ -499,7 +505,7 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
       programCounter = programCounter.clone(absoluteProgramCounterIndex);
     }
     // TODO: we're not cloning the variables; is that OK?
-    return this.newThread(id, programCounter, this.items, this.itemPointer, deepClone(this.captureGroups), this.variables);
+    return this.newThread(id, programCounter, this.items, this.getItemPointer(), deepClone(this.captureGroups), this.variables);
   }
 
   /**
@@ -542,24 +548,35 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
   }
 
   public final boolean atStart() {
-    if (!this.canRead()) {
-      return false;
+    if (Thread.State.DEAD == this.getState()) {
+      throw new IllegalStateException(Thread.State.DEAD.toString());
     }
     if (this.items == null || this.items.isEmpty()) {
-      return this.itemPointer == VALID_NO_INPUT_POINTER;
+      return this.getItemPointer() == VALID_NO_INPUT_POINTER;
     } else {
-      return this.itemPointer == 0;
+      return this.getItemPointer() == 0;
     }
   }
 
+  /**
+   * Returns {@code true} if this {@link Thread}'s input pointer is
+   * equal to this {@link Thread}'s input size.
+   *
+   * <p><strong>Note:</strong> This method may be invoked in any
+   * {@linkplain State state} except {@link State#DEAD}.</p>
+   *
+   * @return {@code true} if this {@link Thread}'s input pointer is
+   * equal to this {@link Thread}'s input size; {@code false}
+   * otherwise
+   */
   public final boolean atEnd() {
-    if (!this.isViable()) {
-      return false;
+    if (Thread.State.DEAD == this.getState()) {
+      throw new IllegalStateException(Thread.State.DEAD.toString());
     }
     if (this.items == null || this.items.isEmpty()) {
-      return this.itemPointer == VALID_NO_INPUT_POINTER;
+      return this.getItemPointer() == VALID_NO_INPUT_POINTER;
     } else {
-      return this.itemPointer == this.items.size();
+      return this.getItemPointer() == this.items.size();
     }
   }
 
@@ -572,7 +589,7 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
    * @return {@code true} if this {@link Thread} can read an item
    */
   public final boolean canRead() {
-    return this.isViable() && this.isValidItemPointer(this.itemPointer);
+    return this.isViable() && this.isValidItemPointer(this.getItemPointer());
   }
 
   /**
@@ -596,11 +613,11 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
       // This is an edge case.  If we are originally supplied with no
       // input, we need to be able to use an itemPointer that is both
       // valid, but doesn't point into the (non-existent) input list.
-      assert this.itemPointer == VALID_NO_INPUT_POINTER;
+      assert this.getItemPointer() == VALID_NO_INPUT_POINTER;
       return null;
     }
-    assert this.itemPointer >= 0 && this.itemPointer < this.items.size();
-    return this.items.get(this.itemPointer);
+    assert this.getItemPointer() >= 0 && this.getItemPointer() < this.items.size();
+    return this.items.get(this.getItemPointer());
   }
 
   private final boolean isValidItemPointer(final int itemPointer) {
@@ -629,7 +646,8 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
   public final boolean advanceItemPointer() {
     this.ensureViable();
     final boolean returnValue;
-    if (this.itemPointer == INVALID_INPUT_POINTER || this.itemPointer == VALID_NO_INPUT_POINTER) {
+    int itemPointer = this.getItemPointer();
+    if (itemPointer == INVALID_INPUT_POINTER || itemPointer == VALID_NO_INPUT_POINTER) {
       returnValue = false;
     } else {
       returnValue = this.isValidItemPointer(++this.itemPointer);
@@ -772,7 +790,10 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
     this.ensureViable();
     final Instruction<T> instruction = this.getInstruction();
     assert instruction != null;
-    instruction.execute(new InstructionContext<T>(this));
+    if (this.ic == null) {
+      this.ic = new InstructionContext<T>(this);
+    }
+    instruction.execute(this.ic);
   }
 
   /**
@@ -791,6 +812,7 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
     final Logger logger = Logger.getLogger(this.getClass().getName());
     assert logger != null;
     final boolean finer = logger.isLoggable(Level.FINER);
+    final int itemPointer = this.getItemPointer();
     final ProgramCounter<T> pc = this.getProgramCounter();
     assert pc != null;
     while (this.isViable()) {
@@ -798,12 +820,12 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
       assert currentInstruction != null;
       if (finer) {
         final int index = pc.getIndex();
-        logger.logp(Level.FINER, this.getClass().getName(), "run", "Before running {0} {1} ({2}) at input position {3}", new Object[] { this, currentInstruction, Integer.valueOf(index), Integer.valueOf(this.itemPointer) });
+        logger.logp(Level.FINER, this.getClass().getName(), "run", "Before running {0} {1} ({2}) at input position {3}", new Object[] { this, currentInstruction, Integer.valueOf(index), Integer.valueOf(itemPointer) });
       }
       this.step();
       if (finer) {
         if (this.isViable()) {
-          logger.logp(Level.FINER, this.getClass().getName(), "run", "After running {0} {1}; input position is now {2}", new Object[] { this, currentInstruction, Integer.valueOf(this.itemPointer) });
+          logger.logp(Level.FINER, this.getClass().getName(), "run", "After running {0} {1}; input position is now {2}", new Object[] { this, currentInstruction, Integer.valueOf(itemPointer) });
         } else {
           logger.logp(Level.FINER, this.getClass().getName(), "run", "Thread {0} is no longer viable", this);
         }
@@ -872,6 +894,27 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
   public final State getState() {
     assert this.state != null;
     return this.state;
+  }
+
+  public final int groupCount() {
+    final int result;
+    if (this.captureGroups == null || this.captureGroups.isEmpty()) {
+      result = 0;
+    } else {
+      result = this.captureGroups.size();
+    }
+    return result;
+  }
+
+  public final List<T> group(final Object index) {
+    List<T> result = null;
+    if (this.captureGroups != null) {
+      final CaptureGroup<T> cg = this.captureGroups.get(index);
+      if (cg != null) {
+        result = cg.getItems();
+      }
+    }
+    return result;
   }
 
   /**

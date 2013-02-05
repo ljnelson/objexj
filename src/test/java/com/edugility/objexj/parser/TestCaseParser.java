@@ -30,7 +30,7 @@ public class TestCaseParser {
     final Program<Character> p = parser.parse(tokenizer);
     reader.close();
     assertNotNull(p);
-    assertEquals(3, p.size());
+    assertEquals(5, p.size());
   }
 
   @Test
@@ -68,7 +68,7 @@ public class TestCaseParser {
     final Program<Character> p = parser.parse(tokenizer);
     reader.close();
     assertNotNull(p);
-    assertEquals(source.split("/").length + 1, p.size());
+    assertEquals(source.split("/").length + 1 + 2 /* the save instructions around the whole program */, p.size());
   }
 
   @Test
@@ -80,7 +80,7 @@ public class TestCaseParser {
     reader.close();
     assertNotNull(p);
     p.setName("Simple alternation");
-    assertEquals(5, p.size());
+    assertEquals(7, p.size());
     System.out.println(p);
   }
 
@@ -99,7 +99,7 @@ public class TestCaseParser {
     reader.close();
     assertNotNull(p);
     p.setName("Long Alternation");
-    assertEquals(11, p.size());
+    assertEquals(13, p.size());
     System.out.println(p);
   }
 
@@ -117,7 +117,7 @@ public class TestCaseParser {
     reader.close();
     assertNotNull(p);
     p.setName("Combination Catenation and Alternation");
-    assertEquals(6, p.size());
+    assertEquals(8, p.size());
     System.out.println(p);
   }
 

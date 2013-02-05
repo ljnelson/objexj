@@ -73,6 +73,7 @@ public class Parser {
       this.position = -1;
       this.tokenizer = tokenizer;
       this.stack = new ArrayDeque<Program<T>>();
+      this.groupIndex = 1;
     }
 
     public final Token getToken() {
@@ -125,9 +126,15 @@ public class Parser {
     if (input == null) {
       throw new IllegalArgumentException("input", new NullPointerException("input"));
     }
-    final PushbackReader reader = new PushbackReader(new StringReader(input));
+    final StringReader sr = new StringReader(input);
+    final PushbackReader reader = new PushbackReader(sr) {
+        @Override
+        public String toString() {
+          return sr.toString();
+        }
+      };
     try {
-      return this.parse(new State<T>(new PostfixTokenizer(new PushbackReader(new StringReader(input)))));
+      return this.parse(new State<T>(new PostfixTokenizer(reader)));
     } finally {
       try {
         reader.close();
@@ -209,26 +216,22 @@ public class Parser {
       }
 
     }
-    Program<T> program = null;
+    final Program<T> program;
     final int stackSize = parsingState.stackSize();
     switch (stackSize) {
     case 0:
       throw new IllegalStateException();
     case 1:
-      program = parsingState.pop();
-      assert program != null;
-      break;
-    case 2:
-      program = parsingState.pop();
-      assert program != null;
-      final Program<T> beginInputProgram = parsingState.pop();
-      assert beginInputProgram != null;
-      assert beginInputProgram.size() == 1;
-      program.addAll(0, beginInputProgram);
+      program = new Program<T>();
+      program.add(new Save<T>(0));
+      program.addAll(parsingState.pop());
+      program.add(new Stop<T>(0));
       break;
     default:
       throw new IllegalStateException("Unexpected stack size: " + parsingState);
     }
+    assert program != null;
+    program.setSource(parsingState.tokenizer);
     program.add(new Match<T>());
     return program;
   }
@@ -310,7 +313,8 @@ public class Parser {
     final Program<T> p0 = new Program<T>();
     p0.add(new Split<T>(1, p1.size() + 2, true));
     p0.addAll(p1);
-    p0.add(new Jump<T>(p2.size() + 1, true));
+    final int target = p2.size() + 1;
+    p0.add(new Jump<T>(target, true)); // dangling jump target
     p0.addAll(p2);
 
     parsingState.push(p0);
@@ -336,7 +340,8 @@ public class Parser {
      */
 
     final Program<T> p0 = new Program<T>();
-    p0.add(0, new Split<T>(1, p1.size() + 2, true));
+    final int target = p1.size() + 2;
+    p0.add(0, new Split<T>(1, target, true)); // dangling split target
     p0.addAll(p1);
     p0.add(new Jump<T>(-(p1.size() + 1), true));
     
@@ -362,7 +367,8 @@ public class Parser {
      * 20 ...
      */
 
-    p1.add(0, new Split<T>(1, p1.size() + 1, true));
+    final int target = p1.size() + 1;
+    p1.add(0, new Split<T>(1, target, true)); // dangling split target
     
   }
 
@@ -399,7 +405,7 @@ public class Parser {
     if (parsingState == null) {
       throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));
     }
-    parsingState.push(Program.singleton(new Stop<T>(Integer.valueOf(parsingState.groupIndex--))));
+    parsingState.push(Program.singleton(new Stop<T>(Integer.valueOf(--parsingState.groupIndex))));
   }
 
 }

@@ -53,19 +53,21 @@ public final class Program<T> extends LinkedList<Instruction<T>> {
 
   private String name;
 
+  private Object source;
+
   public Program() {
     super();
   }
 
   public Program(final Instruction<T> instruction) {
-    this();
+    super();
     if (instruction != null) {
       this.add(instruction);
     }
   }
 
   public Program(final Collection<? extends Instruction<T>> instructions) {
-    this();
+    super();
     if (instructions != null) {
       this.addAll(instructions);
     }
@@ -77,6 +79,30 @@ public final class Program<T> extends LinkedList<Instruction<T>> {
 
   public void setName(final String name) {
     this.name = name;
+  }
+
+  /**
+   * Returns whatever {@link Object} it was from which this {@link
+   * Program} was compiled.  The return value is really useful only
+   * for its {@link Object#toString() toString()} method.  This method
+   * may return {@code null}.
+   *
+   * @return the source {@link Object} from which this {@link Program}
+   * was compiled, or {@code null}
+   */
+  public Object getSource() {
+    return this.source;
+  }
+
+  public void setSource(final Object source) {
+    if (source == null) {
+      throw new IllegalArgumentException("source", new NullPointerException("source"));
+    }
+    final Object old = this.getSource();
+    if (old != null) {
+      throw new IllegalStateException("getSource() != null: " + old);
+    }
+    this.source = source;
   }
 
   public final boolean isValidProgramCounter(final int programCounter) {

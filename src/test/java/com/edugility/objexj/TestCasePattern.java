@@ -25,37 +25,42 @@
  * The original copy of this license is available at
  * http://www.opensource.org/license/mit-license.html.
  */
-package com.edugility.objexj.engine;
+package com.edugility.objexj;
 
 import java.io.IOException;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import com.edugility.objexj.parser.Parser;
+import com.edugility.objexj.engine.Program;
 
 import static org.junit.Assert.*;
 
-public class TestCaseEngine {
+public class TestCasePattern {
 
-  public TestCaseEngine() {
+  public TestCasePattern() {
     super();
   }
 
   @Test
-  public void testSimpleMatch() throws IOException {
-    final Engine<Character> engine = new Engine<Character>();
-    final String sourceCode = "^java.lang.Character(charValue() == 'a')/java.lang.Character(charValue() == 'b')/java.lang.Character(charValue() == 'c')";
-    final Parser parser = new Parser();
-    final Program<Character> program = parser.parse(sourceCode);
+  public void testCompile() throws IOException {
+    final String sourceCode = "^(java.lang.Character(charValue() == 'a')/(java.lang.Character(charValue() == 'b')))/java.lang.Character(charValue() == 'c')";
+    final Pattern<Character> pattern = Pattern.compile(sourceCode);
+    assertNotNull(pattern);
+    final Program<Character> program = pattern.getProgram();
     assertNotNull(program);
+    System.out.println("Program: " + program);
     final List<Character> input = Arrays.asList('a', 'b', 'c');
-    final MatchResult<Character> match = engine.run(program, input);
-    assertNotNull(match);
-    assertTrue(match.matches());
+    final Matcher<Character> matcher = pattern.matcher(input);
+    assertNotNull(matcher);
+    assertTrue(matcher.matches());
+    assertTrue(matcher.matches());
+    assertEquals(3, matcher.groupCount());
+    assertEquals(Arrays.asList('a', 'b', 'c'), matcher.group(0));
+    assertEquals(Arrays.asList('a', 'b'), matcher.group(1));
+    assertEquals(Arrays.asList('b'), matcher.group(2));
   }
 
 }
