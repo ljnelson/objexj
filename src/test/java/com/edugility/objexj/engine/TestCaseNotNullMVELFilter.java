@@ -17,9 +17,9 @@ public class TestCaseNotNullMVELFilter extends BasicThreadScheduler<Character> {
   @Test
   public void testMVELFilter() {
     final MVELFilter<Character> filter = new MVELFilter<Character>("this != null && charValue() == 'a'");
-    assertTrue(filter.accept(Character.valueOf('a')));
-    assertFalse(filter.accept(Character.valueOf('b')));
-    assertFalse(filter.accept((Character)null));
+    assertTrue(filter.accept(Character.valueOf('a'), null));
+    assertFalse(filter.accept(Character.valueOf('b'), null));
+    assertFalse(filter.accept((Character)null, null));
   }
 
 }

@@ -71,12 +71,6 @@ public class MVELFilter<T> extends Filter<T> {
     return returnValue;
   }
 
-  
-
-  final boolean accept(final T item) {
-    return this.accept(item, new HashMap<Object, Object>());
-  }
-  
   public boolean accept(final T item, Map<Object, Object> variables) {
     if (variables == null) {
       variables = new HashMap<Object, Object>();

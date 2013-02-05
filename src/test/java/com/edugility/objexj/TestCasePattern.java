@@ -46,7 +46,7 @@ public class TestCasePattern {
 
   @Test
   public void testCompile() throws IOException {
-    final String sourceCode = "^(java.lang.Character(charValue() == 'a')/(java.lang.Character(charValue() == 'b')))/java.lang.Character(charValue() == 'c')";
+    final String sourceCode = "^(java.lang.Character(charValue() == 'a')/(java.lang.Character(fred = \"bozo\"; return charValue() == 'b')))/java.lang.Character(charValue() == 'c')";
     final Pattern<Character> pattern = Pattern.compile(sourceCode);
     assertNotNull(pattern);
     final Program<Character> program = pattern.getProgram();
@@ -61,6 +61,7 @@ public class TestCasePattern {
     assertEquals(Arrays.asList('a', 'b', 'c'), matcher.group(0));
     assertEquals(Arrays.asList('a', 'b'), matcher.group(1));
     assertEquals(Arrays.asList('b'), matcher.group(2));
+    assertEquals("bozo", matcher.get("fred"));
   }
 
 }

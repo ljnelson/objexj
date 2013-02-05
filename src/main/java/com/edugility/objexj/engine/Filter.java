@@ -45,13 +45,6 @@ public class Filter<T> extends Instruction<T> {
       if (!context.advanceProgramCounter()) {
         assert context.isDead();
       }
-      /*
-      if (context.advanceProgramCounter()) {
-        context.advanceItemPointer();
-      } else {
-        assert context.isDead();
-      }
-      */
       // no need to schedule it; it is already running!
     } else {
       context.die();
