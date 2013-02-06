@@ -1,0 +1,9 @@
+Zero or More Filter Concatenated:
+  0: save 0
+  1: beginInput
+  2: split +1, +3
+  3: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'a'
+  4: jump -2
+  5: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character
+  6: stop 0
+  7: match

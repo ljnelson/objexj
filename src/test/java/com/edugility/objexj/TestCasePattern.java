@@ -31,6 +31,7 @@ import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
@@ -65,20 +66,25 @@ public class TestCasePattern {
   }
 
   @Test
-  public void testExceptions() throws IOException {
-    final String sourceCode = "^java.lang.Exception*/(java.lang.Exception)$";
+  public void testLastException() throws IOException {
+    final String sourceCode = "^java.lang.Exception*/(java.lang.Exception(message == \"third\"))$";
     final Pattern<Exception> pattern = Pattern.compile(sourceCode);
     assertNotNull(pattern);
     final Program<Exception> program = pattern.getProgram();
     assertNotNull(program);
-    System.out.println(program);
     final List<Exception> input = new ArrayList<Exception>();
     input.add(new IllegalStateException("first"));
     input.add(new IllegalArgumentException("second"));
-    input.add(new RuntimeException("third"));
+    final Exception third = new RuntimeException("third");
+    input.add(third);
     final Matcher<Exception> matcher = pattern.matcher(input);
     assertNotNull(matcher);
     assertEquals(2, matcher.groupCount());
+    final List<Exception> group1 = matcher.group(1);
+    assertNotNull(group1);
+    assertEquals(1, group1.size());
+    final Exception group1Exception = group1.get(0);
+    assertSame(third, group1Exception);
   }
 
 }

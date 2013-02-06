@@ -1,0 +1,14 @@
+Long Alternation:
+  0: save 0
+  1: split +1, +9
+  2: split +1, +6
+  3: split +1, +3
+  4: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'a'
+  5: jump +2
+  6: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'b'
+  7: jump +2
+  8: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'c'
+  9: jump +2
+ 10: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'd'
+ 11: stop 0
+ 12: match

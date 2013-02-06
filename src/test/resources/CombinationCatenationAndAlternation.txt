@@ -1,0 +1,9 @@
+Combination Catenation and Alternation:
+  0: save 0
+  1: split +1, +4
+  2: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'a'
+  3: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'b'
+  4: jump +2
+  5: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'c'
+  6: stop 0
+  7: match

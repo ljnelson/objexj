@@ -1,0 +1,7 @@
+One or More Filter:
+  0: save 0
+  1: beginInput
+  2: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'a'
+  3: split -1, +1
+  4: stop 0
+  5: match
