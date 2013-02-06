@@ -120,6 +120,7 @@ public class PostfixTokenizer implements Iterator<Token> {
           break;
 
         case '(':
+          this.insertBeginAtomZeroOrMoreAndCatenation();
           this.unread(c);
           this.state = State.LEFT_PAREN;
           break;
@@ -128,6 +129,7 @@ public class PostfixTokenizer implements Iterator<Token> {
           if (Character.isWhitespace(c)) {
             continue READ_LOOP;
           } else if (c != '$' && Character.isJavaIdentifierStart(c)) {
+            this.insertBeginAtomZeroOrMoreAndCatenation();
             sb.append((char)c);
             this.state = State.FILTER;
           } else {
@@ -501,6 +503,18 @@ public class PostfixTokenizer implements Iterator<Token> {
       }
     }
 
+  }
+
+  private final void insertBeginAtomZeroOrMoreAndCatenation() {
+    this.output.add(this.tokenFor('^'));
+    this.insertCatenation();
+    this.insertZeroOrMoreAnything();
+    this.insertCatenation();
+  }
+
+  private final void insertZeroOrMoreAnything() {
+    this.output.add(new Token(Token.Type.FILTER, "java.lang.Object"));
+    this.handleOperator(this.tokenFor('*'));
   }
 
   private final boolean insertCatenation() {

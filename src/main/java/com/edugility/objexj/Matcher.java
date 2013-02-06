@@ -27,7 +27,6 @@
  */
 package com.edugility.objexj;
 
-import java.util.Collections;
 import java.util.List;
 
 import com.edugility.objexj.engine.Engine;

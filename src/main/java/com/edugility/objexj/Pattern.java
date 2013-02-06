@@ -29,33 +29,68 @@ package com.edugility.objexj;
 
 import java.io.IOException;
 
-import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
-import com.edugility.objexj.engine.CaptureGroup;
 import com.edugility.objexj.engine.Engine;
 import com.edugility.objexj.engine.Program;
-import com.edugility.objexj.engine.Thread;
-import com.edugility.objexj.engine.ThreadScheduler;
-import com.edugility.objexj.engine.ProgramCounter;
 
 import com.edugility.objexj.parser.Parser;
 
+/**
+ * A regular expression pattern for arbitrary {@link Object}s.
+ *
+ * @author <a href="mailto:ljnelson@gmail.com">Laird Nelson</a>
+ */
 public class Pattern<T> {
 
+  /**
+   * The {@link Engine} to use to {@linkplain Engine#run(Program,
+   * List) run <tt>Program</tt>s}.  This field is never {@code null}.
+   */
   private final Engine<T> engine;
 
+  /**
+   * The {@link Program} this {@link Pattern} will {@linkplain
+   * Engine#run(Program, List) run}.  This field is never {@code
+   * null}.
+   */
   private final Program<T> program;
 
+  /**
+   * Creates a new {@link Pattern} with the supplied {@link Program}.
+   * A new {@link Engine} will be used to {@linkplain
+   * Engine#run(Program, List) run} the supplied {@link Program}.
+   *
+   * @param program the {@link Program} to {@linkplain
+   * Engine#run(Program, List) run}; must not be {@code null}
+   *
+   * @exception IllegalArgumentException if {@code program} is {@code
+   * null}
+   *
+   * @see #Pattern(Engine, Program)
+   *
+   * @see Pattern#compile(String)
+   */
   private Pattern(final Program<T> program) {
     this(null, program);
   }
 
+  /**
+   * Creates a new {@link Pattern} with the supplied {@link Engine}
+   * and {@link Program}.
+   *
+   * @param engine the {@link Engine} that will be used to {@linkplain
+   * Engine#run(Program, List) run} the supplied {@link Program}; if
+   * {@code null} a new {@link Engine} will be used instead
+   *
+   * @param program the {@link Program} to {@linkplain
+   * Engine#run(Program, List) run}; must not be {@code null}
+   *
+   * @exception IllegalArgumentException if {@code program} is {@code
+   * null}
+   *
+   * @see Pattern#compile(String)
+   */
   private Pattern(final Engine<T> engine, final Program<T> program) {
     super();
     if (program == null) {
@@ -69,6 +104,14 @@ public class Pattern<T> {
     }
   }
 
+  /**
+   * Returns a {@link Matcher} initialized to match the supplied
+   * {@link List} of items.  This method never returns {@code null}.
+   *
+   * @param items the input; may be {@code null}
+   *
+   * @return a new {@link Matcher}; never {@code null}
+   */
   public final Matcher<T> matcher(final List<T> items) {
     final Engine<T> engine = this.getEngine();
     assert engine != null;
@@ -77,14 +120,57 @@ public class Pattern<T> {
     return new Matcher<T>(engine, program, items);
   }
 
+  /**
+   * Returns the {@link Engine} that will be used to {@linkplain
+   * Engine#run(Program, List) run} this {@link Pattern}'s {@linkplain
+   * #getProgram() affiliated <tt>Program</tt>}.  This method never
+   * returns {@code null}.
+   *
+   * @return a non-{@code null} {@link Engine}
+   */
   private final Engine<T> getEngine() {
     assert this.engine != null;
     return this.engine;
   }
 
+  /**
+   * Returns the {@link Program} that this {@link Pattern} will cause
+   * to be {@linkplain Engine#run(Program, List) run} by {@link
+   * Matcher}s {@linkplain #matcher(List) supplied by its
+   * <tt>matcher(List)</tt> method}.  This method never returns {@code
+   * null}.
+   *
+   * @return a non-{@code null} {@link Program}
+   */
   final Program<T> getProgram() {
     assert this.program != null;
     return this.program;
+  }
+
+  /**
+   * Returns a non-{@code null} {@link String} representation of this
+   * {@link Pattern}.
+   *
+   * <p>This implementation attempts to return the original source
+   * code used to produce this {@link Pattern}.  If that fails for
+   * some reason, then the normal {@link Object#toString()} method
+   * return value is returned instead.</p>
+   *
+   * @return a non-{@code null} {@link String} representation of this
+   * {@link Pattern}
+   */
+  @Override
+  public String toString() {
+    final Program<T> program = this.getProgram();
+    assert program != null;
+    final String returnValue;
+    final Object source = program.getSource();
+    if (source == null) {
+      returnValue = super.toString();
+    } else {
+      returnValue = source.toString();
+    }
+    return returnValue;
   }
 
 
@@ -93,6 +179,19 @@ public class Pattern<T> {
    */
 
 
+  /**
+   * Compiles a new {@link Pattern} from the supplied source code.
+   *
+   * @param source the source code for the {@link Pattern}; must not
+   * be {@code null}
+   *
+   * @return a new, non-{@code null} {@link Pattern}
+   * 
+   * @exception IllegalArgumentException if {@code source} is {@code
+   * null}
+   *
+   * @exception IOException if the source code could not be compiled
+   */
   public static final <T> Pattern<T> compile(final String source) throws IOException {
     if (source == null) {
       throw new IllegalArgumentException("source", new NullPointerException("source"));

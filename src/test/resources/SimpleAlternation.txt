@@ -1,8 +1,12 @@
 Simple alternation:
   0: save 0
-  1: split +1, +3
-  2: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'a'
-  3: jump +2
-  4: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'b'
-  5: stop 0
-  6: match
+  1: split +1, +7
+  2: beginInput
+  3: split +1, +3
+  4: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Object
+  5: jump -2
+  6: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'a'
+  7: jump +2
+  8: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'b'
+  9: stop 0
+ 10: match

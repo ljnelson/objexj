@@ -1,4 +1,4 @@
-/* -*- mode: Java; c-basic-offset: 2; indent-tabs-mode: nil -*-
+/* -*- mode: Java; c-basic-offset: 2; indent-tabs-mode: nil; coding: utf-8-unix -*-
  *
  * Copyright (c) 2012-2013 Edugility LLC.
  *
@@ -650,7 +650,8 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
     if (itemPointer == INVALID_INPUT_POINTER || itemPointer == VALID_NO_INPUT_POINTER) {
       returnValue = false;
     } else {
-      returnValue = this.isValidItemPointer(++this.itemPointer);
+      ++this.itemPointer;
+      returnValue = this.isValidItemPointer(this.getItemPointer());
     }
     return returnValue;
   }

@@ -87,7 +87,8 @@ public class TestCaseParser {
     final Program<Character> p = parser.parse(tokenizer);
     reader.close();
     assertNotNull(p);
-    assertEquals(5, p.size());
+    p.setName("Simple catenation");
+    assertContentsAreEqual(p, "SimpleCatenation.txt");
   }
 
   @Test
@@ -125,7 +126,8 @@ public class TestCaseParser {
     final Program<Character> p = parser.parse(tokenizer);
     reader.close();
     assertNotNull(p);
-    assertEquals(source.split("/").length + 1 + 2 /* the save instructions around the whole program */, p.size());
+    p.setName("Long catenation");
+    assertContentsAreEqual(p, "LongCatenation.txt");
   }
 
   @Test
@@ -137,7 +139,6 @@ public class TestCaseParser {
     reader.close();
     assertNotNull(p);
     p.setName("Simple alternation");
-    assertEquals(7, p.size());
     assertContentsAreEqual(p, "SimpleAlternation.txt");
   }
 
@@ -156,7 +157,6 @@ public class TestCaseParser {
     reader.close();
     assertNotNull(p);
     p.setName("Long Alternation");
-    assertEquals(13, p.size());
     assertContentsAreEqual(p, "LongAlternation.txt");
   }
 
@@ -174,7 +174,6 @@ public class TestCaseParser {
     reader.close();
     assertNotNull(p);
     p.setName("Combination Catenation and Alternation");
-    assertEquals(8, p.size());
     assertContentsAreEqual(p, "CombinationCatenationAndAlternation.txt");
   }
 

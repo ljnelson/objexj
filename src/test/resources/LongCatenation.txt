@@ -1,0 +1,33 @@
+Long catenation:
+  0: save 0
+  1: beginInput
+  2: split +1, +3
+  3: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Object
+  4: jump -2
+  5: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'a'
+  6: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'b'
+  7: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'c'
+  8: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'c'
+  9: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'c'
+ 10: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'c'
+ 11: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'c'
+ 12: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'c'
+ 13: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'c'
+ 14: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'c'
+ 15: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'c'
+ 16: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'c'
+ 17: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'c'
+ 18: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'c'
+ 19: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'c'
+ 20: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'c'
+ 21: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'c'
+ 22: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'c'
+ 23: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'c'
+ 24: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'c'
+ 25: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'c'
+ 26: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'c'
+ 27: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'c'
+ 28: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'c'
+ 29: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'c'
+ 30: stop 0
+ 31: match

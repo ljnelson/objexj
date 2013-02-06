@@ -77,15 +77,6 @@ public class TestCasePostfixTokenizer {
   public void testZeroOrMoreInRepresentativeInput() throws IOException {
     build("^java.lang.Character(charValue() == 'a')*/java.lang.Character");
     
-    /*
-     * Translated:
-     *
-     *   ^ / java.lang.Character(charValue() == 'a') * / java.lang.Character
-     *
-     * In tokens:
-     *
-     * BEGIN_ATOM FILTER ZERO_OR_MORE CATENATION FILTER
-     */
     assertNextIs(BEGIN_ATOM);
     assertNextIs(FILTER);
     assertNextIs(ZERO_OR_MORE);
@@ -100,20 +91,12 @@ public class TestCasePostfixTokenizer {
   public void testSaving() throws IOException {
     build("abc/(def)");
 
-    /*
-     * Let's pretend '[' means start saving and '(' means start grouping.
-     * 
-     * Translated:
-     * 
-     *   abc / [ / def / ]
-     * 
-     * In tokens:
-     * 
-     *   FILTER START_SAVING CATENATION FILTER CATENATION STOP_SAVING CATENATION
-     * 
-     */
-      
+    assertNextIs(BEGIN_ATOM);
     assertNextIs(FILTER);
+    assertNextIs(ZERO_OR_MORE);
+    assertNextIs(CATENATION);
+    assertNextIs(FILTER);
+    assertNextIs(CATENATION);
     assertNextIs(START_SAVING);
     assertNextIs(CATENATION);
     assertNextIs(FILTER);
@@ -165,7 +148,12 @@ public class TestCasePostfixTokenizer {
   public void testValidSaveSyntax() throws IOException {
     build("(froob)");
 
+    assertNextIs(BEGIN_ATOM);
+    assertNextIs(FILTER);
+    assertNextIs(ZERO_OR_MORE);
+    assertNextIs(CATENATION);
     assertNextIs(START_SAVING);
+    assertNextIs(CATENATION);
     assertNextIsFilter("froob");
     assertNextIs(CATENATION);
     assertNextIs(STOP_SAVING);
@@ -177,8 +165,13 @@ public class TestCasePostfixTokenizer {
   @Test(expected = IllegalStateException.class)
   public void testEmptySaveBlock() throws IOException {
     build("()");
-
+    
+    assertNextIs(BEGIN_ATOM);
+    assertNextIs(FILTER);
+    assertNextIs(ZERO_OR_MORE);
+    assertNextIs(CATENATION);
     assertNextIs(START_SAVING);
+    assertNextIs(CATENATION);
 
     assertNoMoreTokens();
   }
@@ -187,7 +180,12 @@ public class TestCasePostfixTokenizer {
   public void testLotsOfOpenParens() throws IOException {
     build("((((");
 
+    assertNextIs(BEGIN_ATOM);
+    assertNextIs(FILTER);
+    assertNextIs(ZERO_OR_MORE);
+    assertNextIs(CATENATION);
     assertNextIs(START_SAVING);
+    assertNextIs(CATENATION);
     assertNextIs(START_SAVING);
     assertNextIs(START_SAVING);
     assertNextIs(START_SAVING);
@@ -227,8 +225,13 @@ public class TestCasePostfixTokenizer {
   public void testWhitespaceBeforeUnaryOperator() throws IOException {
     build("fred +");
 
+    assertNextIs(BEGIN_ATOM);
     assertNextIs(FILTER);
+    assertNextIs(ZERO_OR_MORE);
+    assertNextIs(CATENATION);
+    assertNextIs(FILTER);    
     assertNextIs(ONE_OR_MORE);
+    assertNextIs(CATENATION);
       
     assertNoMoreTokens();
   }
@@ -237,8 +240,13 @@ public class TestCasePostfixTokenizer {
   public void testMvelFilterWithOperator() throws IOException {
     build("fred(xyz)+");
       
+    assertNextIs(BEGIN_ATOM);
+    assertNextIs(FILTER);
+    assertNextIs(ZERO_OR_MORE);
+    assertNextIs(CATENATION);
     assertNextIs(FILTER);
     assertNextIs(ONE_OR_MORE);
+    assertNextIs(CATENATION);
     
     assertNoMoreTokens();
   }
@@ -246,9 +254,14 @@ public class TestCasePostfixTokenizer {
   @Test
   public void testMvelFilterWithOperatorAndWhitespace() throws IOException {
     build("fred (xyz) + ");
-      
+
+    assertNextIs(BEGIN_ATOM);
+    assertNextIs(FILTER);
+    assertNextIs(ZERO_OR_MORE);
+    assertNextIs(CATENATION);      
     assertNextIs(FILTER);
     assertNextIs(ONE_OR_MORE);
+    assertNextIs(CATENATION);
       
     assertNoMoreTokens();
   }
@@ -257,7 +270,12 @@ public class TestCasePostfixTokenizer {
   public void testSimpleFilterAnchoredAtEnd() throws IOException {
     build("x$");
       
+    assertNextIs(BEGIN_ATOM);
     assertNextIs(FILTER);
+    assertNextIs(ZERO_OR_MORE);
+    assertNextIs(CATENATION);
+    assertNextIs(FILTER);
+    assertNextIs(CATENATION);
     assertNextIs(END_ATOM);
     assertNextIs(CATENATION);
 
@@ -268,7 +286,12 @@ public class TestCasePostfixTokenizer {
   public void testSimpleFilterAnchoredAtEndWithWhitespace() throws IOException {
     build(" x  $ ");
       
+    assertNextIs(BEGIN_ATOM);
     assertNextIs(FILTER);
+    assertNextIs(ZERO_OR_MORE);
+    assertNextIs(CATENATION);
+    assertNextIs(FILTER);
+    assertNextIs(CATENATION);
     assertNextIs(END_ATOM);
     assertNextIs(CATENATION);
       
@@ -278,16 +301,6 @@ public class TestCasePostfixTokenizer {
   @Test
   public void testAnchoredCatnenationOfNonQualifiedFiltersWithWhitespace() throws IOException {
     build("^  java.lang.Character /   java.lang.Integer  ");
-      
-    /*
-     * Translated:
-     *
-     *   ^ / java.lang.Character / java.lang.Integer
-     *
-     * In tokens:
-     *
-     *   BEGIN_ATOM FILTER CATENATION FILTER CATENATION
-     */
       
     assertNextIs(BEGIN_ATOM);
     assertNextIs(FILTER);
@@ -302,17 +315,12 @@ public class TestCasePostfixTokenizer {
   public void testPrime() throws IOException {
     build("(java.lang.Character(charValue() == 'f'))/java.lang.Integer");
       
-    /*
-     * Translated (where '[' means START_SAVING)
-     *
-     * [ / java.lang.Character(charValue() == 'f') / ] / java.lang.Integer
-     *
-     * In tokens:
-     *
-     * START_SAVING FILTER CATENATION STOP_SAVING CATENATION FILTER CATENATION
-     * 
-     */
+    assertNextIs(BEGIN_ATOM);
+    assertNextIs(FILTER);
+    assertNextIs(ZERO_OR_MORE);
+    assertNextIs(CATENATION);
     assertNextIs(START_SAVING);
+    assertNextIs(CATENATION);
     assertNextIsFilter(Character.class.getName(), "charValue() == 'f'");
     assertNextIs(CATENATION);
     assertNextIs(STOP_SAVING);

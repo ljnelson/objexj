@@ -41,6 +41,9 @@ import java.util.Set;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.edugility.objexj.parser.Parser;
 
 public class Engine<T> {
@@ -82,12 +85,15 @@ public class Engine<T> {
 
     private final AtomicInteger idGenerator;
 
+    private final Logger logger;
+
     private Scheduler(final Queue<Thread<T>> threads) {
       this(threads, new AtomicInteger());
     }
 
     private Scheduler(final Queue<Thread<T>> threads, final AtomicInteger idGenerator) {
       super();
+      this.logger = Logger.getLogger(this.getClass().getName());
       this.threads = threads;
       if (idGenerator == null) {
         this.idGenerator = new AtomicInteger();
@@ -98,18 +104,35 @@ public class Engine<T> {
 
     @Override
     public final Thread<T> newThread(Object id, final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer, final Map<Object, CaptureGroup<T>> captureGroups, final Map<Object, Object> variables) {
+      if (this.logger != null && this.logger.isLoggable(Level.FINER)) {
+        this.logger.entering(this.getClass().getName(), "newThread", new Object[] { id, programCounter, items, itemPointer, captureGroups, variables });
+      }      
       if (id == null) {
         id = String.format("T%d", this.idGenerator.getAndIncrement());
       }
-      return new Thread<T>(id, programCounter, items, itemPointer, captureGroups, variables, this);
+      final Thread<T> returnValue = new Thread<T>(id, programCounter, items, itemPointer, captureGroups, variables, this);
+      if (this.logger != null && this.logger.isLoggable(Level.FINER)) {
+        this.logger.exiting(this.getClass().getName(), "newThread", returnValue);
+      }      
+      return returnValue;
     }
       
     @Override
     public final boolean schedule(final Thread<T> t) {
+      if (this.logger != null && this.logger.isLoggable(Level.FINER)) {
+        this.logger.entering(this.getClass().getName(), "schedule", t);
+      }
       if (t == null) {
         throw new IllegalArgumentException("t", new NullPointerException("t"));
       }
-      return this.threads != null && this.threads.add(t);
+      if (this.logger != null && this.logger.isLoggable(Level.FINER)) {
+        this.logger.logp(Level.FINER, this.getClass().getName(), "schedule", "Scheduling thread {0}", t);
+      }
+      final boolean returnValue = this.threads != null && this.threads.add(t);
+      if (this.logger != null && this.logger.isLoggable(Level.FINER)) {
+        this.logger.exiting(this.getClass().getName(), "schedule", Boolean.valueOf(returnValue));
+      }
+      return returnValue;
     }
   }
 
