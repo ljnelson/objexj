@@ -31,10 +31,12 @@ import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.StringReader;
 
+import java.util.LinkedList;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -52,8 +54,8 @@ public class Engine<T> {
       throw new IllegalArgumentException("program", new NullPointerException("program"));
     }
     final AtomicInteger idGenerator = new AtomicInteger();
-    final Set<Thread<T>> threadSet = new LinkedHashSet<Thread<T>>();
-    final Scheduler<T> scheduler = new Scheduler<T>(threadSet, idGenerator);
+    final Queue<Thread<T>> threads = new LinkedList<Thread<T>>();
+    final Scheduler<T> scheduler = new Scheduler<T>(threads, idGenerator);
 
     scheduler.schedule(scheduler.newThread(String.format("T%d", idGenerator.getAndIncrement()),
                                            new ProgramCounter<T>(program),
@@ -62,13 +64,9 @@ public class Engine<T> {
                                            null,
                                            null));
     MatchResult<T> result = null;
-    final Iterator<Thread<T>> threads = threadSet.iterator();
-    assert threads != null;
-    assert threads.hasNext();
-    while (threads.hasNext()) {
-      final Thread<T> thread = threads.next();
+    while (!threads.isEmpty()) {
+      final Thread<T> thread = threads.remove();
       assert thread != null;
-      threads.remove();
       thread.run();
       if (Thread.State.MATCH == thread.getState()) {
         result = new MatchResult<T>(thread);
@@ -80,17 +78,17 @@ public class Engine<T> {
 
   private static final class Scheduler<T> implements ThreadScheduler<T> {
 
-    private final Set<Thread<T>> threadSet;
+    private final Queue<Thread<T>> threads;
 
     private final AtomicInteger idGenerator;
 
-    private Scheduler(final Set<Thread<T>> threadSet) {
-      this(threadSet, new AtomicInteger());
+    private Scheduler(final Queue<Thread<T>> threads) {
+      this(threads, new AtomicInteger());
     }
 
-    private Scheduler(final Set<Thread<T>> threadSet, final AtomicInteger idGenerator) {
+    private Scheduler(final Queue<Thread<T>> threads, final AtomicInteger idGenerator) {
       super();
-      this.threadSet = threadSet;
+      this.threads = threads;
       if (idGenerator == null) {
         this.idGenerator = new AtomicInteger();
       } else {
@@ -111,7 +109,7 @@ public class Engine<T> {
       if (t == null) {
         throw new IllegalArgumentException("t", new NullPointerException("t"));
       }
-      return this.threadSet != null && this.threadSet.add(t);
+      return this.threads != null && this.threads.add(t);
     }
   }
 

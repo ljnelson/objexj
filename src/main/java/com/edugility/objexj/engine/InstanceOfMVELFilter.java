@@ -136,6 +136,9 @@ public class InstanceOfMVELFilter<T> extends MVELFilter<T> {
     if (context == null) {
       throw new IllegalArgumentException("context", new NullPointerException("context == null"));
     }
+    if (this.mvelExpression == null) {
+      return super.accept(context);
+    }
     return this.cls != null && context.canRead() && this.accept(context.read(), context.getVariables());
   }
 

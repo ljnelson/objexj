@@ -145,8 +145,7 @@ public class PostfixTokenizer implements Iterator<Token> {
         assert c == '^';
         assert sb.length() == 0;
         this.output.add(this.tokenFor(c));
-        // Now we have to do an implicit CATENATION operator.
-        this.handleOperator(this.tokenFor('/'));
+        this.insertCatenation();
         assert this.state == State.START_SAVING_OR_FILTER;
         break READ_LOOP;
 
@@ -156,6 +155,7 @@ public class PostfixTokenizer implements Iterator<Token> {
         //
       case END_ATOM:
         assert c == '$';
+        this.insertCatenation();
         this.output.add(this.tokenFor(c));
         sb.setLength(0);
         this.state = State.END;
@@ -189,7 +189,7 @@ public class PostfixTokenizer implements Iterator<Token> {
         this.output.add(token);
 
         // Then pretend we found a concatenation.
-        this.handleOperator(this.tokenFor('/'));
+        this.insertCatenation();
 
         // Then pretend we found a START_GROUP.
         final Token t = new Token(Token.Type.START_GROUP);
@@ -232,7 +232,7 @@ public class PostfixTokenizer implements Iterator<Token> {
         // START_SAVING token, so now we need to add the STOP_SAVING.
 
         // Concatenate...
-        this.handleOperator(this.tokenFor('/'));
+        this.insertCatenation();
 
         // ...with stop saving:
         this.output.add(new Token(Token.Type.STOP_SAVING));
@@ -503,7 +503,11 @@ public class PostfixTokenizer implements Iterator<Token> {
 
   }
 
-  final boolean handleOperator(final Token o1) {
+  private final boolean insertCatenation() {
+    return this.handleOperator(this.tokenFor('/'));
+  }
+
+  private final boolean handleOperator(final Token o1) {
     if (o1 == null) {
       throw new IllegalArgumentException("o1", new NullPointerException("o1"));
     } else if (!o1.isOperator()) {

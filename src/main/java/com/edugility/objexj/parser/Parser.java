@@ -35,6 +35,7 @@ import java.io.StringReader;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
+import java.util.Formatter;
 import java.util.Iterator;
 
 import java.util.logging.Level;
@@ -116,6 +117,16 @@ public class Parser {
       return this.stack.pop();
     }
 
+    @Override
+    public String toString() {
+      final Formatter f = new Formatter(new StringBuilder());
+      f.format("Parsing state:%n");
+      f.format("Current token: %s%n", this.getToken());
+      f.format("Stack size: %d%n", this.stackSize());
+      f.format("Stack: %s%n", this.stack);
+      return f.toString();
+    }
+    
   }
 
   public Parser() {

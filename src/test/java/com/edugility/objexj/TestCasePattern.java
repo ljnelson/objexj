@@ -29,6 +29,7 @@ package com.edugility.objexj;
 
 import java.io.IOException;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -51,7 +52,6 @@ public class TestCasePattern {
     assertNotNull(pattern);
     final Program<Character> program = pattern.getProgram();
     assertNotNull(program);
-    System.out.println("Program: " + program);
     final List<Character> input = Arrays.asList('a', 'b', 'c');
     final Matcher<Character> matcher = pattern.matcher(input);
     assertNotNull(matcher);
@@ -62,6 +62,23 @@ public class TestCasePattern {
     assertEquals(Arrays.asList('a', 'b'), matcher.group(1));
     assertEquals(Arrays.asList('b'), matcher.group(2));
     assertEquals("bozo", matcher.get("fred"));
+  }
+
+  @Test
+  public void testExceptions() throws IOException {
+    final String sourceCode = "^java.lang.Exception*/(java.lang.Exception)$";
+    final Pattern<Exception> pattern = Pattern.compile(sourceCode);
+    assertNotNull(pattern);
+    final Program<Exception> program = pattern.getProgram();
+    assertNotNull(program);
+    System.out.println(program);
+    final List<Exception> input = new ArrayList<Exception>();
+    input.add(new IllegalStateException("first"));
+    input.add(new IllegalArgumentException("second"));
+    input.add(new RuntimeException("third"));
+    final Matcher<Exception> matcher = pattern.matcher(input);
+    assertNotNull(matcher);
+    assertEquals(2, matcher.groupCount());
   }
 
 }

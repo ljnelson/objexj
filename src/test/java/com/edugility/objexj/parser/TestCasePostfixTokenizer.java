@@ -259,6 +259,7 @@ public class TestCasePostfixTokenizer {
       
     assertNextIs(FILTER);
     assertNextIs(END_ATOM);
+    assertNextIs(CATENATION);
 
     assertNoMoreTokens();
   }
@@ -269,6 +270,7 @@ public class TestCasePostfixTokenizer {
       
     assertNextIs(FILTER);
     assertNextIs(END_ATOM);
+    assertNextIs(CATENATION);
       
     assertNoMoreTokens();
   }

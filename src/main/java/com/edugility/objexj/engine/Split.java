@@ -82,8 +82,8 @@ public class Split<T> extends Jump<T> {
     if (context == null) {
       throw new IllegalArgumentException("context");
     }
-    super.execute(context);
     context.scheduleNewThread(this.newThreadProgramLocation, this.relative);
+    super.execute(context);
   }
 
   @Override

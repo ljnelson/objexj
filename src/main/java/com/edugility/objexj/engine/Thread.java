@@ -812,7 +812,6 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
     final Logger logger = Logger.getLogger(this.getClass().getName());
     assert logger != null;
     final boolean finer = logger.isLoggable(Level.FINER);
-    final int itemPointer = this.getItemPointer();
     final ProgramCounter<T> pc = this.getProgramCounter();
     assert pc != null;
     while (this.isViable()) {
@@ -820,12 +819,12 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
       assert currentInstruction != null;
       if (finer) {
         final int index = pc.getIndex();
-        logger.logp(Level.FINER, this.getClass().getName(), "run", "Before running {0} {1} ({2}) at input position {3}", new Object[] { this, currentInstruction, Integer.valueOf(index), Integer.valueOf(itemPointer) });
+        logger.logp(Level.FINER, this.getClass().getName(), "run", "Before running {0} {1} ({2}) at input position {3}", new Object[] { this, currentInstruction, Integer.valueOf(index), Integer.valueOf(this.getItemPointer()) });
       }
       this.step();
       if (finer) {
         if (this.isViable()) {
-          logger.logp(Level.FINER, this.getClass().getName(), "run", "After running {0} {1}; input position is now {2}", new Object[] { this, currentInstruction, Integer.valueOf(itemPointer) });
+          logger.logp(Level.FINER, this.getClass().getName(), "run", "After running {0} {1}; input position is now {2}", new Object[] { this, currentInstruction, Integer.valueOf(this.getItemPointer()) });
         } else {
           logger.logp(Level.FINER, this.getClass().getName(), "run", "Thread {0} is no longer viable", this);
         }

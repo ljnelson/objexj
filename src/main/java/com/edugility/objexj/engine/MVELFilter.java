@@ -64,7 +64,7 @@ public class MVELFilter<T> extends Filter<T> {
     }
     final boolean returnValue;
     if (this.mvelExpression == null) {
-      returnValue = true; // no MVEL expression means no additional constraints
+      returnValue = context.canRead(); // no MVEL expression means no additional constraints
     } else {
       returnValue = context.canRead() && this.accept(context.read(), context.getVariables());
     }
@@ -75,8 +75,14 @@ public class MVELFilter<T> extends Filter<T> {
     if (variables == null) {
       variables = new HashMap<Object, Object>();
     }
-    final Object executionResult = MVEL.executeExpression(this.mvelExpression, item, new MapVariableResolverFactory(variables));
-    return executionResult instanceof Boolean && ((Boolean)executionResult).booleanValue();
+    final boolean returnValue;
+    if (this.mvelExpression == null) {
+      returnValue = true;
+    } else {
+      final Object executionResult = MVEL.executeExpression(this.mvelExpression, item, new MapVariableResolverFactory(variables));
+      returnValue = executionResult instanceof Boolean && ((Boolean)executionResult).booleanValue();
+    }
+    return returnValue;
   }
 
   @Override
