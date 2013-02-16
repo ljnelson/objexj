@@ -50,6 +50,8 @@ public class InstanceOfMVELFilter<T> extends MVELFilter<T> {
 
   private final Class<?> cls;
 
+  private final boolean exact;
+
   /**
    * Creates a new {@link NotNullMVELFilter}.
    *
@@ -68,8 +70,12 @@ public class InstanceOfMVELFilter<T> extends MVELFilter<T> {
     if (!m.find()) {
       throw new IllegalArgumentException("Bad operands: " + operands);
     }
-    final String className = m.group(1);
+    String className = m.group(1);
     assert className != null;
+    this.exact = className.charAt(0) == '=';
+    if (this.exact) {
+      className = className.substring(1);
+    }
 
     Class<?> c = null;
     try {
@@ -90,10 +96,14 @@ public class InstanceOfMVELFilter<T> extends MVELFilter<T> {
     }
   }
 
-  public InstanceOfMVELFilter(final String className, final String mvel) {
+  public InstanceOfMVELFilter(String className, final String mvel) {
     super();
     if (className == null) {
       throw new IllegalArgumentException("className", new NullPointerException("className"));
+    }
+    this.exact = className.charAt(0) == '=';
+    if (this.exact) {
+      className = className.substring(1);
     }
     Class<?> c = null;
     try {
@@ -113,15 +123,20 @@ public class InstanceOfMVELFilter<T> extends MVELFilter<T> {
   }
 
   public InstanceOfMVELFilter(final Class<?> c) {
-    this(c, null);
+    this(c, false, null);
   }
 
   public InstanceOfMVELFilter(final Class<?> c, final String mvel) {
+    this(c, false, mvel);
+  }
+
+  public InstanceOfMVELFilter(final Class<?> c, final boolean exact, final String mvel) {
     super();
     if (c == null) {
       throw new IllegalArgumentException("c", new NullPointerException("c"));
     }
     this.cls = c;
+    this.exact = exact;
     if (mvel == null) {
       this.mvelExpression = null;
       this.mvelExpressionSource = null;
@@ -129,6 +144,10 @@ public class InstanceOfMVELFilter<T> extends MVELFilter<T> {
       this.mvelExpression = MVEL.compileExpression(mvel);
       this.mvelExpressionSource = mvel;
     }
+  }
+
+  public boolean isExact() {
+    return this.exact;
   }
 
   @Override
@@ -144,13 +163,21 @@ public class InstanceOfMVELFilter<T> extends MVELFilter<T> {
 
   @Override
   public boolean accept(final T item, Map<Object, Object> variables) {
-    return item != null && this.cls != null && this.cls.isInstance(item) && super.accept(item, variables);
+    return
+      item != null && 
+      this.cls != null &&
+      this.isExact() ? item.getClass().equals(this.cls) : this.cls.isInstance(item) &&
+      super.accept(item, variables);
   }
 
   @Override
   public String toString() {
-    final StringBuilder sb = new StringBuilder(this.getClass().getName());
-    sb.append(" ").append(this.cls.getName());
+    final StringBuilder sb = new StringBuilder(this.getClass().getSimpleName());
+    sb.append(" ");
+    if (this.isExact()) {
+      sb.append("=");
+    }
+    sb.append(this.cls.getName());
     if (this.mvelExpressionSource != null) {
       sb.append(" ").append(this.mvelExpressionSource);
     }

@@ -33,40 +33,106 @@ import com.edugility.objexj.engine.Engine;
 import com.edugility.objexj.engine.MatchResult;
 import com.edugility.objexj.engine.Program;
 
+/**
+ * An object that matches a {@link Pattern} against a {@link List} of
+ * items (the <em>input</em>).
+ *
+ * @param <T> the kind of {@link Object} any input consists of
+ *
+ * @author <a href="mailto:ljnelson@gmail.com">Laird Nelson</a>
+ *
+ * @see #matches()
+ *
+ * @see #lookingAt()
+ */
 public class Matcher<T> {
 
-  private final Engine<T> engine;
-  
-  private final Program<T> program;
+  /**
+   * The {@link Pattern} that this {@link Matcher} is going to apply.
+   * This field is never {@code null}.
+   *
+   * @see #getPattern()
+   *
+   * @see #Matcher(Pattern, List)
+   */
+  private final Pattern<T> pattern;
 
-  private List<T> items;
+  /**
+   * The {@link List} of items against which a match will be
+   * attempted.  This field may be {@code null}.
+   *
+   * @see #getInput()
+   */
+  private List<T> input;
 
-  private MatchResult<T> matchResult;
+  /**
+   * A {@link MatchResult} that contains the state of the last match
+   * attempt.  This field may be {@code null}.
+   */
+  private transient MatchResult<T> matchResult;
 
-  public Matcher(final Engine<T> engine, final Program<T> program, final List<T> items) {
+  /**
+   * Creates a {@link Matcher} with the supplied {@link Pattern} and
+   * input.
+   *
+   * @param pattern the {@link Pattern} to apply; must not be {@code
+   * null}
+   *
+   * @param input a possibly {@code null} {@link List} of items to
+   * match the supplied {@link Pattern} against
+   * 
+   * @exception IllegalArgumentException if {@code pattern} is {@code
+   * null}
+   */
+  Matcher(final Pattern<T> pattern, final List<T> input) {
     super();
-    if (engine == null) {
-      throw new IllegalArgumentException("engine", new NullPointerException("engine"));
+    if (pattern == null) {
+      throw new IllegalArgumentException("pattern", new NullPointerException("pattern"));
     }
-    if (program == null) {
-      throw new IllegalArgumentException("program", new NullPointerException("program"));
-    }
-    this.engine = engine;
-    this.program = program;
-    this.items = items;
+    this.pattern = pattern;
+    this.input = input;
   }
 
-  public boolean matches() {
+  /**
+   * Returns {@code true} if this {@link Matcher} matches the entire
+   * input against its {@linkplain #getPattern() affiliated
+   * <tt>Pattern</tt>}.
+   *
+   * @return {@code true} if this {@link Matcher} matches the entire
+   * input against its {@linkplain #getPattern() affiliated
+   * <tt>Pattern</tt>}; {@code false} otherwise
+   */
+  public final boolean matches() {
     final MatchResult<T> matchResult = this.getMatchResult();
     return matchResult != null && matchResult.matches();
   }
 
-  public boolean lookingAt() {
+  /**
+   * Returns {@code true} if a <em>prefix</em> of this {@link
+   * Matcher}'s {@linkplain #getInput() input} matches this {@link
+   * Matcher}'s {@linkplain #getPattern() affiliated
+   * <tt>Pattern</tt>}.
+   *
+   * @return {@code true} if a <em>prefix</em> of this {@link
+   * Matcher}'s {@linkplain #getInput() input} matches this {@link
+   * Matcher}'s {@linkplain #getPattern() affiliated
+   * <tt>Pattern</tt>}; {@code false} otherwise
+   */
+  public final boolean lookingAt() {
     final MatchResult<T> matchResult = this.getMatchResult();
     return matchResult != null && matchResult.lookingAt();
   }
 
-  public int groupCount() {
+  /**
+   * Returns the total number of <em>capture groups</em> matched by
+   * this {@link Matcher}.  Any successful match will cause this
+   * method to return an {@code int} greater than or equal to {@code
+   * 1}.  Group indices are numbered starting with {@code 0}.
+   *
+   * @return the total number of capture groups matched by this {@link
+   * Matcher}; never less than {@code 0}
+   */
+  public final int groupCount() {
     final MatchResult<T> matchResult = this.getMatchResult();
     final int result;
     if (matchResult == null) {
@@ -77,7 +143,19 @@ public class Matcher<T> {
     return result;
   }
 
-  public List<T> group(final int index) {
+  /**
+   * Returns the <em>capture group</em> matched by the last match
+   * indexed under the supplied zero-based index, or {@code null} if
+   * no such capture group was matched.
+   *
+   * @param index a zero-based number identifying a capture group; may
+   * be any number
+   *
+   * @return a {@link List} of items (a subset of the {@linkplain
+   * #getInput() input}), or {@code null} if no such capture group was
+   * ever identified
+   */
+  public final List<T> group(final int index) {
     final MatchResult<T> matchResult = this.getMatchResult();
     final List<T> result;
     if (matchResult == null) {
@@ -88,7 +166,18 @@ public class Matcher<T> {
     return result;
   }
 
-  public Object get(final Object key) {
+  /**
+   * Returns the value of the <em>variable</em> indexed under the
+   * supplied key, or {@code null} if no such value was ever
+   * established.  Variables may be set from within a {@link
+   * Pattern}'s parsed expression.
+   *
+   * @param key the name of the variable; may be {@code null} but if
+   * so then {@code null} will be returned
+   *
+   * @return the value of the variable, or {@code null}
+   */
+  public final Object get(final Object key) {
     final MatchResult<T> matchResult = this.getMatchResult();
     final Object result;
     if (matchResult == null) {
@@ -99,12 +188,36 @@ public class Matcher<T> {
     return result;
   }
 
+  /**
+   * Returns the {@link Pattern} with which this {@link Matcher} is
+   * currently affiliated.  This method never returns {@code null}.
+   *
+   * @return a non-{@code null} {@link Pattern}
+   */
+  public final Pattern<T> getPattern() {
+    return this.pattern;
+  }
+
+  /**
+   * Returns the input with which this {@link Matcher} is currently
+   * affiliated.  This method may return {@code null}.
+   *
+   * @return the input, or {@code null}
+   */
+  public final List<T> getInput() {
+    return this.input;
+  }
+
   private final Engine<T> getEngine() {
-    return this.engine;
+    final Pattern<T> pattern = this.getPattern();
+    assert pattern != null;
+    return pattern.getEngine();
   }
 
   private final Program<T> getProgram() {
-    return this.program;
+    final Pattern<T> pattern = this.getPattern();
+    assert pattern != null;
+    return pattern.getProgram();
   }
   
   private final MatchResult<T> getMatchResult() {
@@ -113,7 +226,7 @@ public class Matcher<T> {
       assert program != null;
       final Engine<T> engine = this.getEngine();
       assert engine != null;
-      this.matchResult = engine.run(program, this.items);
+      this.matchResult = engine.run(program, this.input);
     }
     return this.matchResult;
   }

@@ -269,6 +269,15 @@ public class Parser {
     assert token != null;
     assert Token.Type.FILTER == token.getType();
 
+    boolean exact = false;
+    String filterType = token.getFilterType();
+    if (filterType != null) {
+      final char c = filterType.charAt(0);
+      if (c == '=') {
+        exact = true;        
+      }
+    }
+
     parsingState.push(Program.singleton(new InstanceOfMVELFilter<T>(token.getFilterType(), token.getValue())));
   }
 

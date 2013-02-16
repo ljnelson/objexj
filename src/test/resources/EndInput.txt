@@ -1,7 +1,7 @@
 End Input:
   0: save 0
   1: beginInput
-  2: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'a'
+  2: InstanceOfMVELFilter java.lang.Character charValue() == 'a'
   3: endInput
   4: stop 0
   5: match

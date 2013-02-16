@@ -1,3 +1,4 @@
+<!-- -*- markdown -*- -->
 # `objexj`
 
 ## Regular Expressions for Java Objects

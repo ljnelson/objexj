@@ -31,6 +31,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import com.edugility.objexj.engine.Thread;
+
 /**
  * A trivial implementation of the {@link ThreadScheduler} interface.
  * This implementation is capable of creating new {@link Thread}s, but

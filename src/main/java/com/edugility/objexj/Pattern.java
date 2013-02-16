@@ -113,11 +113,7 @@ public class Pattern<T> {
    * @return a new {@link Matcher}; never {@code null}
    */
   public final Matcher<T> matcher(final List<T> items) {
-    final Engine<T> engine = this.getEngine();
-    assert engine != null;
-    final Program<T> program = this.getProgram();
-    assert program != null;
-    return new Matcher<T>(engine, program, items);
+    return new Matcher<T>(this, items);
   }
 
   /**
@@ -128,7 +124,7 @@ public class Pattern<T> {
    *
    * @return a non-{@code null} {@link Engine}
    */
-  private final Engine<T> getEngine() {
+  final Engine<T> getEngine() {
     assert this.engine != null;
     return this.engine;
   }

@@ -5,14 +5,14 @@ Long Alternation:
   3: split +1, +7
   4: beginInput
   5: split +1, +3
-  6: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Object
+  6: InstanceOfMVELFilter java.lang.Object
   7: jump -2
-  8: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'a'
+  8: InstanceOfMVELFilter java.lang.Character charValue() == 'a'
   9: jump +2
- 10: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'b'
+ 10: InstanceOfMVELFilter java.lang.Character charValue() == 'b'
  11: jump +2
- 12: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'c'
+ 12: InstanceOfMVELFilter java.lang.Character charValue() == 'c'
  13: jump +2
- 14: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'd'
+ 14: InstanceOfMVELFilter java.lang.Character charValue() == 'd'
  15: stop 0
  16: match

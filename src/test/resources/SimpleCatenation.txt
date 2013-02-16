@@ -2,9 +2,9 @@ Simple catenation:
   0: save 0
   1: beginInput
   2: split +1, +3
-  3: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Object
+  3: InstanceOfMVELFilter java.lang.Object
   4: jump -2
-  5: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'a'
-  6: com.edugility.objexj.engine.InstanceOfMVELFilter java.lang.Character charValue() == 'b'
+  5: InstanceOfMVELFilter java.lang.Character charValue() == 'a'
+  6: InstanceOfMVELFilter java.lang.Character charValue() == 'b'
   7: stop 0
   8: match

@@ -164,7 +164,7 @@ public class TestCaseParser {
   public void testCombinationCatenationAndAlternation() throws IOException {
     final StringBuilder sb = new StringBuilder();
     sb.append("java.lang.Character(charValue() == 'a')/"); // catenation
-    sb.append("java.lang.Character(charValue() == 'b')|"); // altrnation
+    sb.append("java.lang.Character(charValue() == 'b')|"); // alternation
     sb.append("java.lang.Character(charValue() == 'c')");
     final String source = sb.toString();
     final PushbackReader reader = new PushbackReader(new StringReader(source));
@@ -190,6 +190,21 @@ public class TestCaseParser {
     assertNotNull(p);
     p.setName("End Input");
     assertContentsAreEqual(p, "EndInput.txt");
+  }
+
+  @Test
+  public void testExactMatch() throws IOException {
+    final StringBuilder sb = new StringBuilder();
+    sb.append("^=java.lang.Character(charValue() == 'a')");
+    final String source = sb.toString();
+    final PushbackReader reader = new PushbackReader(new StringReader(source));
+    final PostfixTokenizer tokenizer = new PostfixTokenizer(reader);
+    final Parser parser = new Parser();
+    final Program<Character> p = parser.parse(tokenizer);
+    reader.close();
+    assertNotNull(p);
+    p.setName("Exact Match");
+    assertContentsAreEqual(p, "ExactMatch.txt");
   }
 
   @Test
