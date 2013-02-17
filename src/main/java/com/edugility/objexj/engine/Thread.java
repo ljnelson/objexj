@@ -962,6 +962,92 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
   }
 
   @Override
+  public int hashCode() {
+    int result = 17;
+    
+    final Object id = this.getId();
+    int c = id == null ? 0 : id.hashCode();
+    result = result * 37 + c;
+
+    c = this.getItemPointer();
+    result = result * 37 + c;
+
+    c = this.getState().hashCode();
+    result = result * 37 + c;
+
+    c = this.items == null ? 0 : this.items.hashCode();
+    result = result * 37 + c;
+
+    // We don't call getProgramCounter() because hashCode() must be a
+    // method that is permissible to call in any state.
+    c = this.programCounter.hashCode();
+    result = result * 37 + c;
+
+    c = this.captureGroups == null ? 0 : this.captureGroups.hashCode();
+    result = result * 37 + c;
+
+    return result;
+  }
+
+  @Override
+  public boolean equals(final Object other) {
+    if (other == this) {
+      return true;
+    } else if (this.getClass().equals(other.getClass())) {
+      final Thread him = (Thread)other;
+
+      final int myItemPointer = this.getItemPointer();
+      if (him.getItemPointer() != myItemPointer) {
+        return false;
+      }
+
+      final Object id = this.getId();
+      if (id == null) {
+        if (him.getId() != null) {
+          return false;
+        }
+      }
+
+      final State state = this.getState();
+      assert state != null;
+      if (state != him.getState()) {
+        return false;
+      }
+
+      if (this.items == null) {
+        if (him.items != null) {
+          return false;
+        }
+      } else if (!this.items.equals(him.items)) {
+        return false;
+      }
+
+      // We don't call getProgramCounter() because hashCode() must be
+      // a method that is permissible to call in any state.
+      if (this.programCounter == null) {
+        if (him.programCounter != null) {
+          return false;
+        }
+      } else if (!this.programCounter.equals(him.programCounter)) {
+        return false;
+      }
+
+      if (this.captureGroups == null) {
+        if (him.captureGroups != null) {
+          return false;
+        }
+      } else if (!this.captureGroups.equals(him.captureGroups)) {
+        return false;
+      }
+
+      return true;
+
+    } else {
+      return false;
+    }
+  }
+
+  @Override
   public String toString() {
     final Object id = this.getId();
     if (id == null) {
