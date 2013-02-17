@@ -81,6 +81,23 @@ public class Jump<T> extends Instruction<T> {
   }
 
   @Override
+  public int hashCode() {
+    return this.programLocation + (relative ? 1 : 0);
+  }
+
+  @Override
+  public boolean equals(final Object other) {
+    if (other == this) {
+      return true;
+    } else if (super.equals(other)) {
+      final Jump him = (Jump)other;
+      return this.programLocation == him.programLocation && this.relative == him.relative;
+    } else {
+      return false;
+    }
+  }
+
+  @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder(super.toString()).append(" ");
     if (this.relative && this.programLocation >= 0) {

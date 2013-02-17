@@ -171,6 +171,24 @@ public class InstanceOfMVELFilter<T> extends MVELFilter<T> {
   }
 
   @Override
+  public int hashCode() {
+    assert this.cls != null;
+    return 37 * super.hashCode() + this.cls.hashCode() + (this.exact ? 1 : 0);
+  }
+
+  @Override
+  public boolean equals(final Object other) {
+    if (other == this) {
+      return true;
+    } else if (super.equals(other)) {
+      final InstanceOfMVELFilter him = (InstanceOfMVELFilter)other;
+      return this.exact == him.exact && this.cls.equals(him.cls);
+    } else {
+      return false;
+    }
+  }
+
+  @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder(this.getClass().getSimpleName());
     sb.append(" ");

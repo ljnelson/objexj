@@ -87,6 +87,23 @@ public class Split<T> extends Jump<T> {
   }
 
   @Override
+  public int hashCode() {
+    return 37 * super.hashCode() + this.newThreadProgramLocation + (this.relative ? 1 : 0);
+  }
+
+  @Override
+  public boolean equals(final Object other) {
+    if (other == this) {
+      return true;
+    } else if (super.equals(other)) {
+      final Split him = (Split)other;
+      return this.newThreadProgramLocation == him.newThreadProgramLocation && this.relative == him.relative;
+    } else {
+      return false;
+    }
+  }
+
+  @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder(super.toString()).append(", ");
     if (this.relative && this.newThreadProgramLocation >= 0) {

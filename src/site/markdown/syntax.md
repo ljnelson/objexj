@@ -46,17 +46,20 @@ method&mdash;equal to "`fred`":
 
     java.lang.RuntimeException(message == "fred")
 
-### Groups
+<h3 id="#groups">Groups</h3>
 
 A _group_ is one or more patterns surrounded by parentheses.  Groups
-are saved under a one-based index.  Here is a group consisting of a
-single atom that matches instances of `java.lang.RuntimeException`
-whose `message` property is equal to "`fred`".  The group is
-retrievable later under the index `1` (more on this in a moment):
+serve two purposes: they allow composition of patterns, and they also
+serve as capture groups (see [Capture Groups][2]).
+
+Here is a group consisting of a single atom that matches instances of
+`java.lang.RuntimeException` whose `message` property is equal to
+"`fred`".  The group is retrievable later under the index `1` (more on
+this in the [Capture Groups][2] section):
 
     (java.lang.RuntimeException(message == "fred"))
 
-## Concatenation
+### Concatenation
 
 Two patterns may be concatenated into a single pattern by joining them
 together with a solidus (slash) character ('`/`').  The result is a
@@ -67,7 +70,7 @@ by a `java.lang.Exception` instance:
 
     java.lang.RuntimeException/java.lang.Exception
     
-## Alternation
+### Alternation
 
 Two patterns may be alternated by joining them together into a single
 pattern with a vertical bar ('`|`').  Patterns formed in this manner
@@ -77,7 +80,7 @@ that is either a `java.lang.Integer` or a `java.lang.Double`:
 
     java.lang.Integer|java.lang.Double
     
-## Sequences
+### Sequences
 
 A pattern becomes a sequence when any of the following operators is
 appended to it:
@@ -102,5 +105,61 @@ appended to it:
      `java.lang.CharSequence` instance:
      
          java.lang.CharSequence?
+         
+<h2 id="capture_groups">Capture Groups</h2>
+
+A group (see [Groups][3]) is automatically a _capture group_.  If a
+match occurs, the group is "captured" under a numeric index.  Consider
+the following pattern:
+
+    (java.lang.RuntimeException/(java.lang.Exception))
+    
+Capture group `1` above consists of a `RuntimeException` followed by
+an `Exception`.  If a match occurs, then asking the
+`${project.artifactId}` engine to return group `1` will return a
+`List` whose only two elements are these objects.  Asking the engine
+to return group `2` will return a `List` consisting only of the object
+that was matched by the `java.lang.Exception` pattern.
+
+As in most regular expression implementations, group `0` returns the
+whole match.
+
+## Variables
+
+An expression can set an arbitrary variable that can be retrieved by
+name later.  For example, the following atom has an expression that
+sets a variable named `foo` to the value of the particular
+`RuntimeException`'s `message` property:
+
+    java.lang.RuntimeException(foo = message; return true;)
+    
+(The MVEL expression in this case returns `true` so that no further
+conditions are placed on the match.)
+
+## Anchors
+
+### Beginning-of-Input Anchor
+
+A pattern can be _anchored_ to the beginning of the input by beginning
+the pattern with '`^`'.  This anchor may be present only once in a
+pattern string.  Here is an example:
+
+    ^java.lang.RuntimeException
+    
+This pattern matches a `RuntimeException` instance if and only if it
+appears at position `0` in the input `List` being matched.
+
+### End-of-Input Anchor
+
+A pattern can be anchored to the end of the input by ending the
+pattern with '`$`'.  This anchor may be present only once in a pattern
+string.  Here is an example:
+
+    java.lang.RuntimeException$
+    
+This pattern matches a `RuntimeException` instance if and only if it
+appears in the last position of the input `List` being matched.
 
 [1]: http://mvel.codehaus.org/
+[2]: #capture_groups
+[3]: #groups

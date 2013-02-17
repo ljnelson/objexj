@@ -8,18 +8,17 @@ write patterns that match sequences of Java objects.
 
 # Background
 
-Why make this library?  I was looking for a programmatic way to [match
-`Exception` stacks in the same way that we flawed humans do when
-diagnosing errors][3].  Typically we walk the stack and make decisions
-about what kind of problem it represents based on what kinds of
-exceptions we see in what order.  For example, a big complicated
-exception stack that ends with a `PersistenceException` caused by a
-`SQLException` with a particular SQL state tells us pretty
-definitively what happened.  My thought was if I could implement this
-diagnostic activity somehow on top of the actual `Exception`s in the
-stack&mdash;not just the textual representations&mdash;then I could
-come up with a localized error message that was much more informative
-than would otherwise be possible.
+Why make this library?  I was looking for a programmatic way to
+[match `Exception` stacks in the same way that we flawed humans do when diagnosing errors][3].
+Typically we walk the stack and make decisions about what kind of
+problem it represents based on what kinds of exceptions we see in what
+order.  For example, a big complicated exception stack that ends with
+a `PersistenceException` caused by a `SQLException` with a particular
+SQL state tells us pretty definitively what happened.  My thought was
+if I could implement this diagnostic activity somehow on top of the
+actual `Exception`s in the stack&#8212;not just the textual
+representations&#8212;then I could come up with a localized error message
+that was much more informative than would otherwise be possible.
 
 # Giant Shoulders
 
@@ -32,7 +31,13 @@ The syntax used by `${project.artifactId}` is heavily inspired by
 "normal" regular expression syntax.  See the
 [Syntax Guide](syntax.html) for more information.
 
+# API Documentation
+
+The API is fully documented.  Please see the [API documentation][4] to
+get started.
+
 [1]:
 http://blogs.msdn.com/b/ericlippert/archive/2005/11/18/493482.aspx
 [2]: http://swtch.com/~rsc/regexp/
 [3]: http://ljnelson.posterous.com/error-handling-done-right-part-1
+[4]: apidocs/index.html

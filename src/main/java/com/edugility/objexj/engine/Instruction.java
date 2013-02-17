@@ -55,6 +55,16 @@ public abstract class Instruction<T> implements Serializable {
   }
 
   @Override
+  public boolean equals(final Object other) {
+    return other == this || this.getClass().equals(other.getClass());
+  }
+
+  @Override
+  public int hashCode() {
+    return this.getClass().hashCode();
+  }
+
+  @Override
   public String toString() {
     final String simpleName = this.getClass().getSimpleName();
     return String.format("%s%s", simpleName.substring(0, 1).toLowerCase(), simpleName.substring(1));

@@ -187,6 +187,8 @@ public class Pattern<T> {
    * null}
    *
    * @exception IOException if the source code could not be compiled
+   *
+   * @see <a href="../../../../syntax.html">Syntax Guide</a>
    */
   public static final <T> Pattern<T> compile(final String source) throws IOException {
     if (source == null) {

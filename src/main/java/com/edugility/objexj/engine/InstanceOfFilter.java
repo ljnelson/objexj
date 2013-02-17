@@ -79,6 +79,23 @@ public class InstanceOfFilter<T> extends Filter<T> {
   }
 
   @Override
+  public int hashCode() {
+    return this.cls.hashCode();
+  }
+
+  @Override
+  public boolean equals(final Object other) {
+    if (other == this) {
+      return true;
+    } else if (super.equals(other)) {
+      final InstanceOfFilter him = (InstanceOfFilter)other;
+      return this.cls.equals(((InstanceOfFilter)other).cls);
+    } else {
+      return false;
+    }
+  }
+
+  @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder(super.toString());
     if (this.cls != null) {
