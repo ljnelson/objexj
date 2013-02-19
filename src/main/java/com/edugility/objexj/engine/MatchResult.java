@@ -27,7 +27,7 @@ public class MatchResult<T> implements Serializable {
   }
 
   public boolean matches() {
-    return this.lookingAt() && this.thread.atEnd(); // XXX this doesn't work; atEnd() really reports if
+    return this.lookingAt() && this.thread.atEnd();
   }
 
   public boolean lookingAt() {
