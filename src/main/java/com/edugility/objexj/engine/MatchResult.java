@@ -37,7 +37,7 @@ public class MatchResult<T> implements Serializable {
   public List<T> group(final int index) {
     List<T> result = null;
     if (this.thread != null) {
-      result = thread.group(Integer.valueOf(index));
+      result = thread.getGroup(Integer.valueOf(index));
     }
     return result;
   }
@@ -47,7 +47,7 @@ public class MatchResult<T> implements Serializable {
     if (this.thread == null) {
       result = 0;
     } else {
-      result = this.thread.groupCount();
+      result = this.thread.getGroupCount();
     }
     return result;
   }

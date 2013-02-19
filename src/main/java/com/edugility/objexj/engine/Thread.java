@@ -896,7 +896,17 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
     return this.state;
   }
 
-  public final int groupCount() {
+  public final Set<Object> getGroupKeySet() {
+    final Set<Object> returnValue;
+    if (this.captureGroups == null || this.captureGroups.isEmpty()) {
+      returnValue = Collections.emptySet();
+    } else {
+      returnValue = Collections.unmodifiableSet(this.captureGroups.keySet());
+    }
+    return returnValue;
+  }
+
+  public final int getGroupCount() {
     final int result;
     if (this.captureGroups == null || this.captureGroups.isEmpty()) {
       result = 0;
@@ -906,10 +916,10 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
     return result;
   }
 
-  public final List<T> group(final Object index) {
+  public final List<T> getGroup(final Object key) {
     List<T> result = null;
     if (this.captureGroups != null) {
-      final CaptureGroup<T> cg = this.captureGroups.get(index);
+      final CaptureGroup<T> cg = this.captureGroups.get(key);
       if (cg != null) {
         result = cg.getItems();
       }

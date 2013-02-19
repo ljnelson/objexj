@@ -87,4 +87,49 @@ public class TestCasePattern {
     assertSame(third, group1Exception);
   }
 
+  @Test
+  public void testDoubleVariableAssignment() throws IOException {
+    final String sourceCode = "^java.lang.Exception(msg = message; return true)*/(java.lang.Exception(msg = message; message == \"third\"))$";
+    final Pattern<Exception> pattern = Pattern.compile(sourceCode);
+    assertNotNull(pattern);
+    final Program<Exception> program = pattern.getProgram();
+    assertNotNull(program);
+    final List<Exception> input = new ArrayList<Exception>();
+    input.add(new IllegalStateException("first"));
+    input.add(new IllegalArgumentException("second"));
+    final Exception third = new RuntimeException("third");
+    input.add(third);
+    final Matcher<Exception> matcher = pattern.matcher(input);
+    assertNotNull(matcher);
+    assertEquals(2, matcher.groupCount());
+    final List<Exception> group1 = matcher.group(1);
+    assertNotNull(group1);
+    assertEquals(1, group1.size());
+    final Exception group1Exception = group1.get(0);
+    assertSame(third, group1Exception);
+    assertEquals(third.getMessage(), matcher.get("msg"));
+  }
+
+
+  @Test
+  public void testVariables() throws IOException {
+    final String sourceCode = "^java.lang.Exception(msg = message; return true)";
+    final Pattern<Exception> pattern = Pattern.compile(sourceCode);
+    assertNotNull(pattern);
+    final Program<Exception> program = pattern.getProgram();
+    assertNotNull(program);
+    final List<Exception> input = new ArrayList<Exception>();
+    final Exception first = new IllegalStateException("first");
+    input.add(first);
+    final Matcher<Exception> matcher = pattern.matcher(input);
+    assertNotNull(matcher);
+    assertEquals(1, matcher.groupCount());
+    final List<Exception> group1 = matcher.group(0);
+    assertNotNull(group1);
+    assertEquals(1, group1.size());
+    final Exception group1Exception = group1.get(0);
+    assertSame(first, group1Exception);
+    assertEquals(first.getMessage(), matcher.get("msg"));
+  }
+
 }

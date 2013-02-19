@@ -1,7 +1,22 @@
 <!-- -*- markdown -*- -->
-# Usage
+#*
 
-To use the `${project.artifactId}` project, please see the
+Please note that Velocity and Markdown are fundamentally incompatible
+with each other, so some links in this source document can never
+render properly in HTML.  On behalf of the Velocity and Maven
+developers I apologize for being unable to work around these flaws.
+
+*#
+
+Usage
+===
+
+Here's how to use `objexj` in your project.
+
+Add objexj to Your Classpath
+---
+
+To use the `objexj` project, please see the
 [Dependency Information](dependency-info.html) report for full
 details.
 
@@ -12,5 +27,71 @@ In brief, the following dependency in a Maven project will work:
       <artifactId>${project.artifactId}</artifactId>
       <version>${project.version}</version>
     </dependency>
-    
 
+Compile a [Pattern][1]
+---
+
+First, decide on the kind of pattern you want to use.  See the
+[Syntax Guide][2] for help.
+
+Next, you are probably going to match this pattern over an input list
+of a particular kind (say, `Number` or `Exception`).  For this
+example, we'll use `Exception`.
+
+Next, you'll need to [compile that source code into an actual
+`Pattern`][4].  To do this, use the [`Pattern#compile(String)`][4]
+method:
+
+    final Pattern<Exception> p = Pattern.compile("^(java.lang.Exception)");
+    
+The `Pattern` you get back is guaranteed to be non-`null`.
+
+Find Some Input
+---
+
+In this example, we'll build an input `List` of `Exception`s:
+
+    final List<Exception> input = new ArrayList<Exception>();
+    input.add(new Exception("first"));
+    input.add(new Exception("second"));
+    input.add(new Exception("third"));
+
+Acquire a [Matcher][3]
+---
+
+Armed with a compiled `Pattern` and a `List` comprising the input, you
+can now use the `Pattern` to acquire a [`Matcher`][3] that will be
+used to match the input:
+
+    final Matcher<Exception> matcher = p.matcher(input);
+    
+The `Matcher` that is returned is guaranteed to be non-`null`.
+
+Use the Matcher to Apply the Pattern Against the Input
+---
+
+See if the `Matcher` matches the whole input:
+
+    if (matcher.matches()) {
+      // ...
+    }
+    
+Or see if the `Matcher` matches part of the input, starting with
+element `0`:
+
+    if (matcher.lookingAt()) {
+      // ...
+    }
+    
+Get the value of a capture group:
+
+    final List<Exception> group1 = matcher.group(1);
+    
+Get a `List` representing the items that matched:
+
+    final List<Exception> group0 = matcher.group(0);
+
+[1]: apidocs/com/edugility/objexj/Pattern.html
+[2]: syntax.html
+[3]: apidocs/com/edugility/objexj/Matcher.html
+[4]: apidocs/com/edugility/objexj/Pattern.html#compile(String)

@@ -331,6 +331,12 @@ public class TestCasePostfixTokenizer {
     assertNoMoreTokens();
   }
 
+
+  /*
+   * Build methods.
+   */
+
+
   private final void build(final String input) throws IOException {
     assertNotNull(input);
     this.build(new PushbackReader(new StringReader(input)));
@@ -341,6 +347,12 @@ public class TestCasePostfixTokenizer {
     this.pbr = pbr;
     this.pft = new PostfixTokenizer(pbr);
   }
+
+
+  /*
+   * Assert methods.
+   */
+
 
   private final void assertNoMoreTokens() {
     assertFalse(this.pft.hasNext());

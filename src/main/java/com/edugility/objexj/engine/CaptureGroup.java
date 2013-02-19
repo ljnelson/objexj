@@ -67,7 +67,7 @@ public final class CaptureGroup<T> implements Cloneable, Serializable {
     if (this.items == null) {
       return Collections.emptyList();
     } else {
-      return Collections.unmodifiableList(items.subList(this.startIndex, this.endIndex < 0 ? items.size() : this.endIndex));
+      return Collections.unmodifiableList(this.items.subList(this.startIndex, this.endIndex < 0 ? this.items.size() : this.endIndex));
     }
   }
 
