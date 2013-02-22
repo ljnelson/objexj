@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Objexj by ljnelson</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Objexj</h1>
+        <p>Regular expressions for arbitrary Java objects.</p>
+
+        <p class="view"><a href="https://github.com/ljnelson/objexj">View the Project on GitHub <small>ljnelson/objexj</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/ljnelson/objexj/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/ljnelson/objexj/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/ljnelson/objexj">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        
+
+<h1><code>objexj</code></h1>
+
+<h2>Regular Expressions for Java Objects</h2>
+
+<h3>January 16, 2012</h3>
+
+<h3>
+<a href="mailto:ljnelson@gmail.com"></a><a href="mailto:ljnelson@gmail.com">ljnelson@gmail.com</a>
+</h3>
+
+<p><code>objexj</code> is a small project that provides the ability to match <em>input</em>
+(a <code>List</code> of items) against an <em>expression</em>.</p>
+
+<p>That of course is what regular expressions are all about.</p>
+
+<p>The difference here is that you can use any Java <code>Object</code> you want,
+not just characters in a string.</p>
+
+<p>The syntax hews close to Perl-compatible regular expressions, with a
+few modifications.</p>
+
+<p>The underlying machinery is heavily inspired by <a href="https://plus.google.com/116810148281701144465/posts">Russ Cox</a>'s
+excellent paper entitled <a href="http://swtch.com/%7Ersc/regexp/regexp2.html">Regular Expression Matching: the Virtual
+Machine Approach</a>.</p>
+
+<p>This project is in heavy development.</p>
+
+<h3>Sample Code</h3>
+
+<pre><code>@Test
+public void testLastException() throws IOException {
+  final String sourceCode = "^java.lang.Exception*/(java.lang.Exception(message == \"third\"))$";
+  final Pattern&lt;Exception&gt; pattern = Pattern.compile(sourceCode);
+  assertNotNull(pattern);
+
+  final List&lt;Exception&gt; input = new ArrayList&lt;Exception&gt;();
+  input.add(new IllegalStateException("first"));
+  input.add(new IllegalArgumentException("second"));
+  final Exception third = new RuntimeException("third");
+  input.add(third);
+
+  final Matcher&lt;Exception&gt; matcher = pattern.matcher(input);
+  assertNotNull(matcher);
+
+  assertEquals(2, matcher.groupCount());
+
+  final List&lt;Exception&gt; group1 = matcher.group(1);
+  assertNotNull(group1);
+  assertEquals(1, group1.size());
+
+  final Exception group1Exception = group1.get(0);
+  assertSame(third, group1Exception);
+}
+</code></pre>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/ljnelson">ljnelson</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
