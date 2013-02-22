@@ -32,7 +32,7 @@ package com.edugility.objexj.engine;
  * InstructionContext#read() current item} to see if it is {@code null} before
  * proceeding.
  *
- * @author <a href="http://about.me/lairdnelson">Laird Nelson</a>
+ * @author <a href="http://about.me/lairdnelson" target="_parent">Laird Nelson</a>
  */
 public class NotNullMVELFilter<T> extends MVELFilter<T> {
 

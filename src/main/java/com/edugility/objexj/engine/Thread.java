@@ -86,10 +86,10 @@ import java.util.logging.Logger;
  * @param <T> the type of items this {@link Thread} will {@linkplain
  * #read() read}
  *
- * @author <a href="http://about.me/lairdnelson">Laird Nelson</a>
+ * @author <a href="http://about.me/lairdnelson" target="_parent">Laird Nelson</a>
  *
  * @see <a
- * href="http://swtch.com/~rsc/regexp/regexp2.html">R. S. Cox. (2009,
+ * href="http://swtch.com/~rsc/regexp/regexp2.html" target="_parent">R. S. Cox. (2009,
  * December). <span style="font-style: italic;">Regular Expression Matching: the Virtual Machine
  * Approach</span> [Online]. Available:
  * http://swtch.com/~rsc/regexp/regexp2.html</a>

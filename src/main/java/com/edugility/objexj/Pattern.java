@@ -39,7 +39,7 @@ import com.edugility.objexj.parser.Parser;
 /**
  * A regular expression pattern for arbitrary {@link Object}s.
  *
- * @author <a href="http://about.me/lairdnelson">Laird Nelson</a>
+ * @author <a href="http://about.me/lairdnelson" target="_parent">Laird Nelson</a>
  */
 public class Pattern<T> {
 
@@ -188,7 +188,7 @@ public class Pattern<T> {
    *
    * @exception IOException if the source code could not be compiled
    *
-   * @see <a href="../../../../syntax.html">Syntax Guide</a>
+   * @see <a href="../../../../syntax.html" target="_parent">Syntax Guide</a>
    */
   public static final <T> Pattern<T> compile(final String source) throws IOException {
     if (source == null) {

@@ -32,7 +32,7 @@
  * objexj toolkit should focus on the {@code com.edugility.objexj}
  * package instead.
  *
- * @author <a href="http://about.me/lairdnelson">Laird Nelson</a>
+ * @author <a href="http://about.me/lairdnelson" target="_parent">Laird Nelson</a>
  *
  * @see com.edugility.objexj.parser.Parser
  *
