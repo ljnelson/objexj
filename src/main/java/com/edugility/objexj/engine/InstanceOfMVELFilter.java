@@ -40,7 +40,7 @@ import org.mvel2.MVEL;
  * of a specified class before applying further MVEL-based filters to
  * it.
  *
- * @author <a href="mailto:ljnelson@gmail.com">Laird Nelson</a>
+ * @author <a href="http://about.me/lairdnelson">Laird Nelson</a>
  */
 public class InstanceOfMVELFilter<T> extends MVELFilter<T> {
 

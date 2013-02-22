@@ -30,7 +30,7 @@
  * Contains the core APIs intended for use by end users of the objexj
  * toolkit.
  *
- * @author <a href="mailto:ljnelson@gmail.com">Laird Nelson</a>
+ * @author <a href="http://about.me/lairdnelson">Laird Nelson</a>
  *
  * @see com.edugility.objexj.Pattern#compile(String)
  *

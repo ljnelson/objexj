@@ -41,7 +41,7 @@ import com.edugility.objexj.engine.Program;
  *
  * @param <T> the kind of {@link Object} any input consists of
  *
- * @author <a href="mailto:ljnelson@gmail.com">Laird Nelson</a>
+ * @author <a href="http://about.me/lairdnelson">Laird Nelson</a>
  *
  * @see #matches()
  *

@@ -86,7 +86,7 @@ import java.util.logging.Logger;
  * @param <T> the type of items this {@link Thread} will {@linkplain
  * #read() read}
  *
- * @author <a href="mailto:ljnelson@gmail.com">Laird Nelson</a>
+ * @author <a href="http://about.me/lairdnelson">Laird Nelson</a>
  *
  * @see <a
  * href="http://swtch.com/~rsc/regexp/regexp2.html">R. S. Cox. (2009,

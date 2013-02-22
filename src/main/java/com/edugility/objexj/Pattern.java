@@ -39,7 +39,7 @@ import com.edugility.objexj.parser.Parser;
 /**
  * A regular expression pattern for arbitrary {@link Object}s.
  *
- * @author <a href="mailto:ljnelson@gmail.com">Laird Nelson</a>
+ * @author <a href="http://about.me/lairdnelson">Laird Nelson</a>
  */
 public class Pattern<T> {
 
