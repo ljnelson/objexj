@@ -55,10 +55,18 @@ public class MatchResult<T> implements Serializable {
   public Object get(final Object key) {
     Object result = null;
     if (this.thread != null) {
-      final Map<Object, Object> variables = this.thread.getVariables();
+      final Map<?, ?> variables = this.getVariables();
       if (variables != null) {
         result = variables.get(key);
       }
+    }
+    return result;
+  }
+
+  public Map<?, ?> getVariables() {
+    Map<?, ?> result = null;
+    if (this.thread != null) {
+      result = this.thread.getVariables();
     }
     return result;
   }

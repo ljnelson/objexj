@@ -27,7 +27,9 @@
  */
 package com.edugility.objexj;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import com.edugility.objexj.engine.Engine;
 import com.edugility.objexj.engine.MatchResult;
@@ -167,6 +169,28 @@ public class Matcher<T> {
   }
 
   /**
+   * Returns a {@link Map} representing the variables set by this
+   * {@link Matcher} during its execution.
+   *
+   * @return a non-{@code null} {@link Map} of variables
+   */
+  public final Map<?, ?> getVariables() {
+    Map<?, ?> result = null;
+    final MatchResult<T> matchResult = this.getMatchResult();
+    if (matchResult == null) {
+      result = Collections.emptyMap();
+    } else {
+      result = matchResult.getVariables();
+    }
+    if (result == null || result.isEmpty()) {
+      result = Collections.emptyMap();
+    } else {
+      result = Collections.unmodifiableMap(result);
+    }
+    return result;
+  }
+
+  /**
    * Returns the value of the <em>variable</em> indexed under the
    * supplied key, or {@code null} if no such value was ever
    * established.  Variables may be set from within a {@link
@@ -178,12 +202,12 @@ public class Matcher<T> {
    * @return the value of the variable, or {@code null}
    */
   public final Object get(final Object key) {
-    final MatchResult<T> matchResult = this.getMatchResult();
+    final Map<?, ?> variables = this.getVariables();
     final Object result;
-    if (matchResult == null) {
+    if (variables == null) {
       result = null;
     } else {
-      result = matchResult.get(key);
+      result = variables.get(key);
     }
     return result;
   }
