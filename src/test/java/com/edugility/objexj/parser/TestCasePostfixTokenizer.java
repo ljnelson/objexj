@@ -356,6 +356,9 @@ public class TestCasePostfixTokenizer {
    */
 
 
+  /**
+   * @exception IllegalStateException
+   */
   private final void assertNoMoreTokens() {
     assertFalse(this.pft.hasNext());
   }

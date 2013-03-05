@@ -201,8 +201,14 @@ public class Pattern<T> {
    * null}
    *
    * @exception IOException if the source code could not be compiled
+   * because the source code could not be physically read for some
+   * reason
    *
-   * @see <a href="../../../../syntax.html" target="_parent">Syntax Guide</a>
+   * @exception ParseException if the source code could be read but
+   * was syntactically invalid
+   *
+   * @see <a href="../../../../syntax.html" target="_parent">Syntax
+   * Guide</a>
    */
   public static final <T> Pattern<T> compile(final String source) throws IOException, ParseException {
     if (source == null) {

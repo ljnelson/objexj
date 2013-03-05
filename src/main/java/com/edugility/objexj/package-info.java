@@ -30,6 +30,12 @@
  * Contains the core APIs intended for use by end users of the objexj
  * toolkit.
  *
+ * <p>The core API of the objexj toolkit consists of the {@link
+ * com.edugility.objexj.Pattern} class and the {@link
+ * com.edugility.objexj.Matcher} class, instances of which are
+ * produced by the {@link com.edugility.objexj.Pattern#matcher(List)}
+ * method.</p>
+ *
  * @author <a href="http://about.me/lairdnelson" target="_parent">Laird Nelson</a>
  *
  * @see com.edugility.objexj.Pattern#compile(String)

@@ -39,9 +39,18 @@ import com.edugility.objexj.engine.Program;
  * An object that matches a {@link Pattern} against a {@link List} of
  * items (the <em>input</em>).
  *
+ * <p>{@link Matcher}s are produced by the {@link
+ * Pattern#matcher(List)} method.  Once a {@link Matcher} has been
+ * produced it stores results about any match that might have
+ * occurred.</p>
+ *
  * @param <T> the kind of {@link Object} any input consists of
  *
  * @author <a href="http://about.me/lairdnelson" target="_parent">Laird Nelson</a>
+ *
+ * @see Pattern
+ *
+ * @see Pattern#matcher(List)
  *
  * @see #matches()
  *
@@ -53,6 +62,8 @@ public class Matcher<T> {
    * The {@link Pattern} that this {@link Matcher} is going to apply.
    * This field is never {@code null}.
    *
+   * @see Pattern
+   *
    * @see #getPattern()
    *
    * @see #Matcher(Pattern, List)
@@ -60,8 +71,8 @@ public class Matcher<T> {
   private final Pattern<T> pattern;
 
   /**
-   * The {@link List} of items against which a match will be
-   * attempted.  This field may be {@code null}.
+   * The {@link List} of items against which a match will be attempted
+   * (the <em>input</em>).  This field may be {@code null}.
    *
    * @see #getInput()
    */
@@ -96,13 +107,18 @@ public class Matcher<T> {
   }
 
   /**
-   * Returns {@code true} if this {@link Matcher} matches the entire
+   * Returns {@code true} if this {@link Matcher} matches the <em>entire</em>
    * input against its {@linkplain #getPattern() affiliated
    * <tt>Pattern</tt>}.
    *
-   * @return {@code true} if this {@link Matcher} matches the entire
-   * input against its {@linkplain #getPattern() affiliated
-   * <tt>Pattern</tt>}; {@code false} otherwise
+   * <p>In many cases the {@link #lookingAt()} method is more
+   * suitable.</p>
+   *
+   * @return {@code true} if this {@link Matcher} matches the
+   * <em>entire</em> input against its {@linkplain #getPattern()
+   * affiliated <tt>Pattern</tt>}; {@code false} otherwise
+   *
+   * @see #lookingAt()
    */
   public final boolean matches() {
     final MatchResult<T> matchResult = this.getMatchResult();
@@ -115,10 +131,14 @@ public class Matcher<T> {
    * Matcher}'s {@linkplain #getPattern() affiliated
    * <tt>Pattern</tt>}.
    *
+   * <p>Sometimes the {@link #matches()} method is more suitable.</p>
+   *
    * @return {@code true} if a <em>prefix</em> of this {@link
    * Matcher}'s {@linkplain #getInput() input} matches this {@link
    * Matcher}'s {@linkplain #getPattern() affiliated
    * <tt>Pattern</tt>}; {@code false} otherwise
+   *
+   * @see #matches()
    */
   public final boolean lookingAt() {
     final MatchResult<T> matchResult = this.getMatchResult();
@@ -133,6 +153,9 @@ public class Matcher<T> {
    *
    * @return the total number of capture groups matched by this {@link
    * Matcher}; never less than {@code 0}
+   *
+   * @see <a href="../../../../syntax.html" target="_parent">Syntax
+   * Guide</a>
    */
   public final int groupCount() {
     final MatchResult<T> matchResult = this.getMatchResult();
@@ -156,6 +179,9 @@ public class Matcher<T> {
    * @return a {@link List} of items (a subset of the {@linkplain
    * #getInput() input}), or {@code null} if no such capture group was
    * ever identified
+   *
+   * @see <a href="../../../../syntax.html" target="_parent">Syntax
+   * Guide</a>
    */
   public final List<T> group(final int index) {
     final MatchResult<T> matchResult = this.getMatchResult();
@@ -170,9 +196,13 @@ public class Matcher<T> {
 
   /**
    * Returns a {@link Map} representing the variables set by this
-   * {@link Matcher} during its execution.
+   * {@link Matcher} during its execution.  Variables may be set from
+   * within a {@link Pattern}'s parsed expression.
    *
    * @return a non-{@code null} {@link Map} of variables
+   *
+   * @see <a href="../../../../syntax.html" target="_parent">Syntax
+   * Guide</a>
    */
   public final Map<?, ?> getVariables() {
     Map<?, ?> result = null;
@@ -200,6 +230,9 @@ public class Matcher<T> {
    * so then {@code null} will be returned
    *
    * @return the value of the variable, or {@code null}
+   *
+   * @see <a href="../../../../syntax.html" target="_parent">Syntax
+   * Guide</a>
    */
   public final Object get(final Object key) {
     final Map<?, ?> variables = this.getVariables();
@@ -232,18 +265,6 @@ public class Matcher<T> {
     return this.input;
   }
 
-  private final Engine<T> getEngine() {
-    final Pattern<T> pattern = this.getPattern();
-    assert pattern != null;
-    return pattern.getEngine();
-  }
-
-  private final Program<T> getProgram() {
-    final Pattern<T> pattern = this.getPattern();
-    assert pattern != null;
-    return pattern.getProgram();
-  }
-  
   /**
    * Lazily initializes this {@link Matcher}'s associated {@link
    * MatchResult}, if necessary, and returns it.
@@ -253,9 +274,11 @@ public class Matcher<T> {
    */
   private final MatchResult<T> getMatchResult() {
     if (this.matchResult == null) {
-      final Program<T> program = this.getProgram();
+      final Pattern<T> pattern = this.getPattern();
+      assert pattern != null;
+      final Program<T> program = pattern.getProgram();
       assert program != null;
-      final Engine<T> engine = this.getEngine();
+      final Engine<T> engine = pattern.getEngine();
       assert engine != null;
       this.matchResult = engine.run(program, this.input);
     }

@@ -45,20 +45,61 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * A {@link LinkedList} of {@link Instruction}s that can be
+ * {@linkplain Engine#run(Program, List) run} by an {@link Engine} via
+ * a {@link com.edugility.objexj.engine.Thread}.
+ *
+ * <a href="http://about.me/lairdnelson" target="_parent">Laird
+ * Nelson</a>
+ */
 public final class Program<T> extends LinkedList<Instruction<T>> {
 
+  /**
+   * The version of this class for {@linkplain Serializable
+   * serialization purposes}.
+   */
   private static final long serialVersionUID = 1L;
 
+  /**
+   * The platform-specific line separator.  This field is never {@code
+   * null}.
+   */
   private static final String LS = System.getProperty("line.separator", "\n");
 
+  /**
+   * The name of this {@link Program}.  This field may be {@code
+   * null}.
+   *
+   * @see #getName()
+   *
+   * @see #setName(String)
+   */
   private String name;
 
+  /**
+   * The source code for this {@link Program}.  This field may be
+   * {@code null}.
+   *
+   * @see #getSource()
+   *
+   * @see #setSource(Object)
+   */
   private Object source;
 
+  /**
+   * Creates a new {@link Program}.
+   */
   public Program() {
     super();
   }
 
+  /**
+   * Creates a new {@link Program}.
+   *
+   * @param instruction an {@link Instruction}; may be {@code null} in
+   * which case it is ignored
+   */
   public Program(final Instruction<T> instruction) {
     super();
     if (instruction != null) {
@@ -66,6 +107,12 @@ public final class Program<T> extends LinkedList<Instruction<T>> {
     }
   }
 
+  /**
+   * Creates a new {@link Program}.
+   *
+   * @param instructions a {@link Collection} of {@link Instruction}s
+   * that will be {@linkplain #addAll(Collection) added}
+   */
   public Program(final Collection<? extends Instruction<T>> instructions) {
     super();
     if (instructions != null) {
@@ -73,10 +120,21 @@ public final class Program<T> extends LinkedList<Instruction<T>> {
     }
   }
 
+  /**
+   * Returns the name of this {@link Program}.  This method may return
+   * {@code null}.
+   *
+   * @return the name of this {@link Program}, or {@code null}
+   */
   public String getName() {
     return this.name;
   }
 
+  /**
+   * Sets the name of this {@link Program}.
+   *
+   * @param name the new name; may be {@code null}
+   */
   public void setName(final String name) {
     this.name = name;
   }
@@ -94,6 +152,13 @@ public final class Program<T> extends LinkedList<Instruction<T>> {
     return this.source;
   }
 
+  /**
+   * Sets the source from which this {@link Program} was compiled,
+   * provided that this {@link Program} has not yet had its source
+   * set.
+   * 
+   * @param source the new source; may be {@code null}
+   */
   public void setSource(final Object source) {
     if (source == null) {
       throw new IllegalArgumentException("source", new NullPointerException("source"));
@@ -105,14 +170,32 @@ public final class Program<T> extends LinkedList<Instruction<T>> {
     this.source = source;
   }
 
+  /**
+   * Returns {@code true} if the supplied {@code programCounter} is
+   * valid&mdash;that is, greater than or equal to {@code 0} and less
+   * than {@linkplain #size() the return value of the
+   * <code>size()</code> method}.
+   * 
+   * @return {@code true} if the supplied {@link programCounter} is
+   * valid; {@code false} otherwise
+   */
   public final boolean isValidProgramCounter(final int programCounter) {
     return programCounter >= 0 && programCounter < this.size();
   }
 
   /**
+   * Returns the {@link Instruction} found at the supplied {@code
+   * index}, or {@code null} if there is no such {@link Instruction}.
+   *
+   * @param index the zero-based index under which an {@link
+   * Instruction} will hopefully be found
+   *
+   * @return an {@link Instruction} indexed under the supplied {@code
+   * index}, or {@code null}
+   * 
    * @exception InvalidProgramCounterException if {@code index} is
    * less than {@code 0} or greater than or equal to {@linkplain
-   * #size() this <tt>Program</tt>'s size}
+   * #size() this <code>Program</code>'s size}
    */
   @Override
   public final Instruction<T> get(final int index) {

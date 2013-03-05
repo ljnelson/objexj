@@ -30,6 +30,7 @@
  * Contains the inner workings of the objexj toolkit.  End users
  * should focus on the {@code com.edugility.objexj} package instead.
  *
- * @author <a href="http://about.me/lairdnelson" target="_parent">Laird Nelson</a>
+ * @author <a href="http://about.me/lairdnelson"
+ * target="_parent">Laird Nelson</a>
  */
 package com.edugility.objexj.engine;

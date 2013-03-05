@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
 
+import java.text.ParsePosition;
 import java.text.ParseException;
 
 import java.util.ArrayDeque;
@@ -45,7 +46,7 @@ import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PostfixTokenizer implements Iterator<Token> {
+public class PostfixTokenizer extends ParsePosition implements Iterator<Token> {
 
   private static final long serialVersionUID = 1L;
 
@@ -70,7 +71,7 @@ public class PostfixTokenizer implements Iterator<Token> {
   private transient final Deque<Token> stack;
 
   public PostfixTokenizer(final PushbackReader reader) throws IOException, ParseException {
-    super();
+    super(0);
     this.logger = Logger.getLogger(this.getClass().getName());
     assert this.logger != null;
     if (reader == null) {
@@ -85,8 +86,18 @@ public class PostfixTokenizer implements Iterator<Token> {
     this.prime();
   }
 
-  private static final String buildExceptionMessage(final Reader r, final int c, final int position) {
-    return String.format("Unexpected character (%c) at position %d in Reader %s", c, position, r);
+  @Override
+  public int getIndex() {
+    return this.position;
+  }
+
+  @Override
+  public void setIndex(final int index) {
+    this.position = index;
+  }
+
+  private final String buildExceptionMessage(final int c) {
+    return String.format("Unexpected character (%c) at position %d in Reader %s", c, this.getErrorIndex(), this.reader);
   }
 
   private final void prime() throws IOException, ParseException {
@@ -99,8 +110,9 @@ public class PostfixTokenizer implements Iterator<Token> {
     int c = -1;
 
     READ_LOOP:
-    for (; (c = this.read()) != -1; this.position++) {
+    for (; (c = this.read()) != -1; this.setIndex(this.getIndex() + 1)) {
       switch (this.state) {
+
 
         /*
          * In this state switch block, "forwarding" states (states
@@ -135,7 +147,8 @@ public class PostfixTokenizer implements Iterator<Token> {
             sb.append((char)c);
             this.state = State.FILTER;
           } else {
-            throw new ParseException(buildExceptionMessage(this.reader, c, this.position), this.position);
+            this.setErrorIndex(this.getIndex());
+            throw new ParseException(buildExceptionMessage(c), this.getIndex());
           }
           break;
         }
@@ -223,7 +236,8 @@ public class PostfixTokenizer implements Iterator<Token> {
           this.output.add(this.stack.pop());
         }
         if (this.stack.isEmpty()) {
-          throw new ParseException("Mismatched parentheses", this.position);
+          this.setErrorIndex(this.getIndex());
+          throw new ParseException("Mismatched parentheses", this.getIndex());
         }
 
         assert Token.Type.START_GROUP == this.stack.peek().getType();
@@ -258,7 +272,8 @@ public class PostfixTokenizer implements Iterator<Token> {
           sb.append((char)c);
           this.state = State.FILTER;
         } else {
-          throw new ParseException(buildExceptionMessage(this.reader, c, this.position), this.position);
+          this.setErrorIndex(this.getIndex());
+          throw new ParseException(buildExceptionMessage(c), this.getIndex());
         }
         break;
 
@@ -319,10 +334,12 @@ public class PostfixTokenizer implements Iterator<Token> {
             } else if (Character.isJavaIdentifierStart(c)) {
               sb.append((char)c);
             } else {
-              throw new ParseException(buildExceptionMessage(this.reader, c, this.position), this.position);
+              this.setErrorIndex(this.getIndex());
+              throw new ParseException(buildExceptionMessage(c), this.getIndex());
             }
           } else {
-            throw new ParseException(buildExceptionMessage(this.reader, c, this.position), this.position);
+            this.setErrorIndex(this.getIndex());
+            throw new ParseException(buildExceptionMessage(c), this.getIndex());
           }
           break;
         }
@@ -351,7 +368,8 @@ public class PostfixTokenizer implements Iterator<Token> {
             this.state = State.END_OF_FILTER;
             break READ_LOOP;
           } else if (parenCount < 0) {
-            throw new ParseException("Mismatched parentheses", this.position);
+            this.setErrorIndex(this.getIndex());
+            throw new ParseException("Mismatched parentheses", this.getIndex());
           } else {
             sb.append((char)c);
           }
@@ -396,7 +414,8 @@ public class PostfixTokenizer implements Iterator<Token> {
           if (Character.isWhitespace(c)) {
             continue READ_LOOP;
           } else {
-            throw new ParseException(buildExceptionMessage(this.reader, c, this.position), this.position);
+            this.setErrorIndex(this.getIndex());
+            throw new ParseException(buildExceptionMessage(c), this.getIndex());
           }
 
         }
@@ -446,7 +465,7 @@ public class PostfixTokenizer implements Iterator<Token> {
         case '/': // catenation
         case ',': // catenation
         case '|': // alternation
-          this.reader.unread(c);
+          this.unread(c);
           this.state = State.OPERATOR;
           break;
 
@@ -454,7 +473,8 @@ public class PostfixTokenizer implements Iterator<Token> {
           if (Character.isWhitespace(c)) {
             continue READ_LOOP;
           } else {
-            throw new ParseException(buildExceptionMessage(this.reader, c, this.position), this.position);
+            this.setErrorIndex(this.getIndex());
+            throw new ParseException(buildExceptionMessage(c), this.getIndex());
           }
         }
         break;
@@ -465,7 +485,8 @@ public class PostfixTokenizer implements Iterator<Token> {
         //
       case END:
         if (!Character.isWhitespace(c)) {
-          throw new ParseException(buildExceptionMessage(this.reader, c, this.position), this.position);
+          this.setErrorIndex(this.getIndex());
+          throw new ParseException(buildExceptionMessage(c), this.getIndex());
         }
         break;
 
@@ -473,7 +494,8 @@ public class PostfixTokenizer implements Iterator<Token> {
         // DEFAULT
         //
       default:
-        throw new ParseException("Unexpected state: " + this.state, this.position);
+        this.setErrorIndex(this.getIndex());
+        throw new ParseException("Unexpected state: " + this.state, this.getIndex());
       }
     } // READ_LOOP
 
@@ -499,7 +521,8 @@ public class PostfixTokenizer implements Iterator<Token> {
         assert type != null;
 
         if (type == Token.Type.START_GROUP || type == Token.Type.STOP_GROUP) {
-          throw new ParseException("Mismatched parentheses", this.position);
+          this.setErrorIndex(this.getIndex());
+          throw new ParseException("Mismatched parentheses", this.getIndex());
         }
         this.output.add(this.stack.pop());
       }
@@ -607,6 +630,18 @@ public class PostfixTokenizer implements Iterator<Token> {
     return token;
   }
 
+  /**
+   * Asserts that the supplied {@link Token} {@linkplain
+   * Token#isOperator() is an operator}.  Returns {@code true} if this
+   * is true; throws an {@link IllegalArgumentException} if this is
+   * not.
+   *
+   * @return {@code true} when invoked
+   *
+   * @exception IllegalArgumentException if {@code token} is {@code
+   * null} or if its {@link Token#isOperator() isOperator()} method
+   * returns {@code false}
+   */
   private final boolean assertIsOperator(final Token token) {
     if (token == null) {
       throw new IllegalArgumentException("token", new NullPointerException("token"));
@@ -619,15 +654,22 @@ public class PostfixTokenizer implements Iterator<Token> {
 
   private final int read() throws IOException {
     final int c = this.reader.read();
-    ++this.position;
+    this.setIndex(this.getIndex() + 1);
     return c;
   }
 
   private final int unread(final int c) throws IOException {
     this.reader.unread(c);
-    return --this.position;
+    final int newPosition = this.getIndex() - 1;
+    this.setIndex(newPosition);
+    return newPosition;
   }
 
+  /**
+   * @exception IllegalStateException if a prior invocation of {@link
+   * #next()} caused an error; see {@linkplain Throwable#getCause()
+   * its cause} for the root problem
+   */
   @Override
   public boolean hasNext() {
     if (this.error != null) {
@@ -647,10 +689,6 @@ public class PostfixTokenizer implements Iterator<Token> {
     if (this.output.isEmpty()) {
       try {
         this.prime();
-      } catch (final RuntimeException ise) {
-        this.error = ise;
-        this.state = State.INVALID;
-        this.output.clear();
       } catch (final Exception other) {
         this.error = other;
         this.state = State.INVALID;

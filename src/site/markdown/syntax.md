@@ -35,14 +35,14 @@ are not equal to `java.lang.RuntimeException`.
 
 #### Expressions
 
-Each atom can be augmented with an MVEL[1] expression that forms the
+Each atom can be augmented with an [MVEL][1] expression that forms the
 _condition_. The condition is separated from the atom itself by
 parentheses.
 
 For example, the following atom and condition matches any object that
 both is an instance of `java.lang.RuntimeException` and has a
-`message` property value&mdash;as returned by its `getMessage()`
-method&mdash;equal to "`fred`":
+`message` property value&#8212;as returned by its `getMessage()`
+method&#8212;equal to "`fred`":
 
     java.lang.RuntimeException(message == "fred")
 
@@ -115,7 +115,8 @@ the following pattern:
     (java.lang.RuntimeException/(java.lang.Exception))
     
 Capture group `1` above consists of a `RuntimeException` followed by
-an `Exception`.  If a match occurs, then asking the
+an `Exception` (capture group `0` is always present, and always
+captures the entire match).  If a match occurs, then asking the
 `${project.artifactId}` engine to return group `1` will return a
 `List` whose only two elements are these objects.  Asking the engine
 to return group `2` will return a `List` consisting only of the object
@@ -126,15 +127,21 @@ whole match.
 
 ## Variables
 
-An expression can set an arbitrary variable that can be retrieved by
-name later.  For example, the following atom has an expression that
-sets a variable named `foo` to the value of the particular
-`RuntimeException`'s `message` property:
+An expression can set an arbitrary (global) variable that can be
+retrieved by name later.  For example, the following atom has an
+expression that sets a variable named `foo` to the value of the
+particular `RuntimeException`'s `message` property:
 
     java.lang.RuntimeException(foo = message; return true;)
     
 (The MVEL expression in this case returns `true` so that no further
 conditions are placed on the match.)
+
+Variables are almost like capture groups but are inherently scalar and
+thus do not necessarily return `List`s, and when specified in
+different parts of the overall pattern may overwrite previous
+assignments.  They are good for simple, one-shot assignments that
+capture a particular portion of a single object matched by an atom.
 
 ## Anchors
 
