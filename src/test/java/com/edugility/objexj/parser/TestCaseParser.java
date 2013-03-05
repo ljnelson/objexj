@@ -34,6 +34,8 @@ import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.StringReader;
 
+import java.text.ParseException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -80,7 +82,7 @@ public class TestCaseParser {
   }
 
   @Test
-  public void testParseSimpleCatenation() throws IOException {
+  public void testParseSimpleCatenation() throws IOException, ParseException {
     final PushbackReader reader = new PushbackReader(new StringReader("java.lang.Character(charValue() == 'a')/java.lang.Character(charValue() == 'b')"));
     final PostfixTokenizer tokenizer = new PostfixTokenizer(reader);
     final Parser parser = new Parser();
@@ -92,7 +94,7 @@ public class TestCaseParser {
   }
 
   @Test
-  public void testParseLongCatenation() throws IOException {
+  public void testParseLongCatenation() throws IOException, ParseException {
     final StringBuilder sb = new StringBuilder();
     sb.append("java.lang.Character(charValue() == 'a')/");
     sb.append("java.lang.Character(charValue() == 'b')/");
@@ -131,7 +133,7 @@ public class TestCaseParser {
   }
 
   @Test
-  public void testParseSimpleAlternation() throws IOException {
+  public void testParseSimpleAlternation() throws IOException, ParseException {
     final PushbackReader reader = new PushbackReader(new StringReader("java.lang.Character(charValue() == 'a')|java.lang.Character(charValue() == 'b')"));
     final PostfixTokenizer tokenizer = new PostfixTokenizer(reader);
     final Parser parser = new Parser();
@@ -143,7 +145,7 @@ public class TestCaseParser {
   }
 
   @Test
-  public void testParseLongAlternation() throws IOException {
+  public void testParseLongAlternation() throws IOException, ParseException {
     final StringBuilder sb = new StringBuilder();
     sb.append("java.lang.Character(charValue() == 'a')|");
     sb.append("java.lang.Character(charValue() == 'b')|");
@@ -161,7 +163,7 @@ public class TestCaseParser {
   }
 
   @Test
-  public void testCombinationCatenationAndAlternation() throws IOException {
+  public void testCombinationCatenationAndAlternation() throws IOException, ParseException {
     final StringBuilder sb = new StringBuilder();
     sb.append("java.lang.Character(charValue() == 'a')/"); // catenation
     sb.append("java.lang.Character(charValue() == 'b')|"); // alternation
@@ -178,7 +180,7 @@ public class TestCaseParser {
   }
 
   @Test
-  public void testEndInput() throws IOException {
+  public void testEndInput() throws IOException, ParseException {
     final StringBuilder sb = new StringBuilder();
     sb.append("^java.lang.Character(charValue() == 'a')$");
     final String source = sb.toString();
@@ -193,7 +195,7 @@ public class TestCaseParser {
   }
 
   @Test
-  public void testExactMatch() throws IOException {
+  public void testExactMatch() throws IOException, ParseException {
     final StringBuilder sb = new StringBuilder();
     sb.append("^=java.lang.Character(charValue() == 'a')");
     final String source = sb.toString();
@@ -208,7 +210,7 @@ public class TestCaseParser {
   }
 
   @Test
-  public void testBeginInputFollowedByFilter() throws IOException {
+  public void testBeginInputFollowedByFilter() throws IOException, ParseException {
     final StringBuilder sb = new StringBuilder();
     sb.append("^java.lang.Character(charValue() == 'a')");
     final String source = sb.toString();
@@ -223,7 +225,7 @@ public class TestCaseParser {
   }
 
   @Test
-  public void testOneOrMoreFilter() throws IOException {
+  public void testOneOrMoreFilter() throws IOException, ParseException {
     final StringBuilder sb = new StringBuilder();
     sb.append("^java.lang.Character(charValue() == 'a')+");
     final String source = sb.toString();
@@ -238,7 +240,7 @@ public class TestCaseParser {
   }
 
   @Test
-  public void testZeroOrMoreFilter() throws IOException {
+  public void testZeroOrMoreFilter() throws IOException, ParseException {
     final StringBuilder sb = new StringBuilder();
     sb.append("^java.lang.Character(charValue() == 'a')*");
     final String source = sb.toString();
@@ -253,7 +255,7 @@ public class TestCaseParser {
   }
 
   @Test
-  public void testZeroOrMoreFilterConcatenated() throws IOException {
+  public void testZeroOrMoreFilterConcatenated() throws IOException, ParseException {
     final StringBuilder sb = new StringBuilder();
     sb.append("^java.lang.Character(charValue() == 'a')*/java.lang.Character");
     final String source = sb.toString();

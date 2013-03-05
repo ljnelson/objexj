@@ -35,18 +35,72 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * An instruction {@linkplain #execute(InstructionContext) run} in the
+ * {@linkplain InstructionContext context} of a {@linkplain
+ * com.edugility.objexj.engine.Thread thread} of execution in an
+ * {@code objexj} {@linkplain Engine virtual machine}.
+ *
+ * @author <a href="http://about.me/lairdnelson">Laird Nelson</a>
+ *
+ * @see Engine
+ *
+ * @see InstructionContext
+ *
+ * @see Thread
+ */
 public abstract class Instruction<T> implements Serializable {
 
+  /**
+   * The version of this class for serialization purposes.
+   *
+   * @see Serializable
+   */
   private static final long serialVersionUID = 1L;
 
+  /**
+   * A {@link Pattern} useful in parsing an {@link Instruction} from
+   * its textual representation.  This field is never {@code null}.
+   *
+   * @see #valueOf(String)
+   */
   private static final Pattern LINE_PATTERN = Pattern.compile("^([^\\s]+)(?:\\s+?(.*))?$");
 
+  /**
+   * Creates a new {@link Instruction}.
+   */
   protected Instruction() {
     super();
   }
 
+  /**
+   * Executes this {@link Instruction} in the context of the supplied
+   * {@link InstructionContext}.
+   *
+   * @param context the {@link InstructionContext} in effect; must not
+   * be {@code null}
+   *
+   * @exception IllegalArgumentException if {@code context} is {@code
+   * null}
+   */
   public abstract void execute(final InstructionContext<T> context);
 
+  /**
+   * Loads a {@link Class}.  This implementation uses the {@linkplain
+   * java.lang.Thread#getContextClassLoader() context classloader}.
+   *
+   * @param className the name of the class to load; must not be
+   * {@code null}
+   *
+   * @return the loaded {@link Class}; never {@code null}
+   *
+   * @exception IllegalArgumentException if {@code className} is
+   * {@code null}
+   *
+   * @exception ClassNotFoundException if a {@link Class}
+   * corresponding to the supplied {@code className} parameter could
+   * not be found
+   */
   protected Class<?> loadClass(final String className) throws ClassNotFoundException {
     if (className == null) {
       throw new IllegalArgumentException("className", new NullPointerException("className"));
@@ -54,16 +108,43 @@ public abstract class Instruction<T> implements Serializable {
     return java.lang.Thread.currentThread().getContextClassLoader().loadClass(className);
   }
 
+  /**
+   * Checks to see if the supplied {@link Object} is equal to this
+   * {@link Instruction}.  This implementation returns {@code true} if
+   * and only if the supplied {@link Object} is non-{@code null} and
+   * has a {@link Object#getClass() Class} that is {@linkplain
+   * Class#equals(Object) equal to} this {@link Instruction}'s {@link
+   * Object#getClass() Class}.
+   *
+   * @param other the {@link Object} to test; may be {@code null}
+   *
+   * @return {@code true} if the supplied {@link Object} is equal to
+   * this {@link Instruction}; {@code false} otherwise
+   */
   @Override
   public boolean equals(final Object other) {
     return other == this || this.getClass().equals(other.getClass());
   }
 
+  /**
+   * Returns a hashcode for this {@link Instruction}.  This
+   * implementation returns the hashcode of this {@link Instruction}'s
+   * {@link Object#getClass() Class}.
+   *
+   * @return a hashcode for this {@link Instruction}
+   */
   @Override
   public int hashCode() {
     return this.getClass().hashCode();
   }
 
+  /**
+   * Returns a non-{@code null} {@link String} representation of this
+   * {@link Instruction}.
+   *
+   * @return a non-{@code null} {@link String} representation of this
+   * {@link Instruction}
+   */
   @Override
   public String toString() {
     final String simpleName = this.getClass().getSimpleName();
@@ -76,6 +157,36 @@ public abstract class Instruction<T> implements Serializable {
    */
 
 
+  /**
+   * Parses the supplied {@code line} and returns a new {@link
+   * Instruction} instance appropriate for this input.
+   *
+   * @param line the {@link String} to parse; must not be {@code null}
+   *
+   * @return a new {@link Instruction} instance; never {@code null}
+   *
+   * @exception IllegalArgumentException if {@code line} is {@code
+   * null} or unparseable
+   *
+   * @exception ClassNotFoundException if a class corresponding to a
+   * portion of the supplied {@code line} could not be found
+   *
+   * @exception IllegalAccessException if a new {@link Instruction}
+   * instance could not be created because its constructor was found
+   * but could not be called due to access restrictions
+   *
+   * @exception InstantiationException if a new {@link Instruction}
+   * instance could not be created because the constructor could not
+   * be called
+   *
+   * @exception InvocationTargetException if a new {@link Instruction}
+   * instance could not be created becase the invocation of its
+   * constructor threw an {@link Exception}
+   *
+   * @exception NoSuchMethodException if a new {@link Instruction}
+   * instance could not be created because its constructor could not
+   * be found
+   */
   public static final <T> Instruction<T> valueOf(final String line) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
     if (line == null) {
       throw new IllegalArgumentException("line", new NullPointerException("line"));

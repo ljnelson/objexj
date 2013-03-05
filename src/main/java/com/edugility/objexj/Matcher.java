@@ -244,6 +244,13 @@ public class Matcher<T> {
     return pattern.getProgram();
   }
   
+  /**
+   * Lazily initializes this {@link Matcher}'s associated {@link
+   * MatchResult}, if necessary, and returns it.
+   *
+   * @return a {@link MatchResult}, or {@code null} if there was no
+   * match
+   */
   private final MatchResult<T> getMatchResult() {
     if (this.matchResult == null) {
       final Program<T> program = this.getProgram();

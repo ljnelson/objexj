@@ -328,6 +328,7 @@
     <maven.site.deploy.skip>true</maven.site.deploy.skip>
 
     <!-- maven-javadoc-plugin Properties -->
+    <bottom><![CDATA[Copyright &copy; ${project.inceptionYear}&ndash;{currentYear}, <a href="http://about.me/lairdnelson" target="_parent">Laird Nelson</a>. All rights reserved.]]></bottom>
     <detectLinks>false</detectLinks>
     <links>http://download.oracle.com/javaee/6/api/</links>
     <sourcetab>2</sourcetab>

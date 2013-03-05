@@ -29,6 +29,8 @@ package com.edugility.objexj.engine;
 
 import java.io.IOException;
 
+import java.text.ParseException;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -46,7 +48,7 @@ public class TestCaseEngine {
   }
 
   @Test
-  public void testSimpleMatch() throws IOException {
+  public void testSimpleMatch() throws IOException, ParseException {
     final Engine<Character> engine = new Engine<Character>();
     final String sourceCode = "^java.lang.Character(charValue() == 'a')/java.lang.Character(charValue() == 'b')/java.lang.Character(charValue() == 'c')";
     final Parser parser = new Parser();

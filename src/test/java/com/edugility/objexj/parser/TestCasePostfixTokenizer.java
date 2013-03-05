@@ -31,6 +31,8 @@ import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.StringReader;
 
+import java.text.ParseException;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -74,7 +76,7 @@ public class TestCasePostfixTokenizer {
   }
 
   @Test
-  public void testZeroOrMoreInRepresentativeInput() throws IOException {
+  public void testZeroOrMoreInRepresentativeInput() throws IOException, ParseException {
     build("^java.lang.Character(charValue() == 'a')*/java.lang.Character");
     
     assertNextIs(BEGIN_ATOM);
@@ -88,7 +90,7 @@ public class TestCasePostfixTokenizer {
   }
 
   @Test
-  public void testSaving() throws IOException {
+  public void testSaving() throws IOException, ParseException {
     build("abc/(def)");
 
     assertNextIs(BEGIN_ATOM);
@@ -108,7 +110,7 @@ public class TestCasePostfixTokenizer {
   }
 
   @Test
-  public void testInitialCaret() throws IOException {
+  public void testInitialCaret() throws IOException, ParseException {
     build("^");
 
     assertNextIs(BEGIN_ATOM);
@@ -118,34 +120,34 @@ public class TestCasePostfixTokenizer {
   }
 
   @Test(expected = IllegalStateException.class)
-  public void testStupidDoubleCaret() throws IOException {
+  public void testStupidDoubleCaret() throws IOException, ParseException {
     build("^^");
     assertNextIs(BEGIN_ATOM);
     this.pft.hasNext(); // will throw IllegalStateException
   }
 
-  @Test(expected = IllegalStateException.class)
-  public void testInitialConcatenationIsImpossible() throws IOException {
+  @Test(expected = ParseException.class)
+  public void testInitialConcatenationIsImpossible() throws IOException, ParseException {
     final PushbackReader pbr = new PushbackReader(new StringReader("/"));
     try {
-      final PostfixTokenizer postfixTokenizer = new PostfixTokenizer(pbr); // will throw IllegalStateException
+      final PostfixTokenizer postfixTokenizer = new PostfixTokenizer(pbr); // will throw ParseException
     } finally {
       pbr.close();
     }
   }
 
-  @Test(expected = IllegalStateException.class)
-  public void testInitialAlternationIsImpossible() throws IOException {
+  @Test(expected = ParseException.class)
+  public void testInitialAlternationIsImpossible() throws IOException, ParseException {
     final PushbackReader pbr = new PushbackReader(new StringReader("|"));
     try {
-      final PostfixTokenizer postfixTokenizer = new PostfixTokenizer(pbr); // will throw IllegalStateException
+      final PostfixTokenizer postfixTokenizer = new PostfixTokenizer(pbr); // will throw ParseException
     } finally {
       pbr.close();
     }
   }
 
   @Test
-  public void testValidSaveSyntax() throws IOException {
+  public void testValidSaveSyntax() throws IOException, ParseException {
     build("(froob)");
 
     assertNextIs(BEGIN_ATOM);
@@ -163,7 +165,7 @@ public class TestCasePostfixTokenizer {
   }
 
   @Test(expected = IllegalStateException.class)
-  public void testEmptySaveBlock() throws IOException {
+  public void testEmptySaveBlock() throws IOException, ParseException {
     build("()");
     
     assertNextIs(BEGIN_ATOM);
@@ -177,7 +179,7 @@ public class TestCasePostfixTokenizer {
   }
 
   @Test
-  public void testLotsOfOpenParens() throws IOException {
+  public void testLotsOfOpenParens() throws IOException, ParseException {
     build("((((");
 
     assertNextIs(BEGIN_ATOM);
@@ -191,7 +193,7 @@ public class TestCasePostfixTokenizer {
     assertNextIs(START_SAVING);
 
     try {
-      assertNoMoreTokens(); // will throw IllegalStateException
+      assertNoMoreTokens(); // will throw ParseException
       fail();
     } catch (final IllegalStateException expected) {
       
@@ -199,7 +201,7 @@ public class TestCasePostfixTokenizer {
   }
 
   @Test
-  public void testAnchoredCatnenationOfNonQualifiedFilters() throws IOException {
+  public void testAnchoredCatnenationOfNonQualifiedFilters() throws IOException, ParseException {
     build("^java.lang.Character/java.lang.Integer");
       
     assertNextIs(BEGIN_ATOM);
@@ -211,8 +213,8 @@ public class TestCasePostfixTokenizer {
     assertNoMoreTokens();
   }
 
-  @Test(expected = IllegalStateException.class)
-  public void testBadInitialDollar() throws IOException {
+  @Test(expected = ParseException.class)
+  public void testBadInitialDollar() throws IOException, ParseException {
     final PushbackReader pbr = new PushbackReader(new StringReader("$"));
     try {
       final PostfixTokenizer postfixTokenizer = new PostfixTokenizer(pbr);
@@ -222,7 +224,7 @@ public class TestCasePostfixTokenizer {
   }
 
   @Test
-  public void testWhitespaceBeforeUnaryOperator() throws IOException {
+  public void testWhitespaceBeforeUnaryOperator() throws IOException, ParseException {
     build("fred +");
 
     assertNextIs(BEGIN_ATOM);
@@ -237,7 +239,7 @@ public class TestCasePostfixTokenizer {
   }
 
   @Test
-  public void testMvelFilterWithOperator() throws IOException {
+  public void testMvelFilterWithOperator() throws IOException, ParseException {
     build("fred(xyz)+");
       
     assertNextIs(BEGIN_ATOM);
@@ -252,7 +254,7 @@ public class TestCasePostfixTokenizer {
   }
 
   @Test
-  public void testMvelFilterWithOperatorAndWhitespace() throws IOException {
+  public void testMvelFilterWithOperatorAndWhitespace() throws IOException, ParseException {
     build("fred (xyz) + ");
 
     assertNextIs(BEGIN_ATOM);
@@ -267,7 +269,7 @@ public class TestCasePostfixTokenizer {
   }
 
   @Test
-  public void testSimpleFilterAnchoredAtEnd() throws IOException {
+  public void testSimpleFilterAnchoredAtEnd() throws IOException, ParseException {
     build("x$");
       
     assertNextIs(BEGIN_ATOM);
@@ -283,7 +285,7 @@ public class TestCasePostfixTokenizer {
   }
 
   @Test
-  public void testSimpleFilterAnchoredAtEndWithWhitespace() throws IOException {
+  public void testSimpleFilterAnchoredAtEndWithWhitespace() throws IOException, ParseException {
     build(" x  $ ");
       
     assertNextIs(BEGIN_ATOM);
@@ -299,7 +301,7 @@ public class TestCasePostfixTokenizer {
   }
 
   @Test
-  public void testAnchoredCatnenationOfNonQualifiedFiltersWithWhitespace() throws IOException {
+  public void testAnchoredCatnenationOfNonQualifiedFiltersWithWhitespace() throws IOException, ParseException {
     build("^  java.lang.Character /   java.lang.Integer  ");
       
     assertNextIs(BEGIN_ATOM);
@@ -312,7 +314,7 @@ public class TestCasePostfixTokenizer {
   }
 
   @Test
-  public void testPrime() throws IOException {
+  public void testPrime() throws IOException, ParseException {
     build("(java.lang.Character(charValue() == 'f'))/java.lang.Integer");
       
     assertNextIs(BEGIN_ATOM);
@@ -337,12 +339,12 @@ public class TestCasePostfixTokenizer {
    */
 
 
-  private final void build(final String input) throws IOException {
+  private final void build(final String input) throws IOException, ParseException {
     assertNotNull(input);
     this.build(new PushbackReader(new StringReader(input)));
   }
 
-  private final void build(final PushbackReader pbr) throws IOException {
+  private final void build(final PushbackReader pbr) throws IOException, ParseException {
     assertNotNull(pbr);
     this.pbr = pbr;
     this.pft = new PostfixTokenizer(pbr);

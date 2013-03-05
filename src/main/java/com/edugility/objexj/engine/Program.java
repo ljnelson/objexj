@@ -201,34 +201,64 @@ public final class Program<T> extends LinkedList<Instruction<T>> {
    * Unsupported operations.
    */
 
-
+  
+  /**
+   * Throws an {@link UnsupportedOperationException} when invoked.
+   *
+   * @exception UnsupportedOperationException when invoked
+   */
   @Override
   public final void clear() {
     throw new UnsupportedOperationException();
   }
 
+  /**
+   * Throws an {@link UnsupportedOperationException} when invoked.
+   *
+   * @exception UnsupportedOperationException when invoked
+   */
   @Override
-  public final boolean remove(final Object o) {
+  public final boolean remove(final Object ignored) {
     throw new UnsupportedOperationException("remove");
   }
 
+  /**
+   * Throws an {@link UnsupportedOperationException} when invoked.
+   *
+   * @exception UnsupportedOperationException when invoked
+   */
   @Override
-  public final Instruction<T> remove(final int index) {
+  public final Instruction<T> remove(final int ignored) {
     throw new UnsupportedOperationException("remove");
   }
 
+  /**
+   * Throws an {@link UnsupportedOperationException} when invoked.
+   *
+   * @exception UnsupportedOperationException when invoked
+   */
   @Override
-  public final boolean removeAll(final Collection<?> stuff) {
+  public final boolean removeAll(final Collection<?> ignored) {
     throw new UnsupportedOperationException("removeAll");
   }
 
+  /**
+   * Throws an {@link UnsupportedOperationException} when invoked.
+   *
+   * @exception UnsupportedOperationException when invoked
+   */
   @Override
-  public final boolean retainAll(final Collection<?> stuff) {
+  public final boolean retainAll(final Collection<?> ignored) {
     throw new UnsupportedOperationException("retainAll");
   }
 
+  /**
+   * Throws an {@link UnsupportedOperationException} when invoked.
+   *
+   * @exception UnsupportedOperationException when invoked
+   */
   @Override
-  public final Instruction<T> set(final int index, final Instruction<T> instruction) {
+  public final Instruction<T> set(final int ignored0, final Instruction<T> ignored1) {
     throw new UnsupportedOperationException("set");
   }
 

@@ -29,6 +29,8 @@ package com.edugility.objexj;
 
 import java.io.IOException;
 
+import java.text.ParseException;
+
 import java.util.List;
 
 import com.edugility.objexj.engine.Engine;
@@ -39,7 +41,19 @@ import com.edugility.objexj.parser.Parser;
 /**
  * A regular expression pattern for arbitrary {@link Object}s.
  *
+ * <p>A {@link Pattern} encapsulates the rules by which {@link List}s
+ * of objects&mdash;the <em>input</em>&mdash;are matched or rejected.
+ * {@link Pattern}s are compiled from textual representations that
+ * bear a striking and intentional similarity to regular regular
+ * expressions.</p>
+ *
+ * @param <T> the type of {@link Object} a {@link Pattern} can match
+ *
  * @author <a href="http://about.me/lairdnelson" target="_parent">Laird Nelson</a>
+ *
+ * @see #compile(String)
+ *
+ * @see <a href="../../../../syntax.html" target="_parent">Syntax Guide</a>
  */
 public class Pattern<T> {
 
@@ -69,7 +83,7 @@ public class Pattern<T> {
    *
    * @see #Pattern(Engine, Program)
    *
-   * @see Pattern#compile(String)
+   * @see #compile(String)
    */
   private Pattern(final Program<T> program) {
     this(null, program);
@@ -89,7 +103,7 @@ public class Pattern<T> {
    * @exception IllegalArgumentException if {@code program} is {@code
    * null}
    *
-   * @see Pattern#compile(String)
+   * @see #compile(String)
    */
   private Pattern(final Engine<T> engine, final Program<T> program) {
     super();
@@ -190,7 +204,7 @@ public class Pattern<T> {
    *
    * @see <a href="../../../../syntax.html" target="_parent">Syntax Guide</a>
    */
-  public static final <T> Pattern<T> compile(final String source) throws IOException {
+  public static final <T> Pattern<T> compile(final String source) throws IOException, ParseException {
     if (source == null) {
       throw new IllegalArgumentException("source", new NullPointerException("source"));
     }

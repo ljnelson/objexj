@@ -31,6 +31,8 @@ import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
 
+import java.text.ParseException;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -67,7 +69,7 @@ public class PostfixTokenizer implements Iterator<Token> {
 
   private transient final Deque<Token> stack;
 
-  public PostfixTokenizer(final PushbackReader reader) throws IOException {
+  public PostfixTokenizer(final PushbackReader reader) throws IOException, ParseException {
     super();
     this.logger = Logger.getLogger(this.getClass().getName());
     assert this.logger != null;
@@ -83,11 +85,11 @@ public class PostfixTokenizer implements Iterator<Token> {
     this.prime();
   }
 
-  private static final String buildIllegalStateExceptionMessage(final Reader r, final int c, final int position) {
+  private static final String buildExceptionMessage(final Reader r, final int c, final int position) {
     return String.format("Unexpected character (%c) at position %d in Reader %s", c, position, r);
   }
 
-  private final void prime() throws IOException {
+  private final void prime() throws IOException, ParseException {
     if (this.state == State.INVALID) {
       throw new IllegalStateException();
     }
@@ -133,7 +135,7 @@ public class PostfixTokenizer implements Iterator<Token> {
             sb.append((char)c);
             this.state = State.FILTER;
           } else {
-            throw new IllegalStateException(buildIllegalStateExceptionMessage(this.reader, c, this.position));
+            throw new ParseException(buildExceptionMessage(this.reader, c, this.position), this.position);
           }
           break;
         }
@@ -221,7 +223,7 @@ public class PostfixTokenizer implements Iterator<Token> {
           this.output.add(this.stack.pop());
         }
         if (this.stack.isEmpty()) {
-          throw new IllegalStateException("Mismatched parentheses");
+          throw new ParseException("Mismatched parentheses", this.position);
         }
 
         assert Token.Type.START_GROUP == this.stack.peek().getType();
@@ -256,7 +258,7 @@ public class PostfixTokenizer implements Iterator<Token> {
           sb.append((char)c);
           this.state = State.FILTER;
         } else {
-          throw new IllegalStateException(buildIllegalStateExceptionMessage(this.reader, c, this.position));
+          throw new ParseException(buildExceptionMessage(this.reader, c, this.position), this.position);
         }
         break;
 
@@ -317,10 +319,10 @@ public class PostfixTokenizer implements Iterator<Token> {
             } else if (Character.isJavaIdentifierStart(c)) {
               sb.append((char)c);
             } else {
-              throw new IllegalStateException(buildIllegalStateExceptionMessage(this.reader, c, this.position));
+              throw new ParseException(buildExceptionMessage(this.reader, c, this.position), this.position);
             }
           } else {
-            throw new IllegalStateException(buildIllegalStateExceptionMessage(this.reader, c, this.position));
+            throw new ParseException(buildExceptionMessage(this.reader, c, this.position), this.position);
           }
           break;
         }
@@ -349,7 +351,7 @@ public class PostfixTokenizer implements Iterator<Token> {
             this.state = State.END_OF_FILTER;
             break READ_LOOP;
           } else if (parenCount < 0) {
-            throw new IllegalStateException("Mismatched parentheses");
+            throw new ParseException("Mismatched parentheses", this.position);
           } else {
             sb.append((char)c);
           }
@@ -394,7 +396,7 @@ public class PostfixTokenizer implements Iterator<Token> {
           if (Character.isWhitespace(c)) {
             continue READ_LOOP;
           } else {
-            throw new IllegalStateException(buildIllegalStateExceptionMessage(this.reader, c, this.position));
+            throw new ParseException(buildExceptionMessage(this.reader, c, this.position), this.position);
           }
 
         }
@@ -427,7 +429,7 @@ public class PostfixTokenizer implements Iterator<Token> {
         //
         // In these cases we forward to the OPERATOR state.
         //
-        // Any other character causes an IllegalStateException.
+        // Any other character causes an ParseException.
       case STOP_SAVING_OR_END_OF_INPUT_OR_NEXT_IN_SEQUENCE:
         switch (c) {
 
@@ -452,7 +454,7 @@ public class PostfixTokenizer implements Iterator<Token> {
           if (Character.isWhitespace(c)) {
             continue READ_LOOP;
           } else {
-            throw new IllegalStateException(buildIllegalStateExceptionMessage(this.reader, c, this.position));
+            throw new ParseException(buildExceptionMessage(this.reader, c, this.position), this.position);
           }
         }
         break;
@@ -463,7 +465,7 @@ public class PostfixTokenizer implements Iterator<Token> {
         //
       case END:
         if (!Character.isWhitespace(c)) {
-          throw new IllegalStateException(buildIllegalStateExceptionMessage(this.reader, c, this.position));
+          throw new ParseException(buildExceptionMessage(this.reader, c, this.position), this.position);
         }
         break;
 
@@ -471,7 +473,7 @@ public class PostfixTokenizer implements Iterator<Token> {
         // DEFAULT
         //
       default:
-        throw new IllegalStateException("Unexpected state: " + this.state);
+        throw new ParseException("Unexpected state: " + this.state, this.position);
       }
     } // READ_LOOP
 
@@ -497,7 +499,7 @@ public class PostfixTokenizer implements Iterator<Token> {
         assert type != null;
 
         if (type == Token.Type.START_GROUP || type == Token.Type.STOP_GROUP) {
-          throw new IllegalStateException("Mismatched parentheses");
+          throw new ParseException("Mismatched parentheses", this.position);
         }
         this.output.add(this.stack.pop());
       }
@@ -649,8 +651,8 @@ public class PostfixTokenizer implements Iterator<Token> {
         this.error = ise;
         this.state = State.INVALID;
         this.output.clear();
-      } catch (final IOException io) {
-        this.error = io;
+      } catch (final Exception other) {
+        this.error = other;
         this.state = State.INVALID;
         this.output.clear();
       }

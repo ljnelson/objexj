@@ -29,6 +29,8 @@ package com.edugility.objexj;
 
 import java.io.IOException;
 
+import java.text.ParseException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -47,7 +49,7 @@ public class TestCasePattern {
   }
 
   @Test
-  public void testCompile() throws IOException {
+  public void testCompile() throws IOException, ParseException {
     final String sourceCode = "^(java.lang.Character(charValue() == 'a')/(java.lang.Character(fred = \"bozo\"; return charValue() == 'b')))/java.lang.Character(charValue() == 'c')";
     final Pattern<Character> pattern = Pattern.compile(sourceCode);
     assertNotNull(pattern);
@@ -66,7 +68,7 @@ public class TestCasePattern {
   }
 
   @Test
-  public void testLastException() throws IOException {
+  public void testLastException() throws IOException, ParseException {
     final String sourceCode = "^java.lang.Exception*/(java.lang.Exception(message == \"third\"))$";
     final Pattern<Exception> pattern = Pattern.compile(sourceCode);
     assertNotNull(pattern);
@@ -89,7 +91,7 @@ public class TestCasePattern {
   }
 
   @Test
-  public void testDoubleVariableAssignment() throws IOException {
+  public void testDoubleVariableAssignment() throws IOException, ParseException {
     final String sourceCode = "^java.lang.Exception(msg = message; return true)*/(java.lang.Exception(msg = message; message == \"third\"))$";
     final Pattern<Exception> pattern = Pattern.compile(sourceCode);
     assertNotNull(pattern);
@@ -114,7 +116,7 @@ public class TestCasePattern {
 
 
   @Test
-  public void testVariables() throws IOException {
+  public void testVariables() throws IOException, ParseException {
     final String sourceCode = "^java.lang.Exception(msg = message; return true)";
     final Pattern<Exception> pattern = Pattern.compile(sourceCode);
     assertNotNull(pattern);

@@ -32,6 +32,9 @@ import java.io.PushbackReader;
 import java.io.Reader;
 import java.io.StringReader;
 
+import java.text.ParseException;
+import java.text.ParsePosition;
+
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
@@ -52,88 +55,39 @@ import com.edugility.objexj.engine.Save;
 import com.edugility.objexj.engine.Split;
 import com.edugility.objexj.engine.Stop;
 
+/**
+ * A parser that consumes {@link Token}s from a {@link PostfixTokenizer}.
+ *
+ * @author <a href="http://about.me/lairdnelson"
+ * target="_parent">Laird Nelson</a>
+ */
 public class Parser {
 
-  private static final class State<T> implements Iterator<Token> {
-
-    private int groupIndex;
-    
-    private Token token;
-
-    private int position;
-
-    private final Deque<Program<T>> stack;
-
-    private final PostfixTokenizer tokenizer;
-
-    private State(final PostfixTokenizer tokenizer) {
-      super();
-      if (tokenizer == null) {
-        throw new IllegalArgumentException("tokenizer", new NullPointerException("tokenizer"));
-      }
-      this.position = -1;
-      this.tokenizer = tokenizer;
-      this.stack = new ArrayDeque<Program<T>>();
-      this.groupIndex = 1;
-    }
-
-    public final Token getToken() {
-      return this.token;
-    }
-
-    @Override
-    public final boolean hasNext() {
-      return this.tokenizer.hasNext();
-    }
-
-    @Override
-    public final Token next() {
-      this.token = this.tokenizer.next();
-      this.position++;
-      return this.token;
-    }
-
-    @Override
-    public final void remove() {
-      this.tokenizer.remove();
-    }
-
-    public final int stackSize() {
-      return this.stack.size();
-    }
-
-    public void push(final Program<T> programFragment) {
-      if (programFragment == null) {
-        throw new IllegalArgumentException("programFragment", new NullPointerException("programFragment"));
-      }
-      this.stack.push(programFragment);
-    }
-
-    public Program<T> peek() {
-      return this.stack.peek();
-    }
-
-    public Program<T> pop() {
-      return this.stack.pop();
-    }
-
-    @Override
-    public String toString() {
-      final Formatter f = new Formatter(new StringBuilder());
-      f.format("Parsing state:%n");
-      f.format("Current token: %s%n", this.getToken());
-      f.format("Stack size: %d%n", this.stackSize());
-      f.format("Stack: %s%n", this.stack);
-      return f.toString();
-    }
-    
-  }
-
+  /**
+   * Creates a new {@link Parser}.
+   */
   public Parser() {
     super();
   }
 
-  public <T> Program<T> parse(final String input) throws IOException {
+  /**
+   * Constructs a new {@link PostfixTokenizer} and associated {@link
+   * Reader} machinery and then calls the {@link
+   * #parse(PostfixTokenizer)} method and returns its result.
+   *
+   * @param input the {@link String} representation of a {@link
+   * Program}; must not be {@code null}
+   *
+   * @exception IllegalArgumentException if {@code input} is {@code
+   * null}
+   *
+   * @exception IOException if the {@link String} could not be read
+   *
+   * @see #parse(PostfixTokenizer)
+   *
+   * @see PostfixTokenizer
+   */
+  public <T> Program<T> parse(final String input) throws IOException, ParseException {
     if (input == null) {
       throw new IllegalArgumentException("input", new NullPointerException("input"));
     }
@@ -159,20 +113,51 @@ public class Parser {
     }
   }
 
-  public <T> Program<T> parse(final PostfixTokenizer tokenizer) {
+  /**
+   * Receives a feed of {@link Token}s from the supplied {@link
+   * PostfixTokenizer} and parses them into a {@link Program}.
+   *
+   * <p>This method never returns {@code null}.</p>
+   *
+   * @param <T> the type of {@link Object} the returned {@link
+   * Program} will be capable of matching
+   *
+   * @param tokenizer the {@link PostfixTokenizer} that provides a
+   * token stream; must not be {@code null}
+   *
+   * @return a non-{@code null} {@link Program}
+   *
+   * @exception IllegalArgumentException if {@code tokenizer} is
+   * {@code null}
+   */
+  public <T> Program<T> parse(final PostfixTokenizer tokenizer) throws ParseException {
     if (tokenizer == null) {
       throw new IllegalArgumentException("tokenizer", new NullPointerException("tokenizer"));
     }
     return this.parse(new State<T>(tokenizer));
   }
 
-  private final <T> Program<T> parse(final Parser.State<T> parsingState) {
+  /**
+   * Parses the supplied {@link State} into a {@link Program}.
+   *
+   * @param <T> the type of {@link Object} the returned {@link
+   * Program} will be capable of matching
+   *
+   * @param parsingState the {@link State} to parse; really just a
+   * state-holding wrapper around a {@link PostfixTokenizer}; must not
+   * be {@code null}
+   *
+   * @return a non-{@code null} {@link Program}
+   *
+   * @exception IllegalArgumentException if {@code parsingState} is
+   * {@code null}
+   */
+  private final <T> Program<T> parse(final Parser.State<T> parsingState) throws ParseException {
     if (parsingState == null) {
-      throw new IllegalStateException("parsingState", new NullPointerException("parsingState"));
+      throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));
     }
 
-    for (int tokenCount = 0; parsingState.hasNext(); tokenCount++) {
-
+    while (parsingState.hasNext()) {
       final Token token = parsingState.next();
       if (token != null) {
 
@@ -222,7 +207,8 @@ public class Parser {
           break;
 
         default:
-          throw new IllegalStateException("Unknown token type: " + tokenType);
+          parsingState.setErrorIndex(parsingState.getIndex());
+          throw new ParseException(String.format("Unknown token type: %s", tokenType), parsingState.getErrorIndex());
         }
       }
 
@@ -426,6 +412,84 @@ public class Parser {
       throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));
     }
     parsingState.push(Program.singleton(new Stop<T>(Integer.valueOf(--parsingState.groupIndex))));
+  }
+
+
+  /*
+   * Nested and inner classes.
+   */
+
+
+  private static final class State<T> extends ParsePosition implements Iterator<Token> {
+
+    private int groupIndex;
+    
+    private Token token;
+
+    private final Deque<Program<T>> stack;
+
+    private final PostfixTokenizer tokenizer;
+
+    private State(final PostfixTokenizer tokenizer) {
+      super(-1);
+      if (tokenizer == null) {
+        throw new IllegalArgumentException("tokenizer", new NullPointerException("tokenizer"));
+      }
+      this.tokenizer = tokenizer;
+      this.stack = new ArrayDeque<Program<T>>();
+      this.groupIndex = 1;
+    }
+
+    public final Token getToken() {
+      return this.token;
+    }
+
+    @Override
+    public final boolean hasNext() {
+      return this.tokenizer.hasNext();
+    }
+
+    @Override
+    public final Token next() {
+      this.token = this.tokenizer.next();
+      this.setIndex(this.getIndex() + 1);
+      return this.token;
+    }
+
+    @Override
+    public final void remove() {
+      this.tokenizer.remove();
+    }
+
+    public final int stackSize() {
+      return this.stack.size();
+    }
+
+    public void push(final Program<T> programFragment) {
+      if (programFragment == null) {
+        throw new IllegalArgumentException("programFragment", new NullPointerException("programFragment"));
+      }
+      this.stack.push(programFragment);
+    }
+
+    public Program<T> peek() {
+      return this.stack.peek();
+    }
+
+    public Program<T> pop() {
+      return this.stack.pop();
+    }
+
+    @Override
+    public String toString() {
+      final Formatter f = new Formatter(new StringBuilder());
+      f.format("Parsing state:%n");
+      f.format("Current token: %s%n", this.getToken());
+      f.format("Stack size: %d%n", this.stackSize());
+      f.format("Stack: %s%n", this.stack);
+      return f.toString();
+    }
+    
   }
 
 }
