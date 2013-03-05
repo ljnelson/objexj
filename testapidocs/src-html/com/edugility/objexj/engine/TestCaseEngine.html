@@ -32,36 +32,38 @@
 <FONT color="green">029</FONT>    <a name="line.29"></a>
 <FONT color="green">030</FONT>    import java.io.IOException;<a name="line.30"></a>
 <FONT color="green">031</FONT>    <a name="line.31"></a>
-<FONT color="green">032</FONT>    import java.util.Arrays;<a name="line.32"></a>
-<FONT color="green">033</FONT>    import java.util.List;<a name="line.33"></a>
-<FONT color="green">034</FONT>    <a name="line.34"></a>
-<FONT color="green">035</FONT>    import org.junit.Before;<a name="line.35"></a>
-<FONT color="green">036</FONT>    import org.junit.Test;<a name="line.36"></a>
-<FONT color="green">037</FONT>    <a name="line.37"></a>
-<FONT color="green">038</FONT>    import com.edugility.objexj.parser.Parser;<a name="line.38"></a>
+<FONT color="green">032</FONT>    import java.text.ParseException;<a name="line.32"></a>
+<FONT color="green">033</FONT>    <a name="line.33"></a>
+<FONT color="green">034</FONT>    import java.util.Arrays;<a name="line.34"></a>
+<FONT color="green">035</FONT>    import java.util.List;<a name="line.35"></a>
+<FONT color="green">036</FONT>    <a name="line.36"></a>
+<FONT color="green">037</FONT>    import org.junit.Before;<a name="line.37"></a>
+<FONT color="green">038</FONT>    import org.junit.Test;<a name="line.38"></a>
 <FONT color="green">039</FONT>    <a name="line.39"></a>
-<FONT color="green">040</FONT>    import static org.junit.Assert.*;<a name="line.40"></a>
+<FONT color="green">040</FONT>    import com.edugility.objexj.parser.Parser;<a name="line.40"></a>
 <FONT color="green">041</FONT>    <a name="line.41"></a>
-<FONT color="green">042</FONT>    public class TestCaseEngine {<a name="line.42"></a>
+<FONT color="green">042</FONT>    import static org.junit.Assert.*;<a name="line.42"></a>
 <FONT color="green">043</FONT>    <a name="line.43"></a>
-<FONT color="green">044</FONT>      public TestCaseEngine() {<a name="line.44"></a>
-<FONT color="green">045</FONT>        super();<a name="line.45"></a>
-<FONT color="green">046</FONT>      }<a name="line.46"></a>
-<FONT color="green">047</FONT>    <a name="line.47"></a>
-<FONT color="green">048</FONT>      @Test<a name="line.48"></a>
-<FONT color="green">049</FONT>      public void testSimpleMatch() throws IOException {<a name="line.49"></a>
-<FONT color="green">050</FONT>        final Engine&lt;Character&gt; engine = new Engine&lt;Character&gt;();<a name="line.50"></a>
-<FONT color="green">051</FONT>        final String sourceCode = "^java.lang.Character(charValue() == 'a')/java.lang.Character(charValue() == 'b')/java.lang.Character(charValue() == 'c')";<a name="line.51"></a>
-<FONT color="green">052</FONT>        final Parser parser = new Parser();<a name="line.52"></a>
-<FONT color="green">053</FONT>        final Program&lt;Character&gt; program = parser.parse(sourceCode);<a name="line.53"></a>
-<FONT color="green">054</FONT>        assertNotNull(program);<a name="line.54"></a>
-<FONT color="green">055</FONT>        final List&lt;Character&gt; input = Arrays.asList('a', 'b', 'c');<a name="line.55"></a>
-<FONT color="green">056</FONT>        final MatchResult&lt;Character&gt; match = engine.run(program, input);<a name="line.56"></a>
-<FONT color="green">057</FONT>        assertNotNull(match);<a name="line.57"></a>
-<FONT color="green">058</FONT>        assertTrue(match.matches());<a name="line.58"></a>
-<FONT color="green">059</FONT>      }<a name="line.59"></a>
-<FONT color="green">060</FONT>    <a name="line.60"></a>
-<FONT color="green">061</FONT>    }<a name="line.61"></a>
+<FONT color="green">044</FONT>    public class TestCaseEngine {<a name="line.44"></a>
+<FONT color="green">045</FONT>    <a name="line.45"></a>
+<FONT color="green">046</FONT>      public TestCaseEngine() {<a name="line.46"></a>
+<FONT color="green">047</FONT>        super();<a name="line.47"></a>
+<FONT color="green">048</FONT>      }<a name="line.48"></a>
+<FONT color="green">049</FONT>    <a name="line.49"></a>
+<FONT color="green">050</FONT>      @Test<a name="line.50"></a>
+<FONT color="green">051</FONT>      public void testSimpleMatch() throws IOException, ParseException {<a name="line.51"></a>
+<FONT color="green">052</FONT>        final Engine&lt;Character&gt; engine = new Engine&lt;Character&gt;();<a name="line.52"></a>
+<FONT color="green">053</FONT>        final String sourceCode = "^java.lang.Character(charValue() == 'a')/java.lang.Character(charValue() == 'b')/java.lang.Character(charValue() == 'c')";<a name="line.53"></a>
+<FONT color="green">054</FONT>        final Parser parser = new Parser();<a name="line.54"></a>
+<FONT color="green">055</FONT>        final Program&lt;Character&gt; program = parser.parse(sourceCode);<a name="line.55"></a>
+<FONT color="green">056</FONT>        assertNotNull(program);<a name="line.56"></a>
+<FONT color="green">057</FONT>        final List&lt;Character&gt; input = Arrays.asList('a', 'b', 'c');<a name="line.57"></a>
+<FONT color="green">058</FONT>        final MatchResult&lt;Character&gt; match = engine.run(program, input);<a name="line.58"></a>
+<FONT color="green">059</FONT>        assertNotNull(match);<a name="line.59"></a>
+<FONT color="green">060</FONT>        assertTrue(match.matches());<a name="line.60"></a>
+<FONT color="green">061</FONT>      }<a name="line.61"></a>
+<FONT color="green">062</FONT>    <a name="line.62"></a>
+<FONT color="green">063</FONT>    }<a name="line.63"></a>
 
 
 
