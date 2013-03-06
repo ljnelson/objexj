@@ -46,7 +46,7 @@ method&#8212;equal to "`fred`":
 
     java.lang.RuntimeException(message == "fred")
 
-<h3 id="#groups">Groups</h3>
+<h3 id="groups">Groups</h3>
 
 A _group_ is one or more patterns surrounded by parentheses.  Groups
 serve two purposes: they allow composition of patterns, and they also

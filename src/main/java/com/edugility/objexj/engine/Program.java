@@ -31,6 +31,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader; // for javadoc only
 import java.io.StringReader;
 
 import java.lang.reflect.Constructor;
@@ -50,8 +51,11 @@ import java.util.logging.Logger;
  * {@linkplain Engine#run(Program, List) run} by an {@link Engine} via
  * a {@link com.edugility.objexj.engine.Thread}.
  *
- * <a href="http://about.me/lairdnelson" target="_parent">Laird
- * Nelson</a>
+ * @param <T> the type of {@link Object} that {@link Program}
+ * instances are capable of matching.
+ *
+ * @author <a href="http://about.me/lairdnelson"
+ * target="_parent">Laird Nelson</a>
  */
 public final class Program<T> extends LinkedList<Instruction<T>> {
 
@@ -207,6 +211,16 @@ public final class Program<T> extends LinkedList<Instruction<T>> {
     return instruction;
   }
 
+  /**
+   * Returns the index of the supplied {@link Object}, or {@code -1}
+   * if the supplied {@link Object} is {@code null} or not contained
+   * in this {@link Program}.
+   *
+   * @param o the {@link Object} whose index should be retrieved; may
+   * be {@code null}
+   *
+   * @return the index of the supplied {@link Object}, or {@code -1}
+   */
   @Override
   public final int indexOf(final Object o) {
     int returnValue = -1;
@@ -216,6 +230,17 @@ public final class Program<T> extends LinkedList<Instruction<T>> {
     return returnValue;
   }
 
+  /**
+   * Returns the last index of the supplied {@link Object}, or {@code
+   * -1} if the supplied {@link Object} is {@code null} or not
+   * contained in this {@link Program}.
+   *
+   * @param o the {@link Object} whose last index should be retrieved;
+   * may be {@code null}
+   *
+   * @return the last index of the supplied {@link Object}, or {@code
+   * -1}
+   */
   @Override
   public final int lastIndexOf(final Object o) {
     int returnValue = -1;
@@ -225,6 +250,17 @@ public final class Program<T> extends LinkedList<Instruction<T>> {
     return returnValue;
   }
 
+  /**
+   * Adds the supplied {@link Instruction} at the end of this {@link
+   * Program}.  Returns {@code true} if this {@link Program} actually
+   * added the {@link Instruction}.
+   *
+   * @param instruction the {@link Instruction} to add; may be {@code
+   * null} in which case {@code false} is returned
+   *
+   * @return {@code true} if the supplied {@link Instruction} was
+   * actually added; {@code false} otherwise
+   */
   @Override
   public final boolean add(final Instruction<T> instruction) {
     boolean returnValue = false;
@@ -234,6 +270,25 @@ public final class Program<T> extends LinkedList<Instruction<T>> {
     return returnValue;
   }
   
+  /**
+   * Adds the supplied {@link Instruction} immediately after the
+   * specified zero-based index.  Returns {@code true} if this {@link
+   * Program} actually added the {@link Instruction}.
+   *
+   * @param index the zero-based index after which to add the supplied
+   * {@link Instruction}; must be greater than or equal to {@code 0}
+   * and less than {@linkplain Program#size() this
+   * <code>Program</code>'s size}
+   *
+   * @param instruction the {@link Instruction} to add; may be {@code
+   * null} in which case {@code false} is returned
+   *
+   * @return {@code true} if the supplied {@link Instruction} was
+   * actually added; {@code false} otherwise
+   *
+   * @exception IndexOutOfBoundsException if the supplied {@code
+   * index} is out of bounds
+   */
   @Override
   public final void add(final int index, final Instruction<T> instruction) {
     if (instruction != null) {
@@ -241,6 +296,19 @@ public final class Program<T> extends LinkedList<Instruction<T>> {
     }
   }
 
+  /**
+   * Adds the supplied {@link Collection} of {@link Instruction}s to
+   * the end of this {@link Program}.  Returns {@code true} if this
+   * {@link Program} actually added the {@link Collection}; {@code
+   * false} otherwise.
+   *
+   * @param instructions the instructions to add; may be {@code null}
+   * in which case {@code false} will be returned
+   *
+   * @return {@code true} if this {@link Program} actually added the
+   * supplied {@link Collection} of {@link Instruction}s; {@code
+   * false} otherwise
+   */
   @Override
   public final boolean addAll(final Collection<? extends Instruction<T>> instructions) {
     boolean returnValue = false;
@@ -250,6 +318,24 @@ public final class Program<T> extends LinkedList<Instruction<T>> {
     return returnValue;
   }
 
+  /**
+   * Adds the supplied {@link Collection} of {@link Instruction}s
+   * immediately after the supplied index in this {@link Program}.
+   * Returns {@code true} if this {@link Program} actually added the
+   * {@link Collection}; {@code false} otherwise.
+   *
+   * @param index the zero-based index after which to add the supplied
+   * {@link Instruction}s; must be greater than or equal to {@code 0}
+   * and less than {@linkplain Program#size() this
+   * <code>Program</code>'s size}
+   *
+   * @param instructions the instructions to add; may be {@code null}
+   * in which case {@code false} will be returned
+   *
+   * @return {@code true} if this {@link Program} actually added the
+   * supplied {@link Collection} of {@link Instruction}s; {@code
+   * false} otherwise
+   */
   @Override
   public final boolean addAll(final int index, final Collection<? extends Instruction<T>> instructions) {
     boolean returnValue = false;
@@ -259,6 +345,12 @@ public final class Program<T> extends LinkedList<Instruction<T>> {
     return returnValue;
   }
 
+  /**
+   * Returns a non-{@code null} textual representation of this {@link
+   * Program}.
+   *
+   * @return a non-{@code null} {@link String}
+   */
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder();
@@ -351,6 +443,43 @@ public final class Program<T> extends LinkedList<Instruction<T>> {
    */
 
 
+  /**
+   * Creates and returns a {@link Program} parsed from the supplied
+   * {@link File}.
+   *
+   * <p>This method never returns {@code null}.</p>
+   *
+   * @param <T> the type of {@link Object}s the returned {@link
+   * Program} will be able to {@linkplain Program#matcher(String)
+   * match}
+   *
+   * @param file a {@link File} containing {@link Instruction}s in
+   * {@linkplain Instruction#valueOf(String) source form}; must not be
+   * {@code null}
+   *
+   * @return a new {@link Program}; never {@code null}
+   *
+   * @exception IllegalArgumentException if {@code file} is {@code
+   * null}
+   *
+   * @exception ClassNotFoundException if there was an error
+   * assembling an {@link Instruction} in the {@link File}
+   *
+   * @exception IllegalAccessException if there was an error
+   * assembling an {@link Instruction} in the {@link File}
+   *
+   * @exception InstantiationException if there was an error
+   * assembling an {@link Instruction} in the {@link File}
+   *
+   * @exception InvocationTargetException if there was an error
+   * assembling an {@link Instruction} in the {@link File}
+   *
+   * @exception IOException if there was an error
+   * assembling an {@link Instruction} in the {@link File}
+   *
+   * @exception NoSuchMethodException if there was an error
+   * assembling an {@link Instruction} in the {@link File}
+   */
   public static final <T> Program<T> valueOf(final File file) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, IOException, NoSuchMethodException {
     if (file == null) {
       throw new IllegalArgumentException("file");
@@ -370,6 +499,44 @@ public final class Program<T> extends LinkedList<Instruction<T>> {
     }
   }
 
+  /**
+   * Creates and returns a {@link Program} parsed from the supplied
+   * {@link BufferedReader}.
+   *
+   * <p>This method never returns {@code null}.</p>
+   *
+   * @param <T> the type of {@link Object}s the returned {@link
+   * Program} will be able to {@linkplain Program#matcher(String)
+   * match}
+   *
+   * @param reader a {@link BufferedReader} that can read {@link
+   * Instruction}s in {@linkplain Instruction#valueOf(String) source
+   * form}; must not be {@code null} and must not be {@linkplain
+   * Reader#close() closed}
+   *
+   * @return a new {@link Program}; never {@code null}
+   *
+   * @exception IllegalArgumentException if {@code reader} is {@code
+   * null}
+   *
+   * @exception ClassNotFoundException if there was an error
+   * assembling an {@link Instruction} in the {@link File}
+   *
+   * @exception IllegalAccessException if there was an error
+   * assembling an {@link Instruction} in the {@link File}
+   *
+   * @exception InstantiationException if there was an error
+   * assembling an {@link Instruction} in the {@link File}
+   *
+   * @exception InvocationTargetException if there was an error
+   * assembling an {@link Instruction} in the {@link File}
+   *
+   * @exception IOException if there was an error
+   * assembling an {@link Instruction} in the {@link File}
+   *
+   * @exception NoSuchMethodException if there was an error
+   * assembling an {@link Instruction} in the {@link File}
+   */
   public static final <T> Program<T> valueOf(final BufferedReader reader) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, IOException, NoSuchMethodException {
     if (reader == null) {
       throw new IllegalArgumentException("reader == null");
@@ -385,6 +552,42 @@ public final class Program<T> extends LinkedList<Instruction<T>> {
     return program;
   }
   
+  /**
+   * Creates and returns a {@link Program} parsed from the supplied
+   * {@code text}.
+   *
+   * <p>This method never returns {@code null}.</p>
+   *
+   * @param <T> the type of {@link Object}s the returned {@link
+   * Program} will be able to {@linkplain Program#matcher(String)
+   * match}
+   *
+   * @param text a {@link String} containing {@link Instruction}s in
+   * source form; must not be {@code null}
+   *
+   * @return a new {@link Program}; never {@code null}
+   *
+   * @exception IllegalArgumentException if {@code text} is {@code
+   * null}
+   *
+   * @exception ClassNotFoundException if there was an error
+   * assembling an {@link Instruction} in the {@link File}
+   *
+   * @exception IllegalAccessException if there was an error
+   * assembling an {@link Instruction} in the {@link File}
+   *
+   * @exception InstantiationException if there was an error
+   * assembling an {@link Instruction} in the {@link File}
+   *
+   * @exception InvocationTargetException if there was an error
+   * assembling an {@link Instruction} in the {@link File}
+   *
+   * @exception IOException if there was an error
+   * assembling an {@link Instruction} in the {@link File}
+   *
+   * @exception NoSuchMethodException if there was an error
+   * assembling an {@link Instruction} in the {@link File}
+   */
   public static final <T> Program<T> valueOf(final String text) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, IOException, NoSuchMethodException {
     if (text == null) {
       throw new IllegalArgumentException("text == null");
@@ -404,10 +607,84 @@ public final class Program<T> extends LinkedList<Instruction<T>> {
     }
   }
 
+  /**
+   * Creates and returns a {@link Program} parsed from the supplied
+   * {@link Iterable} of {@link Instruction} lines in source form.
+   *
+   * <p>This method never returns {@code null}.</p>
+   *
+   * @param <T> the type of {@link Object}s the returned {@link
+   * Program} will be able to {@linkplain Program#matcher(String)
+   * match}
+   *
+   * @param lines an {@link Iterable} of {@link String}s, each of
+   * which represents an {@link Instruction} in source form; must not
+   * be {@code null}
+   *
+   * @return a new {@link Program}; never {@code null}
+   *
+   * @exception IllegalArgumentException if {@code lines} is {@code
+   * null}
+   *
+   * @exception ClassNotFoundException if there was an error
+   * assembling an {@link Instruction} in the {@link File}
+   *
+   * @exception IllegalAccessException if there was an error
+   * assembling an {@link Instruction} in the {@link File}
+   *
+   * @exception InstantiationException if there was an error
+   * assembling an {@link Instruction} in the {@link File}
+   *
+   * @exception InvocationTargetException if there was an error
+   * assembling an {@link Instruction} in the {@link File}
+   *
+   * @exception IOException if there was an error
+   * assembling an {@link Instruction} in the {@link File}
+   *
+   * @exception NoSuchMethodException if there was an error
+   * assembling an {@link Instruction} in the {@link File}
+   */
   public static final <T> Program<T> valueOf(final Iterable<String> lines) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
     return valueOf(lines == null ? (Iterator<String>)null : lines.iterator());
   }
 
+  /**
+   * Creates and returns a {@link Program} parsed from the supplied
+   * {@link Iterator} of {@link Instruction} lines in source form.
+   *
+   * <p>This method never returns {@code null}.</p>
+   *
+   * @param <T> the type of {@link Object}s the returned {@link
+   * Program} will be able to {@linkplain Program#matcher(String)
+   * match}
+   *
+   * @param lines an {@link Iterator} of {@link String}s, each of
+   * which represents an {@link Instruction} in source form; must not
+   * be {@code null}
+   *
+   * @return a new {@link Program}; never {@code null}
+   *
+   * @exception IllegalArgumentException if {@code lines} is {@code
+   * null}
+   *
+   * @exception ClassNotFoundException if there was an error
+   * assembling an {@link Instruction} in the {@link File}
+   *
+   * @exception IllegalAccessException if there was an error
+   * assembling an {@link Instruction} in the {@link File}
+   *
+   * @exception InstantiationException if there was an error
+   * assembling an {@link Instruction} in the {@link File}
+   *
+   * @exception InvocationTargetException if there was an error
+   * assembling an {@link Instruction} in the {@link File}
+   *
+   * @exception IOException if there was an error
+   * assembling an {@link Instruction} in the {@link File}
+   *
+   * @exception NoSuchMethodException if there was an error
+   * assembling an {@link Instruction} in the {@link File}
+   */
   public static final <T> Program<T> valueOf(final Iterator<String> lines) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
     Program<T> program = new Program<T>();
     if (lines != null && lines.hasNext()) {
@@ -421,13 +698,18 @@ public final class Program<T> extends LinkedList<Instruction<T>> {
     return program;
   }
 
+  /**
+   * Creates a new {@link Program} that contains only the supplied
+   * {@link Instruction}.
+   *
+   * @param instruction the {@link Instruction} to wrap with a new
+   * {@link Program}; if {@code null} an {@linkplain
+   * LinkedList#isEmpty() empty} {@link Program} is returned instead
+   *
+   * @return a non-{@code null} {@link Program}
+   */
   public static final <T> Program<T> singleton(final Instruction<T> instruction) {
-    final Program<T> program = new Program<T>();
-    if (instruction != null) {
-      program.add(instruction);
-    }
-    return program;
+    return new Program<T>(instruction);
   }
-
 
 }
