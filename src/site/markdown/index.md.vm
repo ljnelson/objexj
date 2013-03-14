@@ -4,7 +4,8 @@
 Welcome to the `${project.artifactId}` project.
 `${project.artifactId}` implements [regular expression concepts][1]
 but using arbitrary Java objects as the input.  This means you can
-write patterns that match sequences of Java objects.
+write patterns that match sequences of Java objects, not just
+sequences of characters.
 
 # Background
 
@@ -31,6 +32,12 @@ The syntax used by `${project.artifactId}` is heavily inspired by
 "normal" regular expression syntax.  See the
 [Syntax Guide](syntax.html) for more information.
 
+# Applications
+
+This library has applications in error analysis (building messages for
+chains of `Throwable`s), stream processing, event processing and other
+pattern-recognition-related domains.
+
 # API Documentation
 
 The API is fully documented.  Please see the [API documentation][4] to
@@ -39,5 +46,5 @@ get started.
 [1]:
 http://blogs.msdn.com/b/ericlippert/archive/2005/11/18/493482.aspx
 [2]: http://swtch.com/~rsc/regexp/
-[3]: http://ljnelson.posterous.com/error-handling-done-right-part-1
+[3]: http://lairdnelson.wordpress.com/2012/02/16/error-handling-done-right-part-1/
 [4]: apidocs/index.html

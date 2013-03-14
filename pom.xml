@@ -288,7 +288,7 @@
     <mavenAssemblyPluginVersion>2.4</mavenAssemblyPluginVersion>
     <mavenCleanPluginVersion>2.5</mavenCleanPluginVersion>
     <mavenCompilerPluginVersion>3.0</mavenCompilerPluginVersion>
-    <mavenDependencyPluginVersion>2.6</mavenDependencyPluginVersion>
+    <mavenDependencyPluginVersion>2.7</mavenDependencyPluginVersion>
     <mavenDeployPluginVersion>2.7</mavenDeployPluginVersion>
     <mavenEnforcerPluginVersion>1.2</mavenEnforcerPluginVersion>
     <mavenGpgPluginVersion>1.4</mavenGpgPluginVersion>
@@ -301,7 +301,6 @@
     <mavenResourcesPluginVersion>2.6</mavenResourcesPluginVersion>
     <mavenScmManagerPlexusVersion>${mavenScmPluginVersion}</mavenScmManagerPlexusVersion>
     <mavenScmPluginVersion>1.8.1</mavenScmPluginVersion>
-    <mavenScmProviderGitexeVersion>${mavenScmPluginVersion}</mavenScmProviderGitexeVersion>
     <mavenSitePluginVersion>3.2</mavenSitePluginVersion>
     <mavenSourcePluginVersion>2.2.1</mavenSourcePluginVersion>
     <mavenSurefirePluginVersion>2.14</mavenSurefirePluginVersion>
@@ -329,9 +328,9 @@
     <!-- maven-javadoc-plugin Properties -->
     <bottom><![CDATA[Copyright &copy; ${project.inceptionYear}&ndash;{currentYear}, <a href="http://about.me/lairdnelson" target="_parent">Laird Nelson</a>. All rights reserved.]]></bottom>
     <detectLinks>false</detectLinks>
-    <links>http://download.oracle.com/javaee/6/api/</links>
+    <links>http://download.oracle.com/javaee/6/api/,http://mvel.codehaus.org/javadoc/2.0/</links>
     <sourcetab>2</sourcetab>
-    <stylesheetfile>styles.css</stylesheetfile> <!-- relative to src/main/javadoc -->
+    <stylesheetfile>styles.css</stylesheetfile>
 
     <!-- maven-surefire-plugin Properties -->
     <surefire.useFile>false</surefire.useFile>
