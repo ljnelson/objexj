@@ -33,16 +33,65 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * A sub-{@link List} of items as captured by a {@link
+ * com.edugility.objexj.engine.Thread}.
+ *
+ * @author <a href="http://about.me/lairdnelson"
+ * target="_parent">Laird Nelson</a>
+ */
 public final class CaptureGroup<T> implements Cloneable, Serializable {
 
+  /**
+   * The version of this class for {@linkplain Serializable
+   * serialization purposes}.
+   */
   private static final long serialVersionUID = 1L;
 
+  /**
+   * The inclusive zero-based index at which this {@link CaptureGroup}
+   * starts.  This field will always be greater than or equal to
+   * {@code 0} and less than the {@linkplain List#size() size} of the
+   * {@linkplain #getItems() <code>List</code> of items}.
+   *
+   * @see #items
+   */
   private final int startIndex;
 
+  /**
+   * The exclusive zero-based index at which this {@link CaptureGroup}
+   * ends.  This field will always be greater than or equal to
+   * {@linkplain #startIndex the start index} and less than or
+   * equal to the {@linkplain List#size() size} of the {@linkplain
+   * #getItems() <code>List</code> of items}.
+   *
+   * @see #items
+   */
   private int endIndex;
 
+  /**
+   * The {@link List} of items from which this {@link CaptureGroup}
+   * will capture a sub-{@link List}.  This field is never {@code
+   * null}.
+   */
   private List<T> items;
 
+  /**
+   * Creates a new {@link CaptureGroup}.
+   *
+   * @param items the {@link List} of items from which to capture;
+   * must not be {@code null} and must not be {@linkplain
+   * List#isEmpty() empty}
+   *
+   * @param startIndex the zero-based index at which capturing will
+   * start; must be greater than or equal to {@code 0} and less than
+   * {@link List#size() items.size()}
+   *
+   * @exception IllegalArgumentException if {@code items} is {@code
+   * null} or {@code items} {@linkplain List#isEmpty() is empty} or
+   * {@code startIndex} is less than {@code 0} or {@code startIndex}
+   * is greater than or equal to {@link List#size() items.size()}
+   */ 
   public CaptureGroup(final List<T> items, final int startIndex) {
     super();
     if (items == null) {
@@ -63,6 +112,17 @@ public final class CaptureGroup<T> implements Cloneable, Serializable {
     this.endIndex = -1;
   }
 
+  /**
+   * Returns a non-{@code null} {@linkplain
+   * Collections#unmodifiableList(List) unmodifiable
+   * <code>List</code>} of the items this {@link CaptureGroup}
+   * captured.
+   *
+   * @return a non-{@code null} {@link List} of items captured by this
+   * {@link CaptureGroup}.  The {@link List} returned is that returned
+   * by the {@link List#subList(int, int)} method (or {@link
+   * Collections#emptyList()})
+   */
   public final List<T> getItems() {
     if (this.items == null) {
       return Collections.emptyList();
@@ -71,13 +131,36 @@ public final class CaptureGroup<T> implements Cloneable, Serializable {
     }
   }
 
-  private final void setItems(final List<T> items) {
+  /**
+   * Sets the {@link List} of items this {@link CaptureGroup} will
+   * capture from.
+   *
+   * @param items the {@link List} of items; must not be {@code null}
+   *
+   * @exception IllegalArgumentException if {@code items} is {@code
+   * null}
+   */
+  private final void setItemList(final List<T> items) {
     if (items == null) {
       throw new IllegalArgumentException("items", new NullPointerException("items == null"));
     }
     this.items = items;
   }
 
+  /**
+   * Sets the exclusive zero-based index that marks the end of the
+   * items this {@link CaptureGroup} will capture.
+   *
+   * @param endIndex the exclusive zero-based end index; must be
+   * greater than {@code 0}, less than the value of the {@code
+   * startIndex} supplied at {@linkplain #CaptureGroup(List, int)
+   * construction time} and less than the {@linkplain List#size()
+   * size} of the {@link List} of items supplied at {@linkplain
+   * #CaptureGroup(List, int) construction time}
+   *
+   * @exception IllegalArgumentException if {@code endIndex} is
+   * invalid
+   */
   public final void setEndIndex(final int endIndex) {
     if (endIndex < this.startIndex) {
       throw new IllegalArgumentException("endIndex < startIndex: " + endIndex + " < " + this.startIndex);
@@ -88,6 +171,13 @@ public final class CaptureGroup<T> implements Cloneable, Serializable {
     this.endIndex = endIndex;
   }
 
+  /**
+   * Returns a non-{@code null} {@linkplain Object#clone() clone} of
+   * this {@link CaptureGroup}.
+   *
+   * @return a non-{@code null} {@linkplain Object#clone() clone} of
+   * this {@link CaptureGroup}
+   */
   @Override
   public final CaptureGroup<T> clone() {
     CaptureGroup<T> clone = null;
@@ -100,11 +190,16 @@ public final class CaptureGroup<T> implements Cloneable, Serializable {
     }
     assert clone != null;
     if (this.items != null) {
-      clone.setItems(new ArrayList<T>(this.items));
+      clone.setItemList(new ArrayList<T>(this.items));
     }
     return clone;
   }
 
+  /**
+   * Returns a hashcode for this {@link CaptureGroup}.
+   *
+   * @return a hashcode for this {@link CaptureGroup}.
+   */
   @Override
   public final int hashCode() {
     int result = 17;
@@ -120,6 +215,16 @@ public final class CaptureGroup<T> implements Cloneable, Serializable {
     return result;
   }
 
+  /**
+   * Returns {@code true} if the supplied {@link Object} is equal to
+   * this {@link CaptureGroup}. Two {@link CaptureGroup}s are equal if
+   * their start and end indices are the same.  Notably, the {@link
+   * List} of items supplied {@linkplain #CaptureGroup(List, int) at
+   * construction time} is deliberately excluded from consideration.
+   *
+   * @return {@code true} if the supplied {@link Object} is equal to
+   * this {@link CaptureGroup}; {@code false} otherwise
+   */
   @Override
   public final boolean equals(final Object other) {
     if (other == this) {
@@ -147,6 +252,13 @@ public final class CaptureGroup<T> implements Cloneable, Serializable {
     }
   }
 
+  /**
+   * Returns a non-{@code null} {@link String} representation of this
+   * {@link CaptureGroup}.
+   *
+   * @return a non-{@code null} representation of this {@link
+   * CaptureGroup}
+   */
   @Override
   public final String toString() {
     return String.format("(%d, %d)", this.startIndex, this.endIndex);

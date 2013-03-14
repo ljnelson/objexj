@@ -547,6 +547,19 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
     return this.threadScheduler.schedule(t);
   }
 
+  /**
+   * Returns {@code true} if this {@link Thread}'s {@linkplain
+   * #getItemPointer() item pointer} is {@code 0} (in the case of
+   * there being input) or {@link #VALID_NO_INPUT_POINTER} (in the case
+   * of there being null or {@linkplain Collection#isEmpty() empty}
+   * input).
+   *
+   * @return {@code true} if this {@link Thread} is positioned at the
+   * beginning of the input; {@code false} otherwise
+   *
+   * @exception IllegalStateException if this {@link Thread}'s
+   * {@linkplain #getState() state} is {@link State#DEAD}
+   */
   public final boolean atStart() {
     if (Thread.State.DEAD == this.getState()) {
       throw new IllegalStateException(Thread.State.DEAD.toString());

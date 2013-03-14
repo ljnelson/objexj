@@ -17,7 +17,7 @@ public class TestCaseThread extends BasicThreadScheduler<Character> {
   private static final ProgramCounter<Character> simpleProgramCounter;
   
   static {
-    simpleProgramCounter = new ProgramCounter<Character>(Program.singleton(new NotNullMVELFilter<Character>("this.charValue() == 'a'")));
+    simpleProgramCounter = new ProgramCounter<Character>(Program.singleton(new InstanceOfMVELFilter<Character>(Object.class, "this.charValue() == 'a'")));
   }
 
   public TestCaseThread() {

@@ -1,2 +1,2 @@
-NotNullMVELFilter foo = "bar"; charValue() == 'a'
+InstanceOfMVELFilter java.lang.Character foo = "bar"; charValue() == 'a'
 Match

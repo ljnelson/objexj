@@ -180,7 +180,7 @@ public final class Program<T> extends LinkedList<Instruction<T>> {
    * than {@linkplain #size() the return value of the
    * <code>size()</code> method}.
    * 
-   * @return {@code true} if the supplied {@link programCounter} is
+   * @return {@code true} if the supplied {@code programCounter} is
    * valid; {@code false} otherwise
    */
   public final boolean isValidProgramCounter(final int programCounter) {
@@ -282,9 +282,6 @@ public final class Program<T> extends LinkedList<Instruction<T>> {
    *
    * @param instruction the {@link Instruction} to add; may be {@code
    * null} in which case {@code false} is returned
-   *
-   * @return {@code true} if the supplied {@link Instruction} was
-   * actually added; {@code false} otherwise
    *
    * @exception IndexOutOfBoundsException if the supplied {@code
    * index} is out of bounds
@@ -450,8 +447,7 @@ public final class Program<T> extends LinkedList<Instruction<T>> {
    * <p>This method never returns {@code null}.</p>
    *
    * @param <T> the type of {@link Object}s the returned {@link
-   * Program} will be able to {@linkplain Program#matcher(String)
-   * match}
+   * Program} will be able to match
    *
    * @param file a {@link File} containing {@link Instruction}s in
    * {@linkplain Instruction#valueOf(String) source form}; must not be
@@ -506,8 +502,7 @@ public final class Program<T> extends LinkedList<Instruction<T>> {
    * <p>This method never returns {@code null}.</p>
    *
    * @param <T> the type of {@link Object}s the returned {@link
-   * Program} will be able to {@linkplain Program#matcher(String)
-   * match}
+   * Program} will be able to match
    *
    * @param reader a {@link BufferedReader} that can read {@link
    * Instruction}s in {@linkplain Instruction#valueOf(String) source
@@ -559,8 +554,7 @@ public final class Program<T> extends LinkedList<Instruction<T>> {
    * <p>This method never returns {@code null}.</p>
    *
    * @param <T> the type of {@link Object}s the returned {@link
-   * Program} will be able to {@linkplain Program#matcher(String)
-   * match}
+   * Program} will be able to match
    *
    * @param text a {@link String} containing {@link Instruction}s in
    * source form; must not be {@code null}
@@ -614,8 +608,7 @@ public final class Program<T> extends LinkedList<Instruction<T>> {
    * <p>This method never returns {@code null}.</p>
    *
    * @param <T> the type of {@link Object}s the returned {@link
-   * Program} will be able to {@linkplain Program#matcher(String)
-   * match}
+   * Program} will be able to match
    *
    * @param lines an {@link Iterable} of {@link String}s, each of
    * which represents an {@link Instruction} in source form; must not
@@ -655,8 +648,7 @@ public final class Program<T> extends LinkedList<Instruction<T>> {
    * <p>This method never returns {@code null}.</p>
    *
    * @param <T> the type of {@link Object}s the returned {@link
-   * Program} will be able to {@linkplain Program#matcher(String)
-   * match}
+   * Program} will be able to match
    *
    * @param lines an {@link Iterator} of {@link String}s, each of
    * which represents an {@link Instruction} in source form; must not

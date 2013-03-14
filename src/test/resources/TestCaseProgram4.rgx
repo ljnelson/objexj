@@ -5,14 +5,14 @@
 #
 
 # 0: Match a character whose value is 'a'
-NotNullMVELFilter foo = "bar"; charValue() == 'a'
+InstanceOfMVELFilter java.lang.Character foo = "bar"; charValue() == 'a'
 
 # 1: Keep one thread going at the next instruction; have another start
 #    over at the top
 Split 0, 2
 
 # 2: Match a character whose value is 'b'
-NotNullMVELFilter charValue() == 'b'
+InstanceOfMVELFilter java.lang.Character charValue() == 'b'
 
 # 3: Keep one thread going at the next instruction; have another one
 #    go to instruction at index 2

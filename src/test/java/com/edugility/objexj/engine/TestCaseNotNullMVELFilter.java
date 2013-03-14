@@ -6,6 +6,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.mvel2.CompileException;
+
 import static org.junit.Assert.*;
 
 public class TestCaseNotNullMVELFilter extends BasicThreadScheduler<Character> {
@@ -14,6 +16,11 @@ public class TestCaseNotNullMVELFilter extends BasicThreadScheduler<Character> {
     super();
   }
 
+  @Test(expected = CompileException.class)
+  public void testBadMVEL() throws Throwable {
+    new MVELFilter<Character>("arglebargle + 1").accept(Character.valueOf('a'), null);
+  }
+  
   @Test
   public void testMVELFilter() {
     final MVELFilter<Character> filter = new MVELFilter<Character>("this != null && charValue() == 'a'");

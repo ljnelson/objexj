@@ -46,12 +46,44 @@ import java.util.logging.Logger;
 
 import com.edugility.objexj.parser.Parser;
 
+/**
+ * A stateless regular-expression-processing virtual machine made to
+ * run {@link Program}s against {@link List}s of input using {@link
+ * com.edugility.objexj.engine.Thread}s.
+ *
+ * @param <T> the type of {@link Object}s that {@link List}s supplied
+ * to the {@link #run(Program, List)} method will consist of
+ *
+ * @author <a href="http://about.me/lairdnelson"
+ * target="_parent">Laird Nelson</a>
+ *
+ * @see #run(Program, List)
+ */
 public class Engine<T> {
 
+  /**
+   * Creates a new {@link Engine}.
+   */
   public Engine() {
     super();
   }
 
+  /**
+   * Runs the supplied {@link Program} against the supplied {@link
+   * List} and returns a (possibly {@code null}) {@link MatchResult}
+   * describing the run result.
+   *
+   * @param program the {@link Program} to run; must not be {@code
+   * null}
+   *
+   * @param items the input {@link List}; may be {@code null}
+   *
+   * @return a {@link MatchResult}, or {@code null} if no match
+   * occurred
+   *
+   * @exception IllegalArgumentException if {@code program} is {@code
+   * null}
+   */
   public MatchResult<T> run(final Program<T> program, final List<T> items) {
     if (program == null) {
       throw new IllegalArgumentException("program", new NullPointerException("program"));
@@ -79,18 +111,52 @@ public class Engine<T> {
     return result;
   }
 
+  /**
+   * A {@link ThreadScheduler} that schedules {@link Thread}s in a
+   * simplistic, sequential manner.
+   *
+   * @author <a href="http://about.me/lairdnelson"
+   * target="_parent">Laird Nelson</a>
+   */
   private static final class Scheduler<T> implements ThreadScheduler<T> {
 
+    /**
+     * A {@link Queue} of scheduled {@link Thread}s.  This field may
+     * be {@code null}.
+     */
     private final Queue<Thread<T>> threads;
 
+    /**
+     * An {@link AtomicInteger} used to generate {@link Thread}
+     * identifiers.  This field is never {@code null}.
+     */
     private final AtomicInteger idGenerator;
 
+    /**
+     * A {@link Logger} to log messages.  This field is never {@code
+     * null}.
+     */
     private final Logger logger;
 
+    /**
+     * Creates a new {@link Scheduler}.
+     *
+     * @param threads a {@lik Queue} of {@link Thread}s; may be {@code
+     * null}
+     */
     private Scheduler(final Queue<Thread<T>> threads) {
       this(threads, new AtomicInteger());
     }
 
+    /**
+     * Creates a new {@link Scheduler}.
+     *
+     * @param threads a {@link Queue} of {@link Thread}s; may be
+     * {@code null}
+     *
+     * @param idGenerator an {@link AtomicInteger} to help with {@link
+     * Thread} identifier generation; may be {@code null}
+     */
     private Scheduler(final Queue<Thread<T>> threads, final AtomicInteger idGenerator) {
       super();
       this.logger = Logger.getLogger(this.getClass().getName());
@@ -102,6 +168,38 @@ public class Engine<T> {
       }
     }
 
+    /**
+     * Creates a new {@link Thread}.
+     *
+     * @param id the identifier for the new {@link Thread}; may be
+     * {@code null} in which case a default identifier will be used
+     * instead
+     *
+     * @param programCounter a {@link ProgramCounter}; must not be {@code null}
+     *
+     * @param items the input {@link List} to read from; may be {@code
+     * null} in which case the supplied {@code itemPointer} must be
+     * equal to {@code 0} or {@link Thread#VALID_NO_INPUT_POINTER}
+     *
+     * @param itemPointer the index within the supplied {@code items}
+     * {@link List} from which to begin {@linkplain Thread#read()
+     * reading}; must be zero or a positive integer less than the
+     * supplied {@code items} {@linkplain Collection#size() size}, or
+     * must be equal to {@link Thrad#VALID_NO_INPUT_POINTER} provided
+     * that the {@code items} {@link List} is {@code null} or
+     * {@linkplain Collection#isEmpty() empty}
+     *
+     * @param captureGroups a {@link Map} of {@link CaptureGroup}s
+     * indexed by key that this new {@link Thread} will use to store
+     * {@linkplain Thread#getSubmatches() submatches}; may be {@code
+     * null}
+     *
+     * @param variables a {@link Map} of variables the new {@link
+     * Thread} will be initialized with; may be {@code null}
+     *
+     * @exception IllegalArgumentException if any of the preconditions
+     * outlined as part of the parameter descriptions is not fulfilled
+     */
     @Override
     public final Thread<T> newThread(Object id, final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer, final Map<Object, CaptureGroup<T>> captureGroups, final Map<Object, Object> variables) {
       if (this.logger != null && this.logger.isLoggable(Level.FINER)) {
@@ -117,6 +215,23 @@ public class Engine<T> {
       return returnValue;
     }
       
+    /**
+     * Schedules the supplied {@link Thread} for execution.  This
+     * implementation of the {@link ThreadScheduler#schedule(Thread)}
+     * method adds the supplied {@link Thread} to the end of a
+     * first-in-last-out {@link Queue} of scheduled {@link Thread}s.
+     *
+     * @param t the {@link Thread} to schedule; must not be {@code
+     * null}
+     *
+     * @return {@code true} if the supplied {@link Thread} was
+     * actually scheduled; {@code false} if this {@link Scheduler}
+     * concluded that&mdash;for whatever reason&mdash;that the
+     * supplied {@link Thread} could not be scheduled
+     *
+     * @exception IllegalArgumentException if {@code t} is {@code
+     * null}
+     */
     @Override
     public final boolean schedule(final Thread<T> t) {
       if (this.logger != null && this.logger.isLoggable(Level.FINER)) {

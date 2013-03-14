@@ -27,14 +27,51 @@
  */
 package com.edugility.objexj.engine;
 
+/**
+ * An {@link Instruction} that {@linkplain
+ * InstructionContext#advanceProgramCounter() advances an
+ * <code>InstructionContext</code>'s program counter} if the {@link
+ * InstructionContext} {@linkplain InstructionContext#canRead() can be
+ * read from} and {@linkplain InstructionContext#read() produces an
+ * <code>Object</code>} that is non-{@code null}.
+ *
+ * @author <a href="http://about.me/lairdnelson"
+ * target="_parent">Laird Nelson</a>
+ */
 public class Filter<T> extends Instruction<T> {
 
+  /**
+   * The version of this class for {@linkplain Serializable
+   * serialization purposes}.
+   */
   private static final long serialVersionUID = 1L;
 
+  /**
+   * Creates a new {@link Filter}.
+   */
   public Filter() {
     super();
   }
 
+  /**
+   * {@linkplain InstructionContext#advanceProgramCounter() Advances
+   * an <code>InstructionContext</code>'s program counter} if and only
+   * if the {@link #accept(InstructionContext)} method returns {@code
+   * true}.
+   *
+   * <p>If the {@link #accept(InstructionContext)} method returns
+   * {@code false}, then this method {@linkplain
+   * InstructionContext#die() kills the
+   * <code>InstructionContext</code>}.</p>
+   *
+   * @param context an {@link InstructionContext} to execute this
+   * {@link Filter} in; must not be {@code null}
+   *
+   * @exception IllegalArgumentException if {@code context} is {@code
+   * null}
+   *
+   * @see #accept(InstructionContext)
+   */
   @Override
   public final void execute(final InstructionContext<T> context) {
     if (context == null) {
@@ -42,15 +79,22 @@ public class Filter<T> extends Instruction<T> {
     }
     if (this.accept(context)) {
       context.advanceItemPointer();
-      if (!context.advanceProgramCounter()) {
-        assert context.isDead();
-      }
-      // no need to schedule it; it is already running!
+      context.advanceProgramCounter();
     } else {
       context.die();
     }
   }
 
+  /**
+   * Returns {@code true} if this {@link Filter} accepts the supplied
+   * {@link InstructionContext}.
+   *
+   * @return {@code true} if and only if the supplied {@link
+   * InstructionContext} is not {@code null}, {@linkplain
+   * InstructionContext#canRead() can be read from}, and {@linkplain
+   * InstructionContext#read() produces an <code>Object</code>} that
+   * is not {@code null}; {@code false} in all other cases
+   */
   public boolean accept(final InstructionContext<T> context) {
     return context != null && context.canRead() && context.read() != null;
   }
