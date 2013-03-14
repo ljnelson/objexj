@@ -550,556 +550,569 @@
 <FONT color="green">547</FONT>        return this.threadScheduler.schedule(t);<a name="line.547"></a>
 <FONT color="green">548</FONT>      }<a name="line.548"></a>
 <FONT color="green">549</FONT>    <a name="line.549"></a>
-<FONT color="green">550</FONT>      public final boolean atStart() {<a name="line.550"></a>
-<FONT color="green">551</FONT>        if (Thread.State.DEAD == this.getState()) {<a name="line.551"></a>
-<FONT color="green">552</FONT>          throw new IllegalStateException(Thread.State.DEAD.toString());<a name="line.552"></a>
-<FONT color="green">553</FONT>        }<a name="line.553"></a>
-<FONT color="green">554</FONT>        if (this.items == null || this.items.isEmpty()) {<a name="line.554"></a>
-<FONT color="green">555</FONT>          return this.getItemPointer() == VALID_NO_INPUT_POINTER;<a name="line.555"></a>
-<FONT color="green">556</FONT>        } else {<a name="line.556"></a>
-<FONT color="green">557</FONT>          return this.getItemPointer() == 0;<a name="line.557"></a>
-<FONT color="green">558</FONT>        }<a name="line.558"></a>
-<FONT color="green">559</FONT>      }<a name="line.559"></a>
-<FONT color="green">560</FONT>    <a name="line.560"></a>
-<FONT color="green">561</FONT>      /**<a name="line.561"></a>
-<FONT color="green">562</FONT>       * Returns {@code true} if this {@link Thread}'s input pointer is<a name="line.562"></a>
-<FONT color="green">563</FONT>       * equal to this {@link Thread}'s input size.<a name="line.563"></a>
-<FONT color="green">564</FONT>       *<a name="line.564"></a>
-<FONT color="green">565</FONT>       * &lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; This method may be invoked in any<a name="line.565"></a>
-<FONT color="green">566</FONT>       * {@linkplain State state} except {@link State#DEAD}.&lt;/p&gt;<a name="line.566"></a>
-<FONT color="green">567</FONT>       *<a name="line.567"></a>
-<FONT color="green">568</FONT>       * @return {@code true} if this {@link Thread}'s input pointer is<a name="line.568"></a>
-<FONT color="green">569</FONT>       * equal to this {@link Thread}'s input size; {@code false}<a name="line.569"></a>
-<FONT color="green">570</FONT>       * otherwise<a name="line.570"></a>
-<FONT color="green">571</FONT>       */<a name="line.571"></a>
-<FONT color="green">572</FONT>      public final boolean atEnd() {<a name="line.572"></a>
-<FONT color="green">573</FONT>        if (Thread.State.DEAD == this.getState()) {<a name="line.573"></a>
-<FONT color="green">574</FONT>          throw new IllegalStateException(Thread.State.DEAD.toString());<a name="line.574"></a>
-<FONT color="green">575</FONT>        }<a name="line.575"></a>
-<FONT color="green">576</FONT>        if (this.items == null || this.items.isEmpty()) {<a name="line.576"></a>
-<FONT color="green">577</FONT>          return this.getItemPointer() == VALID_NO_INPUT_POINTER;<a name="line.577"></a>
-<FONT color="green">578</FONT>        } else {<a name="line.578"></a>
-<FONT color="green">579</FONT>          return this.getItemPointer() == this.items.size();<a name="line.579"></a>
-<FONT color="green">580</FONT>        }<a name="line.580"></a>
-<FONT color="green">581</FONT>      }<a name="line.581"></a>
-<FONT color="green">582</FONT>    <a name="line.582"></a>
-<FONT color="green">583</FONT>      /**<a name="line.583"></a>
-<FONT color="green">584</FONT>       * Returns {@code true} if this {@link Thread} {@linkplain<a name="line.584"></a>
-<FONT color="green">585</FONT>       * #isViable() is viable}, and has more items to read.<a name="line.585"></a>
-<FONT color="green">586</FONT>       *<a name="line.586"></a>
-<FONT color="green">587</FONT>       * &lt;p&gt;This method may be invoked in all states.&lt;/p&gt;<a name="line.587"></a>
-<FONT color="green">588</FONT>       *<a name="line.588"></a>
-<FONT color="green">589</FONT>       * @return {@code true} if this {@link Thread} can read an item<a name="line.589"></a>
-<FONT color="green">590</FONT>       */<a name="line.590"></a>
-<FONT color="green">591</FONT>      public final boolean canRead() {<a name="line.591"></a>
-<FONT color="green">592</FONT>        return this.isViable() &amp;&amp; this.isValidItemPointer(this.getItemPointer());<a name="line.592"></a>
-<FONT color="green">593</FONT>      }<a name="line.593"></a>
-<FONT color="green">594</FONT>    <a name="line.594"></a>
-<FONT color="green">595</FONT>      /**<a name="line.595"></a>
-<FONT color="green">596</FONT>       * Reads (but does not "consume") the current item.<a name="line.596"></a>
-<FONT color="green">597</FONT>       *<a name="line.597"></a>
-<FONT color="green">598</FONT>       * &lt;p&gt;This method may be invoked only when {@link #canRead()}<a name="line.598"></a>
-<FONT color="green">599</FONT>       * returns {@code true}.&lt;/p&gt;<a name="line.599"></a>
-<FONT color="green">600</FONT>       *<a name="line.600"></a>
-<FONT color="green">601</FONT>       * @return the current item which may be {@code null}<a name="line.601"></a>
-<FONT color="green">602</FONT>       *<a name="line.602"></a>
-<FONT color="green">603</FONT>       * @exception IllegalStateException if the {@link #canRead()} method<a name="line.603"></a>
-<FONT color="green">604</FONT>       * returns {@code false}<a name="line.604"></a>
-<FONT color="green">605</FONT>       *<a name="line.605"></a>
-<FONT color="green">606</FONT>       * @see #canRead()<a name="line.606"></a>
-<FONT color="green">607</FONT>       */<a name="line.607"></a>
-<FONT color="green">608</FONT>      public final T read() {<a name="line.608"></a>
-<FONT color="green">609</FONT>        if (!this.canRead()) {<a name="line.609"></a>
-<FONT color="green">610</FONT>          throw new IllegalStateException("Thread cannot read");<a name="line.610"></a>
-<FONT color="green">611</FONT>        }<a name="line.611"></a>
-<FONT color="green">612</FONT>        if (this.items == null || this.items.isEmpty()) {<a name="line.612"></a>
-<FONT color="green">613</FONT>          // This is an edge case.  If we are originally supplied with no<a name="line.613"></a>
-<FONT color="green">614</FONT>          // input, we need to be able to use an itemPointer that is both<a name="line.614"></a>
-<FONT color="green">615</FONT>          // valid, but doesn't point into the (non-existent) input list.<a name="line.615"></a>
-<FONT color="green">616</FONT>          assert this.getItemPointer() == VALID_NO_INPUT_POINTER;<a name="line.616"></a>
-<FONT color="green">617</FONT>          return null;<a name="line.617"></a>
-<FONT color="green">618</FONT>        }<a name="line.618"></a>
-<FONT color="green">619</FONT>        assert this.getItemPointer() &gt;= 0 &amp;&amp; this.getItemPointer() &lt; this.items.size();<a name="line.619"></a>
-<FONT color="green">620</FONT>        return this.items.get(this.getItemPointer());<a name="line.620"></a>
-<FONT color="green">621</FONT>      }<a name="line.621"></a>
-<FONT color="green">622</FONT>    <a name="line.622"></a>
-<FONT color="green">623</FONT>      private final boolean isValidItemPointer(final int itemPointer) {<a name="line.623"></a>
-<FONT color="green">624</FONT>        if (this.items == null || this.items.isEmpty()) {<a name="line.624"></a>
-<FONT color="green">625</FONT>          // We can have null or empty input.  In such a case, a value<a name="line.625"></a>
-<FONT color="green">626</FONT>          // equal to VALID_NO_INPUT_POINTER is OK; all others are not.<a name="line.626"></a>
-<FONT color="green">627</FONT>          return itemPointer == VALID_NO_INPUT_POINTER;<a name="line.627"></a>
-<FONT color="green">628</FONT>        }<a name="line.628"></a>
-<FONT color="green">629</FONT>        return itemPointer &gt;= 0 &amp;&amp; itemPointer &lt; this.items.size();<a name="line.629"></a>
-<FONT color="green">630</FONT>      }<a name="line.630"></a>
-<FONT color="green">631</FONT>    <a name="line.631"></a>
-<FONT color="green">632</FONT>      /**<a name="line.632"></a>
-<FONT color="green">633</FONT>       * Advances this {@link Thread}'s item pointer, provided it was<a name="line.633"></a>
-<FONT color="green">634</FONT>       * valid to begin with.  Returns {@code true} if the resulting item<a name="line.634"></a>
-<FONT color="green">635</FONT>       * pointer is valid.<a name="line.635"></a>
-<FONT color="green">636</FONT>       *<a name="line.636"></a>
-<FONT color="green">637</FONT>       * &lt;p&gt;Please note that a return value of {@code false} does<a name="line.637"></a>
-<FONT color="green">638</FONT>       * &lt;em&gt;not&lt;/em&gt; indicate that this {@link Thread} is dead.&lt;/p&gt;<a name="line.638"></a>
-<FONT color="green">639</FONT>       *<a name="line.639"></a>
-<FONT color="green">640</FONT>       * @return {@code true} if this {@link Thread}'s item pointer was<a name="line.640"></a>
-<FONT color="green">641</FONT>       * successfully advanced; {@code false} otherwise<a name="line.641"></a>
-<FONT color="green">642</FONT>       *<a name="line.642"></a>
-<FONT color="green">643</FONT>       * @exception IllegalStateException if this {@link Thread}<a name="line.643"></a>
-<FONT color="green">644</FONT>       * {@linkplain #isViable() is not viable}<a name="line.644"></a>
-<FONT color="green">645</FONT>       */<a name="line.645"></a>
-<FONT color="green">646</FONT>      public final boolean advanceItemPointer() {<a name="line.646"></a>
-<FONT color="green">647</FONT>        this.ensureViable();<a name="line.647"></a>
-<FONT color="green">648</FONT>        final boolean returnValue;<a name="line.648"></a>
-<FONT color="green">649</FONT>        int itemPointer = this.getItemPointer();<a name="line.649"></a>
-<FONT color="green">650</FONT>        if (itemPointer == INVALID_INPUT_POINTER || itemPointer == VALID_NO_INPUT_POINTER) {<a name="line.650"></a>
-<FONT color="green">651</FONT>          returnValue = false;<a name="line.651"></a>
-<FONT color="green">652</FONT>        } else {<a name="line.652"></a>
-<FONT color="green">653</FONT>          ++this.itemPointer;<a name="line.653"></a>
-<FONT color="green">654</FONT>          returnValue = this.isValidItemPointer(this.getItemPointer());<a name="line.654"></a>
-<FONT color="green">655</FONT>        }<a name="line.655"></a>
-<FONT color="green">656</FONT>        return returnValue;<a name="line.656"></a>
-<FONT color="green">657</FONT>      }<a name="line.657"></a>
-<FONT color="green">658</FONT>    <a name="line.658"></a>
-<FONT color="green">659</FONT>      /**<a name="line.659"></a>
-<FONT color="green">660</FONT>       * Returns this {@link Thread}'s associated {@link ProgramCounter}.<a name="line.660"></a>
-<FONT color="green">661</FONT>       * This method never returns {@code null}.<a name="line.661"></a>
-<FONT color="green">662</FONT>       *<a name="line.662"></a>
-<FONT color="green">663</FONT>       * &lt;p&gt;This method may be invoked only when {@link #isViable()}<a name="line.663"></a>
-<FONT color="green">664</FONT>       * returns {@code true}.&lt;/p&gt;<a name="line.664"></a>
-<FONT color="green">665</FONT>       *<a name="line.665"></a>
-<FONT color="green">666</FONT>       * @return this {@link Thread}'s associated {@link ProgramCounter};<a name="line.666"></a>
-<FONT color="green">667</FONT>       * never {@code null}<a name="line.667"></a>
-<FONT color="green">668</FONT>       */<a name="line.668"></a>
-<FONT color="green">669</FONT>      public final ProgramCounter&lt;T&gt; getProgramCounter() {<a name="line.669"></a>
-<FONT color="green">670</FONT>        this.ensureViable();<a name="line.670"></a>
-<FONT color="green">671</FONT>        return this.programCounter;<a name="line.671"></a>
-<FONT color="green">672</FONT>      }<a name="line.672"></a>
-<FONT color="green">673</FONT>    <a name="line.673"></a>
-<FONT color="green">674</FONT>      /**<a name="line.674"></a>
-<FONT color="green">675</FONT>       * Advances the program counter to point at the next {@link<a name="line.675"></a>
-<FONT color="green">676</FONT>       * Instruction} in the {@link Program}.  If this cannot<a name="line.676"></a>
-<FONT color="green">677</FONT>       * happen&amp;mdash;as in the case where there are no more {@link<a name="line.677"></a>
-<FONT color="green">678</FONT>       * Instruction}s in the {@link Program}&amp;mdash;then the {@link<a name="line.678"></a>
-<FONT color="green">679</FONT>       * #die()} method is invoked.<a name="line.679"></a>
-<FONT color="green">680</FONT>       *<a name="line.680"></a>
-<FONT color="green">681</FONT>       * &lt;p&gt;This method may be invoked only when {@link #isViable()}<a name="line.681"></a>
-<FONT color="green">682</FONT>       * returns {@code true}.&lt;/p&gt;<a name="line.682"></a>
-<FONT color="green">683</FONT>       *<a name="line.683"></a>
-<FONT color="green">684</FONT>       * @return {@code true} if the program counter was successfully<a name="line.684"></a>
-<FONT color="green">685</FONT>       * advanced and therefore if there is another {@link Instruction}<a name="line.685"></a>
-<FONT color="green">686</FONT>       * ready to be executed; {@code false} if this {@link Thread} has<a name="line.686"></a>
-<FONT color="green">687</FONT>       * been killed via the {@link #die()} method since there are no more<a name="line.687"></a>
-<FONT color="green">688</FONT>       * {@link Instruction}s in the {@link Program} to be executed<a name="line.688"></a>
-<FONT color="green">689</FONT>       *<a name="line.689"></a>
-<FONT color="green">690</FONT>       * @exception IllegalStateException if this {@link Thread}<a name="line.690"></a>
-<FONT color="green">691</FONT>       * {@linkplain #isViable() is not viable}<a name="line.691"></a>
-<FONT color="green">692</FONT>       */<a name="line.692"></a>
-<FONT color="green">693</FONT>      public final boolean advanceProgramCounter() {<a name="line.693"></a>
-<FONT color="green">694</FONT>        this.ensureViable();<a name="line.694"></a>
-<FONT color="green">695</FONT>        boolean returnValue = false;<a name="line.695"></a>
-<FONT color="green">696</FONT>        final ProgramCounter&lt;T&gt; programCounter = this.getProgramCounter();<a name="line.696"></a>
-<FONT color="green">697</FONT>        if (programCounter != null) {<a name="line.697"></a>
-<FONT color="green">698</FONT>          returnValue = programCounter.advance();<a name="line.698"></a>
-<FONT color="green">699</FONT>        }<a name="line.699"></a>
-<FONT color="green">700</FONT>        if (!returnValue) {<a name="line.700"></a>
-<FONT color="green">701</FONT>          // The program counter could not be incremented, so there are no<a name="line.701"></a>
-<FONT color="green">702</FONT>          // further instructions to run, so we're dead.<a name="line.702"></a>
-<FONT color="green">703</FONT>          this.die();<a name="line.703"></a>
-<FONT color="green">704</FONT>        }<a name="line.704"></a>
-<FONT color="green">705</FONT>        return returnValue;<a name="line.705"></a>
-<FONT color="green">706</FONT>      }<a name="line.706"></a>
-<FONT color="green">707</FONT>    <a name="line.707"></a>
-<FONT color="green">708</FONT>      /**<a name="line.708"></a>
-<FONT color="green">709</FONT>       * Sets this {@link Thread}'s program counter to the supplied value,<a name="line.709"></a>
-<FONT color="green">710</FONT>       * provided it is valid.  If the supplied value is &lt;em&gt;not&lt;/em&gt;<a name="line.710"></a>
-<FONT color="green">711</FONT>       * valid, then this {@link Thread} {@linkplain #die() dies}.<a name="line.711"></a>
-<FONT color="green">712</FONT>       *<a name="line.712"></a>
-<FONT color="green">713</FONT>       * &lt;p&gt;This method may be invoked only when {@link #isViable()}<a name="line.713"></a>
-<FONT color="green">714</FONT>       * returns {@code true}.&lt;/p&gt;<a name="line.714"></a>
-<FONT color="green">715</FONT>       *<a name="line.715"></a>
-<FONT color="green">716</FONT>       * @param programCounter<a name="line.716"></a>
-<FONT color="green">717</FONT>       *<a name="line.717"></a>
-<FONT color="green">718</FONT>       * @param relative<a name="line.718"></a>
-<FONT color="green">719</FONT>       *<a name="line.719"></a>
-<FONT color="green">720</FONT>       * @return {@code true} if the program counter was actually set;<a name="line.720"></a>
-<FONT color="green">721</FONT>       * {@code false} if it was not (thus indicating that this {@link<a name="line.721"></a>
-<FONT color="green">722</FONT>       * Thread} is now dead)<a name="line.722"></a>
-<FONT color="green">723</FONT>       *<a name="line.723"></a>
-<FONT color="green">724</FONT>       * @exception IllegalArgumentException if the supplied {@code<a name="line.724"></a>
-<FONT color="green">725</FONT>       * programCounter} is not valid<a name="line.725"></a>
-<FONT color="green">726</FONT>       *<a name="line.726"></a>
-<FONT color="green">727</FONT>       * @exception IllegalStateException if this {@link Thread}<a name="line.727"></a>
-<FONT color="green">728</FONT>       * {@linkplain #isViable() is not viable}<a name="line.728"></a>
-<FONT color="green">729</FONT>       */<a name="line.729"></a>
-<FONT color="green">730</FONT>      public final boolean jump(final int programCounter, final boolean relative) {<a name="line.730"></a>
-<FONT color="green">731</FONT>        this.ensureViable();<a name="line.731"></a>
-<FONT color="green">732</FONT>        final boolean returnValue;<a name="line.732"></a>
-<FONT color="green">733</FONT>        final ProgramCounter&lt;T&gt; pc = this.getProgramCounter();<a name="line.733"></a>
-<FONT color="green">734</FONT>        final int absoluteProgramCounter;<a name="line.734"></a>
-<FONT color="green">735</FONT>        if (relative) {<a name="line.735"></a>
-<FONT color="green">736</FONT>          absoluteProgramCounter = pc.getIndex() + programCounter;<a name="line.736"></a>
-<FONT color="green">737</FONT>        } else {<a name="line.737"></a>
-<FONT color="green">738</FONT>          absoluteProgramCounter = programCounter;<a name="line.738"></a>
-<FONT color="green">739</FONT>        }<a name="line.739"></a>
-<FONT color="green">740</FONT>        if (pc != null &amp;&amp; pc.isValid(absoluteProgramCounter)) {<a name="line.740"></a>
-<FONT color="green">741</FONT>          pc.setIndex(absoluteProgramCounter);<a name="line.741"></a>
-<FONT color="green">742</FONT>          returnValue = true;<a name="line.742"></a>
-<FONT color="green">743</FONT>        } else {<a name="line.743"></a>
-<FONT color="green">744</FONT>          this.die();<a name="line.744"></a>
-<FONT color="green">745</FONT>          returnValue = false;<a name="line.745"></a>
-<FONT color="green">746</FONT>        }<a name="line.746"></a>
-<FONT color="green">747</FONT>        return returnValue;<a name="line.747"></a>
-<FONT color="green">748</FONT>      }<a name="line.748"></a>
-<FONT color="green">749</FONT>    <a name="line.749"></a>
-<FONT color="green">750</FONT>      /**<a name="line.750"></a>
-<FONT color="green">751</FONT>       * Returns the current {@link Instruction}.<a name="line.751"></a>
-<FONT color="green">752</FONT>       *<a name="line.752"></a>
-<FONT color="green">753</FONT>       * &lt;p&gt;This method may be invoked only when {@link #isViable()}<a name="line.753"></a>
-<FONT color="green">754</FONT>       * returns {@code true}.&lt;/p&gt;<a name="line.754"></a>
-<FONT color="green">755</FONT>       *<a name="line.755"></a>
-<FONT color="green">756</FONT>       * @return the current {@link Instruction}, or {@code null} if the<a name="line.756"></a>
-<FONT color="green">757</FONT>       * {@link #isViable()} method returns {@code false}<a name="line.757"></a>
-<FONT color="green">758</FONT>       *<a name="line.758"></a>
-<FONT color="green">759</FONT>       * @exception IllegalStateException if this {@link Thread}<a name="line.759"></a>
-<FONT color="green">760</FONT>       * {@linkplain #isViable() is not viable}<a name="line.760"></a>
-<FONT color="green">761</FONT>       *<a name="line.761"></a>
-<FONT color="green">762</FONT>       * @see #isViable()<a name="line.762"></a>
-<FONT color="green">763</FONT>       */<a name="line.763"></a>
-<FONT color="green">764</FONT>      private final Instruction&lt;T&gt; getInstruction() {<a name="line.764"></a>
-<FONT color="green">765</FONT>        this.ensureViable();<a name="line.765"></a>
-<FONT color="green">766</FONT>        final Instruction&lt;T&gt; returnValue;<a name="line.766"></a>
-<FONT color="green">767</FONT>        final ProgramCounter&lt;T&gt; programCounter = this.getProgramCounter();<a name="line.767"></a>
-<FONT color="green">768</FONT>        if (programCounter != null &amp;&amp; this.isViable()) {<a name="line.768"></a>
-<FONT color="green">769</FONT>          returnValue = programCounter.getInstruction();<a name="line.769"></a>
-<FONT color="green">770</FONT>        } else {<a name="line.770"></a>
-<FONT color="green">771</FONT>          returnValue = null;<a name="line.771"></a>
-<FONT color="green">772</FONT>        }<a name="line.772"></a>
-<FONT color="green">773</FONT>        return returnValue;<a name="line.773"></a>
-<FONT color="green">774</FONT>      }<a name="line.774"></a>
-<FONT color="green">775</FONT>    <a name="line.775"></a>
-<FONT color="green">776</FONT>      /**<a name="line.776"></a>
-<FONT color="green">777</FONT>       * Retrieves the current {@link Instruction} and {@linkplain<a name="line.777"></a>
-<FONT color="green">778</FONT>       * Instruction#execute(InstructionContext) executes} it.<a name="line.778"></a>
-<FONT color="green">779</FONT>       *<a name="line.779"></a>
-<FONT color="green">780</FONT>       * &lt;p&gt;If the {@link #isViable()} method returns {@code false},<a name="line.780"></a>
-<FONT color="green">781</FONT>       * then invoking this method will cause the {@link #die()} method to<a name="line.781"></a>
-<FONT color="green">782</FONT>       * be invoked and no further action will take place.&lt;/p&gt;<a name="line.782"></a>
-<FONT color="green">783</FONT>       *<a name="line.783"></a>
-<FONT color="green">784</FONT>       * &lt;p&gt;This method may be invoked only when {@link #isViable()}<a name="line.784"></a>
-<FONT color="green">785</FONT>       * returns {@code true}.&lt;/p&gt;<a name="line.785"></a>
-<FONT color="green">786</FONT>       *<a name="line.786"></a>
-<FONT color="green">787</FONT>       * @exception IllegalStateException if this {@link Thread}<a name="line.787"></a>
-<FONT color="green">788</FONT>       * {@linkplain #isViable() is not viable}<a name="line.788"></a>
-<FONT color="green">789</FONT>       */<a name="line.789"></a>
-<FONT color="green">790</FONT>      public final void step() {<a name="line.790"></a>
-<FONT color="green">791</FONT>        this.ensureViable();<a name="line.791"></a>
-<FONT color="green">792</FONT>        final Instruction&lt;T&gt; instruction = this.getInstruction();<a name="line.792"></a>
-<FONT color="green">793</FONT>        assert instruction != null;<a name="line.793"></a>
-<FONT color="green">794</FONT>        if (this.ic == null) {<a name="line.794"></a>
-<FONT color="green">795</FONT>          this.ic = new InstructionContext&lt;T&gt;(this);<a name="line.795"></a>
-<FONT color="green">796</FONT>        }<a name="line.796"></a>
-<FONT color="green">797</FONT>        instruction.execute(this.ic);<a name="line.797"></a>
-<FONT color="green">798</FONT>      }<a name="line.798"></a>
-<FONT color="green">799</FONT>    <a name="line.799"></a>
-<FONT color="green">800</FONT>      /**<a name="line.800"></a>
-<FONT color="green">801</FONT>       * Repeatedly calls the {@link #step()} method until this {@link<a name="line.801"></a>
-<FONT color="green">802</FONT>       * Thread} has completed execution.<a name="line.802"></a>
-<FONT color="green">803</FONT>       *<a name="line.803"></a>
-<FONT color="green">804</FONT>       * &lt;p&gt;This method may be invoked only when {@link #isViable()}<a name="line.804"></a>
-<FONT color="green">805</FONT>       * returns {@code true}.&lt;/p&gt;<a name="line.805"></a>
-<FONT color="green">806</FONT>       *<a name="line.806"></a>
-<FONT color="green">807</FONT>       * @exception IllegalStateException if this {@link Thread}<a name="line.807"></a>
-<FONT color="green">808</FONT>       * {@linkplain #isViable() is not viable}<a name="line.808"></a>
-<FONT color="green">809</FONT>       */<a name="line.809"></a>
-<FONT color="green">810</FONT>      @Override<a name="line.810"></a>
-<FONT color="green">811</FONT>      public final void run() {<a name="line.811"></a>
-<FONT color="green">812</FONT>        this.ensureViable();<a name="line.812"></a>
-<FONT color="green">813</FONT>        final Logger logger = Logger.getLogger(this.getClass().getName());<a name="line.813"></a>
-<FONT color="green">814</FONT>        assert logger != null;<a name="line.814"></a>
-<FONT color="green">815</FONT>        final boolean finer = logger.isLoggable(Level.FINER);<a name="line.815"></a>
-<FONT color="green">816</FONT>        final ProgramCounter&lt;T&gt; pc = this.getProgramCounter();<a name="line.816"></a>
-<FONT color="green">817</FONT>        assert pc != null;<a name="line.817"></a>
-<FONT color="green">818</FONT>        while (this.isViable()) {<a name="line.818"></a>
-<FONT color="green">819</FONT>          final Instruction&lt;T&gt; currentInstruction = pc.getInstruction();<a name="line.819"></a>
-<FONT color="green">820</FONT>          assert currentInstruction != null;<a name="line.820"></a>
-<FONT color="green">821</FONT>          if (finer) {<a name="line.821"></a>
-<FONT color="green">822</FONT>            final int index = pc.getIndex();<a name="line.822"></a>
-<FONT color="green">823</FONT>            logger.logp(Level.FINER, this.getClass().getName(), "run", "Before running {0} {1} ({2}) at input position {3}", new Object[] { this, currentInstruction, Integer.valueOf(index), Integer.valueOf(this.getItemPointer()) });<a name="line.823"></a>
-<FONT color="green">824</FONT>          }<a name="line.824"></a>
-<FONT color="green">825</FONT>          this.step();<a name="line.825"></a>
-<FONT color="green">826</FONT>          if (finer) {<a name="line.826"></a>
-<FONT color="green">827</FONT>            if (this.isViable()) {<a name="line.827"></a>
-<FONT color="green">828</FONT>              logger.logp(Level.FINER, this.getClass().getName(), "run", "After running {0} {1}; input position is now {2}", new Object[] { this, currentInstruction, Integer.valueOf(this.getItemPointer()) });<a name="line.828"></a>
-<FONT color="green">829</FONT>            } else {<a name="line.829"></a>
-<FONT color="green">830</FONT>              logger.logp(Level.FINER, this.getClass().getName(), "run", "Thread {0} is no longer viable", this);<a name="line.830"></a>
-<FONT color="green">831</FONT>            }<a name="line.831"></a>
-<FONT color="green">832</FONT>          }<a name="line.832"></a>
-<FONT color="green">833</FONT>        }<a name="line.833"></a>
-<FONT color="green">834</FONT>      }<a name="line.834"></a>
-<FONT color="green">835</FONT>    <a name="line.835"></a>
-<FONT color="green">836</FONT>      /**<a name="line.836"></a>
-<FONT color="green">837</FONT>       * Returns {@code true} if and only if this {@link Thread}'s<a name="line.837"></a>
-<FONT color="green">838</FONT>       * {@linkplain #getState() associated state} is {@link State#VIABLE<a name="line.838"></a>
-<FONT color="green">839</FONT>       * VIABLE} and if its associated {@link ProgramCounter}'s {@link<a name="line.839"></a>
-<FONT color="green">840</FONT>       * ProgramCounter#isValid()} method returns {@code true}.<a name="line.840"></a>
-<FONT color="green">841</FONT>       *<a name="line.841"></a>
-<FONT color="green">842</FONT>       * &lt;p&gt;This method may be invoked in all states.&lt;/p&gt;<a name="line.842"></a>
-<FONT color="green">843</FONT>       *<a name="line.843"></a>
-<FONT color="green">844</FONT>       * @return {@code true} if and only if this {@link Thread} is viable<a name="line.844"></a>
-<FONT color="green">845</FONT>       */<a name="line.845"></a>
-<FONT color="green">846</FONT>      public final boolean isViable() {<a name="line.846"></a>
-<FONT color="green">847</FONT>        // Do not call getProgramCounter() here; just access the field<a name="line.847"></a>
-<FONT color="green">848</FONT>        // directly.  This avoids an infinite loop.<a name="line.848"></a>
-<FONT color="green">849</FONT>        return this.getState() == State.VIABLE &amp;&amp; this.programCounter != null &amp;&amp; this.programCounter.isValid();<a name="line.849"></a>
-<FONT color="green">850</FONT>      }<a name="line.850"></a>
-<FONT color="green">851</FONT>    <a name="line.851"></a>
-<FONT color="green">852</FONT>      /**<a name="line.852"></a>
-<FONT color="green">853</FONT>       * Causes this {@link Thread} to irrevocably enter the {@link<a name="line.853"></a>
-<FONT color="green">854</FONT>       * State#MATCH MATCH} state.<a name="line.854"></a>
-<FONT color="green">855</FONT>       *<a name="line.855"></a>
-<FONT color="green">856</FONT>       * &lt;p&gt;This method may be invoked only when {@link #isViable()}<a name="line.856"></a>
-<FONT color="green">857</FONT>       * returns {@code true}.&lt;/p&gt;<a name="line.857"></a>
-<FONT color="green">858</FONT>       *<a name="line.858"></a>
-<FONT color="green">859</FONT>       * @exception IllegalStateException if this {@link Thread}<a name="line.859"></a>
-<FONT color="green">860</FONT>       * {@linkplain #isViable() is not viable}<a name="line.860"></a>
-<FONT color="green">861</FONT>       */<a name="line.861"></a>
-<FONT color="green">862</FONT>      public final void match() {<a name="line.862"></a>
-<FONT color="green">863</FONT>        this.ensureViable();<a name="line.863"></a>
-<FONT color="green">864</FONT>        this.state = State.MATCH;<a name="line.864"></a>
-<FONT color="green">865</FONT>      }<a name="line.865"></a>
-<FONT color="green">866</FONT>    <a name="line.866"></a>
-<FONT color="green">867</FONT>      /**<a name="line.867"></a>
-<FONT color="green">868</FONT>       * Causes this {@link Thread} to irrevocably enter the {@link<a name="line.868"></a>
-<FONT color="green">869</FONT>       * State#DEAD DEAD} state.<a name="line.869"></a>
-<FONT color="green">870</FONT>       *<a name="line.870"></a>
-<FONT color="green">871</FONT>       * &lt;p&gt;This method may be invoked in all states except {@link<a name="line.871"></a>
-<FONT color="green">872</FONT>       * State#MATCH MATCH}.&lt;/p&gt;<a name="line.872"></a>
-<FONT color="green">873</FONT>       *<a name="line.873"></a>
-<FONT color="green">874</FONT>       * @exception IllegalStateException if this {@link Thread} is<a name="line.874"></a>
-<FONT color="green">875</FONT>       * currently in the {@link State#MATCH MATCH} state<a name="line.875"></a>
-<FONT color="green">876</FONT>       */<a name="line.876"></a>
-<FONT color="green">877</FONT>      public final void die() {<a name="line.877"></a>
-<FONT color="green">878</FONT>        if (State.MATCH == this.getState()) {<a name="line.878"></a>
-<FONT color="green">879</FONT>          throw new IllegalStateException();<a name="line.879"></a>
-<FONT color="green">880</FONT>        }<a name="line.880"></a>
-<FONT color="green">881</FONT>        this.state = State.DEAD;<a name="line.881"></a>
-<FONT color="green">882</FONT>        this.itemPointer = INVALID_INPUT_POINTER;<a name="line.882"></a>
-<FONT color="green">883</FONT>        if (this.captureGroups != null) {<a name="line.883"></a>
-<FONT color="green">884</FONT>          this.captureGroups.clear();<a name="line.884"></a>
-<FONT color="green">885</FONT>        }<a name="line.885"></a>
-<FONT color="green">886</FONT>      }<a name="line.886"></a>
-<FONT color="green">887</FONT>    <a name="line.887"></a>
-<FONT color="green">888</FONT>      /**<a name="line.888"></a>
-<FONT color="green">889</FONT>       * Returns the {@link State} of this {@link Thread}.  This method<a name="line.889"></a>
-<FONT color="green">890</FONT>       * never returns {@code null}.<a name="line.890"></a>
-<FONT color="green">891</FONT>       *<a name="line.891"></a>
-<FONT color="green">892</FONT>       * @return a non-{@code null} {@link State}<a name="line.892"></a>
-<FONT color="green">893</FONT>       */<a name="line.893"></a>
-<FONT color="green">894</FONT>      public final State getState() {<a name="line.894"></a>
-<FONT color="green">895</FONT>        assert this.state != null;<a name="line.895"></a>
-<FONT color="green">896</FONT>        return this.state;<a name="line.896"></a>
-<FONT color="green">897</FONT>      }<a name="line.897"></a>
-<FONT color="green">898</FONT>    <a name="line.898"></a>
-<FONT color="green">899</FONT>      public final Set&lt;Object&gt; getGroupKeySet() {<a name="line.899"></a>
-<FONT color="green">900</FONT>        final Set&lt;Object&gt; returnValue;<a name="line.900"></a>
-<FONT color="green">901</FONT>        if (this.captureGroups == null || this.captureGroups.isEmpty()) {<a name="line.901"></a>
-<FONT color="green">902</FONT>          returnValue = Collections.emptySet();<a name="line.902"></a>
-<FONT color="green">903</FONT>        } else {<a name="line.903"></a>
-<FONT color="green">904</FONT>          returnValue = Collections.unmodifiableSet(this.captureGroups.keySet());<a name="line.904"></a>
-<FONT color="green">905</FONT>        }<a name="line.905"></a>
-<FONT color="green">906</FONT>        return returnValue;<a name="line.906"></a>
-<FONT color="green">907</FONT>      }<a name="line.907"></a>
-<FONT color="green">908</FONT>    <a name="line.908"></a>
-<FONT color="green">909</FONT>      public final int getGroupCount() {<a name="line.909"></a>
-<FONT color="green">910</FONT>        final int result;<a name="line.910"></a>
-<FONT color="green">911</FONT>        if (this.captureGroups == null || this.captureGroups.isEmpty()) {<a name="line.911"></a>
-<FONT color="green">912</FONT>          result = 0;<a name="line.912"></a>
-<FONT color="green">913</FONT>        } else {<a name="line.913"></a>
-<FONT color="green">914</FONT>          result = this.captureGroups.size();<a name="line.914"></a>
-<FONT color="green">915</FONT>        }<a name="line.915"></a>
-<FONT color="green">916</FONT>        return result;<a name="line.916"></a>
-<FONT color="green">917</FONT>      }<a name="line.917"></a>
-<FONT color="green">918</FONT>    <a name="line.918"></a>
-<FONT color="green">919</FONT>      public final List&lt;T&gt; getGroup(final Object key) {<a name="line.919"></a>
-<FONT color="green">920</FONT>        List&lt;T&gt; result = null;<a name="line.920"></a>
-<FONT color="green">921</FONT>        if (this.captureGroups != null) {<a name="line.921"></a>
-<FONT color="green">922</FONT>          final CaptureGroup&lt;T&gt; cg = this.captureGroups.get(key);<a name="line.922"></a>
-<FONT color="green">923</FONT>          if (cg != null) {<a name="line.923"></a>
-<FONT color="green">924</FONT>            result = cg.getItems();<a name="line.924"></a>
-<FONT color="green">925</FONT>          }<a name="line.925"></a>
-<FONT color="green">926</FONT>        }<a name="line.926"></a>
-<FONT color="green">927</FONT>        return result;<a name="line.927"></a>
-<FONT color="green">928</FONT>      }<a name="line.928"></a>
-<FONT color="green">929</FONT>    <a name="line.929"></a>
-<FONT color="green">930</FONT>      /**<a name="line.930"></a>
-<FONT color="green">931</FONT>       * Does nothing if this {@link Thread} {@linkplain #isViable() is viable}.<a name="line.931"></a>
-<FONT color="green">932</FONT>       *<a name="line.932"></a>
-<FONT color="green">933</FONT>       * @exception IllegalStateException if this {@link Thread}<a name="line.933"></a>
-<FONT color="green">934</FONT>       * {@linkplain #isViable() is not viable}<a name="line.934"></a>
-<FONT color="green">935</FONT>       */<a name="line.935"></a>
-<FONT color="green">936</FONT>      private final void ensureViable() {<a name="line.936"></a>
-<FONT color="green">937</FONT>        if (!this.isViable()) {<a name="line.937"></a>
-<FONT color="green">938</FONT>          throw new IllegalStateException("Thread is not viable");<a name="line.938"></a>
+<FONT color="green">550</FONT>      /**<a name="line.550"></a>
+<FONT color="green">551</FONT>       * Returns {@code true} if this {@link Thread}'s {@linkplain<a name="line.551"></a>
+<FONT color="green">552</FONT>       * #getItemPointer() item pointer} is {@code 0} (in the case of<a name="line.552"></a>
+<FONT color="green">553</FONT>       * there being input) or {@link #VALID_NO_INPUT_POINTER} (in the case<a name="line.553"></a>
+<FONT color="green">554</FONT>       * of there being null or {@linkplain Collection#isEmpty() empty}<a name="line.554"></a>
+<FONT color="green">555</FONT>       * input).<a name="line.555"></a>
+<FONT color="green">556</FONT>       *<a name="line.556"></a>
+<FONT color="green">557</FONT>       * @return {@code true} if this {@link Thread} is positioned at the<a name="line.557"></a>
+<FONT color="green">558</FONT>       * beginning of the input; {@code false} otherwise<a name="line.558"></a>
+<FONT color="green">559</FONT>       *<a name="line.559"></a>
+<FONT color="green">560</FONT>       * @exception IllegalStateException if this {@link Thread}'s<a name="line.560"></a>
+<FONT color="green">561</FONT>       * {@linkplain #getState() state} is {@link State#DEAD}<a name="line.561"></a>
+<FONT color="green">562</FONT>       */<a name="line.562"></a>
+<FONT color="green">563</FONT>      public final boolean atStart() {<a name="line.563"></a>
+<FONT color="green">564</FONT>        if (Thread.State.DEAD == this.getState()) {<a name="line.564"></a>
+<FONT color="green">565</FONT>          throw new IllegalStateException(Thread.State.DEAD.toString());<a name="line.565"></a>
+<FONT color="green">566</FONT>        }<a name="line.566"></a>
+<FONT color="green">567</FONT>        if (this.items == null || this.items.isEmpty()) {<a name="line.567"></a>
+<FONT color="green">568</FONT>          return this.getItemPointer() == VALID_NO_INPUT_POINTER;<a name="line.568"></a>
+<FONT color="green">569</FONT>        } else {<a name="line.569"></a>
+<FONT color="green">570</FONT>          return this.getItemPointer() == 0;<a name="line.570"></a>
+<FONT color="green">571</FONT>        }<a name="line.571"></a>
+<FONT color="green">572</FONT>      }<a name="line.572"></a>
+<FONT color="green">573</FONT>    <a name="line.573"></a>
+<FONT color="green">574</FONT>      /**<a name="line.574"></a>
+<FONT color="green">575</FONT>       * Returns {@code true} if this {@link Thread}'s input pointer is<a name="line.575"></a>
+<FONT color="green">576</FONT>       * equal to this {@link Thread}'s input size.<a name="line.576"></a>
+<FONT color="green">577</FONT>       *<a name="line.577"></a>
+<FONT color="green">578</FONT>       * &lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; This method may be invoked in any<a name="line.578"></a>
+<FONT color="green">579</FONT>       * {@linkplain State state} except {@link State#DEAD}.&lt;/p&gt;<a name="line.579"></a>
+<FONT color="green">580</FONT>       *<a name="line.580"></a>
+<FONT color="green">581</FONT>       * @return {@code true} if this {@link Thread}'s input pointer is<a name="line.581"></a>
+<FONT color="green">582</FONT>       * equal to this {@link Thread}'s input size; {@code false}<a name="line.582"></a>
+<FONT color="green">583</FONT>       * otherwise<a name="line.583"></a>
+<FONT color="green">584</FONT>       */<a name="line.584"></a>
+<FONT color="green">585</FONT>      public final boolean atEnd() {<a name="line.585"></a>
+<FONT color="green">586</FONT>        if (Thread.State.DEAD == this.getState()) {<a name="line.586"></a>
+<FONT color="green">587</FONT>          throw new IllegalStateException(Thread.State.DEAD.toString());<a name="line.587"></a>
+<FONT color="green">588</FONT>        }<a name="line.588"></a>
+<FONT color="green">589</FONT>        if (this.items == null || this.items.isEmpty()) {<a name="line.589"></a>
+<FONT color="green">590</FONT>          return this.getItemPointer() == VALID_NO_INPUT_POINTER;<a name="line.590"></a>
+<FONT color="green">591</FONT>        } else {<a name="line.591"></a>
+<FONT color="green">592</FONT>          return this.getItemPointer() == this.items.size();<a name="line.592"></a>
+<FONT color="green">593</FONT>        }<a name="line.593"></a>
+<FONT color="green">594</FONT>      }<a name="line.594"></a>
+<FONT color="green">595</FONT>    <a name="line.595"></a>
+<FONT color="green">596</FONT>      /**<a name="line.596"></a>
+<FONT color="green">597</FONT>       * Returns {@code true} if this {@link Thread} {@linkplain<a name="line.597"></a>
+<FONT color="green">598</FONT>       * #isViable() is viable}, and has more items to read.<a name="line.598"></a>
+<FONT color="green">599</FONT>       *<a name="line.599"></a>
+<FONT color="green">600</FONT>       * &lt;p&gt;This method may be invoked in all states.&lt;/p&gt;<a name="line.600"></a>
+<FONT color="green">601</FONT>       *<a name="line.601"></a>
+<FONT color="green">602</FONT>       * @return {@code true} if this {@link Thread} can read an item<a name="line.602"></a>
+<FONT color="green">603</FONT>       */<a name="line.603"></a>
+<FONT color="green">604</FONT>      public final boolean canRead() {<a name="line.604"></a>
+<FONT color="green">605</FONT>        return this.isViable() &amp;&amp; this.isValidItemPointer(this.getItemPointer());<a name="line.605"></a>
+<FONT color="green">606</FONT>      }<a name="line.606"></a>
+<FONT color="green">607</FONT>    <a name="line.607"></a>
+<FONT color="green">608</FONT>      /**<a name="line.608"></a>
+<FONT color="green">609</FONT>       * Reads (but does not "consume") the current item.<a name="line.609"></a>
+<FONT color="green">610</FONT>       *<a name="line.610"></a>
+<FONT color="green">611</FONT>       * &lt;p&gt;This method may be invoked only when {@link #canRead()}<a name="line.611"></a>
+<FONT color="green">612</FONT>       * returns {@code true}.&lt;/p&gt;<a name="line.612"></a>
+<FONT color="green">613</FONT>       *<a name="line.613"></a>
+<FONT color="green">614</FONT>       * @return the current item which may be {@code null}<a name="line.614"></a>
+<FONT color="green">615</FONT>       *<a name="line.615"></a>
+<FONT color="green">616</FONT>       * @exception IllegalStateException if the {@link #canRead()} method<a name="line.616"></a>
+<FONT color="green">617</FONT>       * returns {@code false}<a name="line.617"></a>
+<FONT color="green">618</FONT>       *<a name="line.618"></a>
+<FONT color="green">619</FONT>       * @see #canRead()<a name="line.619"></a>
+<FONT color="green">620</FONT>       */<a name="line.620"></a>
+<FONT color="green">621</FONT>      public final T read() {<a name="line.621"></a>
+<FONT color="green">622</FONT>        if (!this.canRead()) {<a name="line.622"></a>
+<FONT color="green">623</FONT>          throw new IllegalStateException("Thread cannot read");<a name="line.623"></a>
+<FONT color="green">624</FONT>        }<a name="line.624"></a>
+<FONT color="green">625</FONT>        if (this.items == null || this.items.isEmpty()) {<a name="line.625"></a>
+<FONT color="green">626</FONT>          // This is an edge case.  If we are originally supplied with no<a name="line.626"></a>
+<FONT color="green">627</FONT>          // input, we need to be able to use an itemPointer that is both<a name="line.627"></a>
+<FONT color="green">628</FONT>          // valid, but doesn't point into the (non-existent) input list.<a name="line.628"></a>
+<FONT color="green">629</FONT>          assert this.getItemPointer() == VALID_NO_INPUT_POINTER;<a name="line.629"></a>
+<FONT color="green">630</FONT>          return null;<a name="line.630"></a>
+<FONT color="green">631</FONT>        }<a name="line.631"></a>
+<FONT color="green">632</FONT>        assert this.getItemPointer() &gt;= 0 &amp;&amp; this.getItemPointer() &lt; this.items.size();<a name="line.632"></a>
+<FONT color="green">633</FONT>        return this.items.get(this.getItemPointer());<a name="line.633"></a>
+<FONT color="green">634</FONT>      }<a name="line.634"></a>
+<FONT color="green">635</FONT>    <a name="line.635"></a>
+<FONT color="green">636</FONT>      private final boolean isValidItemPointer(final int itemPointer) {<a name="line.636"></a>
+<FONT color="green">637</FONT>        if (this.items == null || this.items.isEmpty()) {<a name="line.637"></a>
+<FONT color="green">638</FONT>          // We can have null or empty input.  In such a case, a value<a name="line.638"></a>
+<FONT color="green">639</FONT>          // equal to VALID_NO_INPUT_POINTER is OK; all others are not.<a name="line.639"></a>
+<FONT color="green">640</FONT>          return itemPointer == VALID_NO_INPUT_POINTER;<a name="line.640"></a>
+<FONT color="green">641</FONT>        }<a name="line.641"></a>
+<FONT color="green">642</FONT>        return itemPointer &gt;= 0 &amp;&amp; itemPointer &lt; this.items.size();<a name="line.642"></a>
+<FONT color="green">643</FONT>      }<a name="line.643"></a>
+<FONT color="green">644</FONT>    <a name="line.644"></a>
+<FONT color="green">645</FONT>      /**<a name="line.645"></a>
+<FONT color="green">646</FONT>       * Advances this {@link Thread}'s item pointer, provided it was<a name="line.646"></a>
+<FONT color="green">647</FONT>       * valid to begin with.  Returns {@code true} if the resulting item<a name="line.647"></a>
+<FONT color="green">648</FONT>       * pointer is valid.<a name="line.648"></a>
+<FONT color="green">649</FONT>       *<a name="line.649"></a>
+<FONT color="green">650</FONT>       * &lt;p&gt;Please note that a return value of {@code false} does<a name="line.650"></a>
+<FONT color="green">651</FONT>       * &lt;em&gt;not&lt;/em&gt; indicate that this {@link Thread} is dead.&lt;/p&gt;<a name="line.651"></a>
+<FONT color="green">652</FONT>       *<a name="line.652"></a>
+<FONT color="green">653</FONT>       * @return {@code true} if this {@link Thread}'s item pointer was<a name="line.653"></a>
+<FONT color="green">654</FONT>       * successfully advanced; {@code false} otherwise<a name="line.654"></a>
+<FONT color="green">655</FONT>       *<a name="line.655"></a>
+<FONT color="green">656</FONT>       * @exception IllegalStateException if this {@link Thread}<a name="line.656"></a>
+<FONT color="green">657</FONT>       * {@linkplain #isViable() is not viable}<a name="line.657"></a>
+<FONT color="green">658</FONT>       */<a name="line.658"></a>
+<FONT color="green">659</FONT>      public final boolean advanceItemPointer() {<a name="line.659"></a>
+<FONT color="green">660</FONT>        this.ensureViable();<a name="line.660"></a>
+<FONT color="green">661</FONT>        final boolean returnValue;<a name="line.661"></a>
+<FONT color="green">662</FONT>        int itemPointer = this.getItemPointer();<a name="line.662"></a>
+<FONT color="green">663</FONT>        if (itemPointer == INVALID_INPUT_POINTER || itemPointer == VALID_NO_INPUT_POINTER) {<a name="line.663"></a>
+<FONT color="green">664</FONT>          returnValue = false;<a name="line.664"></a>
+<FONT color="green">665</FONT>        } else {<a name="line.665"></a>
+<FONT color="green">666</FONT>          ++this.itemPointer;<a name="line.666"></a>
+<FONT color="green">667</FONT>          returnValue = this.isValidItemPointer(this.getItemPointer());<a name="line.667"></a>
+<FONT color="green">668</FONT>        }<a name="line.668"></a>
+<FONT color="green">669</FONT>        return returnValue;<a name="line.669"></a>
+<FONT color="green">670</FONT>      }<a name="line.670"></a>
+<FONT color="green">671</FONT>    <a name="line.671"></a>
+<FONT color="green">672</FONT>      /**<a name="line.672"></a>
+<FONT color="green">673</FONT>       * Returns this {@link Thread}'s associated {@link ProgramCounter}.<a name="line.673"></a>
+<FONT color="green">674</FONT>       * This method never returns {@code null}.<a name="line.674"></a>
+<FONT color="green">675</FONT>       *<a name="line.675"></a>
+<FONT color="green">676</FONT>       * &lt;p&gt;This method may be invoked only when {@link #isViable()}<a name="line.676"></a>
+<FONT color="green">677</FONT>       * returns {@code true}.&lt;/p&gt;<a name="line.677"></a>
+<FONT color="green">678</FONT>       *<a name="line.678"></a>
+<FONT color="green">679</FONT>       * @return this {@link Thread}'s associated {@link ProgramCounter};<a name="line.679"></a>
+<FONT color="green">680</FONT>       * never {@code null}<a name="line.680"></a>
+<FONT color="green">681</FONT>       */<a name="line.681"></a>
+<FONT color="green">682</FONT>      public final ProgramCounter&lt;T&gt; getProgramCounter() {<a name="line.682"></a>
+<FONT color="green">683</FONT>        this.ensureViable();<a name="line.683"></a>
+<FONT color="green">684</FONT>        return this.programCounter;<a name="line.684"></a>
+<FONT color="green">685</FONT>      }<a name="line.685"></a>
+<FONT color="green">686</FONT>    <a name="line.686"></a>
+<FONT color="green">687</FONT>      /**<a name="line.687"></a>
+<FONT color="green">688</FONT>       * Advances the program counter to point at the next {@link<a name="line.688"></a>
+<FONT color="green">689</FONT>       * Instruction} in the {@link Program}.  If this cannot<a name="line.689"></a>
+<FONT color="green">690</FONT>       * happen&amp;mdash;as in the case where there are no more {@link<a name="line.690"></a>
+<FONT color="green">691</FONT>       * Instruction}s in the {@link Program}&amp;mdash;then the {@link<a name="line.691"></a>
+<FONT color="green">692</FONT>       * #die()} method is invoked.<a name="line.692"></a>
+<FONT color="green">693</FONT>       *<a name="line.693"></a>
+<FONT color="green">694</FONT>       * &lt;p&gt;This method may be invoked only when {@link #isViable()}<a name="line.694"></a>
+<FONT color="green">695</FONT>       * returns {@code true}.&lt;/p&gt;<a name="line.695"></a>
+<FONT color="green">696</FONT>       *<a name="line.696"></a>
+<FONT color="green">697</FONT>       * @return {@code true} if the program counter was successfully<a name="line.697"></a>
+<FONT color="green">698</FONT>       * advanced and therefore if there is another {@link Instruction}<a name="line.698"></a>
+<FONT color="green">699</FONT>       * ready to be executed; {@code false} if this {@link Thread} has<a name="line.699"></a>
+<FONT color="green">700</FONT>       * been killed via the {@link #die()} method since there are no more<a name="line.700"></a>
+<FONT color="green">701</FONT>       * {@link Instruction}s in the {@link Program} to be executed<a name="line.701"></a>
+<FONT color="green">702</FONT>       *<a name="line.702"></a>
+<FONT color="green">703</FONT>       * @exception IllegalStateException if this {@link Thread}<a name="line.703"></a>
+<FONT color="green">704</FONT>       * {@linkplain #isViable() is not viable}<a name="line.704"></a>
+<FONT color="green">705</FONT>       */<a name="line.705"></a>
+<FONT color="green">706</FONT>      public final boolean advanceProgramCounter() {<a name="line.706"></a>
+<FONT color="green">707</FONT>        this.ensureViable();<a name="line.707"></a>
+<FONT color="green">708</FONT>        boolean returnValue = false;<a name="line.708"></a>
+<FONT color="green">709</FONT>        final ProgramCounter&lt;T&gt; programCounter = this.getProgramCounter();<a name="line.709"></a>
+<FONT color="green">710</FONT>        if (programCounter != null) {<a name="line.710"></a>
+<FONT color="green">711</FONT>          returnValue = programCounter.advance();<a name="line.711"></a>
+<FONT color="green">712</FONT>        }<a name="line.712"></a>
+<FONT color="green">713</FONT>        if (!returnValue) {<a name="line.713"></a>
+<FONT color="green">714</FONT>          // The program counter could not be incremented, so there are no<a name="line.714"></a>
+<FONT color="green">715</FONT>          // further instructions to run, so we're dead.<a name="line.715"></a>
+<FONT color="green">716</FONT>          this.die();<a name="line.716"></a>
+<FONT color="green">717</FONT>        }<a name="line.717"></a>
+<FONT color="green">718</FONT>        return returnValue;<a name="line.718"></a>
+<FONT color="green">719</FONT>      }<a name="line.719"></a>
+<FONT color="green">720</FONT>    <a name="line.720"></a>
+<FONT color="green">721</FONT>      /**<a name="line.721"></a>
+<FONT color="green">722</FONT>       * Sets this {@link Thread}'s program counter to the supplied value,<a name="line.722"></a>
+<FONT color="green">723</FONT>       * provided it is valid.  If the supplied value is &lt;em&gt;not&lt;/em&gt;<a name="line.723"></a>
+<FONT color="green">724</FONT>       * valid, then this {@link Thread} {@linkplain #die() dies}.<a name="line.724"></a>
+<FONT color="green">725</FONT>       *<a name="line.725"></a>
+<FONT color="green">726</FONT>       * &lt;p&gt;This method may be invoked only when {@link #isViable()}<a name="line.726"></a>
+<FONT color="green">727</FONT>       * returns {@code true}.&lt;/p&gt;<a name="line.727"></a>
+<FONT color="green">728</FONT>       *<a name="line.728"></a>
+<FONT color="green">729</FONT>       * @param programCounter<a name="line.729"></a>
+<FONT color="green">730</FONT>       *<a name="line.730"></a>
+<FONT color="green">731</FONT>       * @param relative<a name="line.731"></a>
+<FONT color="green">732</FONT>       *<a name="line.732"></a>
+<FONT color="green">733</FONT>       * @return {@code true} if the program counter was actually set;<a name="line.733"></a>
+<FONT color="green">734</FONT>       * {@code false} if it was not (thus indicating that this {@link<a name="line.734"></a>
+<FONT color="green">735</FONT>       * Thread} is now dead)<a name="line.735"></a>
+<FONT color="green">736</FONT>       *<a name="line.736"></a>
+<FONT color="green">737</FONT>       * @exception IllegalArgumentException if the supplied {@code<a name="line.737"></a>
+<FONT color="green">738</FONT>       * programCounter} is not valid<a name="line.738"></a>
+<FONT color="green">739</FONT>       *<a name="line.739"></a>
+<FONT color="green">740</FONT>       * @exception IllegalStateException if this {@link Thread}<a name="line.740"></a>
+<FONT color="green">741</FONT>       * {@linkplain #isViable() is not viable}<a name="line.741"></a>
+<FONT color="green">742</FONT>       */<a name="line.742"></a>
+<FONT color="green">743</FONT>      public final boolean jump(final int programCounter, final boolean relative) {<a name="line.743"></a>
+<FONT color="green">744</FONT>        this.ensureViable();<a name="line.744"></a>
+<FONT color="green">745</FONT>        final boolean returnValue;<a name="line.745"></a>
+<FONT color="green">746</FONT>        final ProgramCounter&lt;T&gt; pc = this.getProgramCounter();<a name="line.746"></a>
+<FONT color="green">747</FONT>        final int absoluteProgramCounter;<a name="line.747"></a>
+<FONT color="green">748</FONT>        if (relative) {<a name="line.748"></a>
+<FONT color="green">749</FONT>          absoluteProgramCounter = pc.getIndex() + programCounter;<a name="line.749"></a>
+<FONT color="green">750</FONT>        } else {<a name="line.750"></a>
+<FONT color="green">751</FONT>          absoluteProgramCounter = programCounter;<a name="line.751"></a>
+<FONT color="green">752</FONT>        }<a name="line.752"></a>
+<FONT color="green">753</FONT>        if (pc != null &amp;&amp; pc.isValid(absoluteProgramCounter)) {<a name="line.753"></a>
+<FONT color="green">754</FONT>          pc.setIndex(absoluteProgramCounter);<a name="line.754"></a>
+<FONT color="green">755</FONT>          returnValue = true;<a name="line.755"></a>
+<FONT color="green">756</FONT>        } else {<a name="line.756"></a>
+<FONT color="green">757</FONT>          this.die();<a name="line.757"></a>
+<FONT color="green">758</FONT>          returnValue = false;<a name="line.758"></a>
+<FONT color="green">759</FONT>        }<a name="line.759"></a>
+<FONT color="green">760</FONT>        return returnValue;<a name="line.760"></a>
+<FONT color="green">761</FONT>      }<a name="line.761"></a>
+<FONT color="green">762</FONT>    <a name="line.762"></a>
+<FONT color="green">763</FONT>      /**<a name="line.763"></a>
+<FONT color="green">764</FONT>       * Returns the current {@link Instruction}.<a name="line.764"></a>
+<FONT color="green">765</FONT>       *<a name="line.765"></a>
+<FONT color="green">766</FONT>       * &lt;p&gt;This method may be invoked only when {@link #isViable()}<a name="line.766"></a>
+<FONT color="green">767</FONT>       * returns {@code true}.&lt;/p&gt;<a name="line.767"></a>
+<FONT color="green">768</FONT>       *<a name="line.768"></a>
+<FONT color="green">769</FONT>       * @return the current {@link Instruction}, or {@code null} if the<a name="line.769"></a>
+<FONT color="green">770</FONT>       * {@link #isViable()} method returns {@code false}<a name="line.770"></a>
+<FONT color="green">771</FONT>       *<a name="line.771"></a>
+<FONT color="green">772</FONT>       * @exception IllegalStateException if this {@link Thread}<a name="line.772"></a>
+<FONT color="green">773</FONT>       * {@linkplain #isViable() is not viable}<a name="line.773"></a>
+<FONT color="green">774</FONT>       *<a name="line.774"></a>
+<FONT color="green">775</FONT>       * @see #isViable()<a name="line.775"></a>
+<FONT color="green">776</FONT>       */<a name="line.776"></a>
+<FONT color="green">777</FONT>      private final Instruction&lt;T&gt; getInstruction() {<a name="line.777"></a>
+<FONT color="green">778</FONT>        this.ensureViable();<a name="line.778"></a>
+<FONT color="green">779</FONT>        final Instruction&lt;T&gt; returnValue;<a name="line.779"></a>
+<FONT color="green">780</FONT>        final ProgramCounter&lt;T&gt; programCounter = this.getProgramCounter();<a name="line.780"></a>
+<FONT color="green">781</FONT>        if (programCounter != null &amp;&amp; this.isViable()) {<a name="line.781"></a>
+<FONT color="green">782</FONT>          returnValue = programCounter.getInstruction();<a name="line.782"></a>
+<FONT color="green">783</FONT>        } else {<a name="line.783"></a>
+<FONT color="green">784</FONT>          returnValue = null;<a name="line.784"></a>
+<FONT color="green">785</FONT>        }<a name="line.785"></a>
+<FONT color="green">786</FONT>        return returnValue;<a name="line.786"></a>
+<FONT color="green">787</FONT>      }<a name="line.787"></a>
+<FONT color="green">788</FONT>    <a name="line.788"></a>
+<FONT color="green">789</FONT>      /**<a name="line.789"></a>
+<FONT color="green">790</FONT>       * Retrieves the current {@link Instruction} and {@linkplain<a name="line.790"></a>
+<FONT color="green">791</FONT>       * Instruction#execute(InstructionContext) executes} it.<a name="line.791"></a>
+<FONT color="green">792</FONT>       *<a name="line.792"></a>
+<FONT color="green">793</FONT>       * &lt;p&gt;If the {@link #isViable()} method returns {@code false},<a name="line.793"></a>
+<FONT color="green">794</FONT>       * then invoking this method will cause the {@link #die()} method to<a name="line.794"></a>
+<FONT color="green">795</FONT>       * be invoked and no further action will take place.&lt;/p&gt;<a name="line.795"></a>
+<FONT color="green">796</FONT>       *<a name="line.796"></a>
+<FONT color="green">797</FONT>       * &lt;p&gt;This method may be invoked only when {@link #isViable()}<a name="line.797"></a>
+<FONT color="green">798</FONT>       * returns {@code true}.&lt;/p&gt;<a name="line.798"></a>
+<FONT color="green">799</FONT>       *<a name="line.799"></a>
+<FONT color="green">800</FONT>       * @exception IllegalStateException if this {@link Thread}<a name="line.800"></a>
+<FONT color="green">801</FONT>       * {@linkplain #isViable() is not viable}<a name="line.801"></a>
+<FONT color="green">802</FONT>       */<a name="line.802"></a>
+<FONT color="green">803</FONT>      public final void step() {<a name="line.803"></a>
+<FONT color="green">804</FONT>        this.ensureViable();<a name="line.804"></a>
+<FONT color="green">805</FONT>        final Instruction&lt;T&gt; instruction = this.getInstruction();<a name="line.805"></a>
+<FONT color="green">806</FONT>        assert instruction != null;<a name="line.806"></a>
+<FONT color="green">807</FONT>        if (this.ic == null) {<a name="line.807"></a>
+<FONT color="green">808</FONT>          this.ic = new InstructionContext&lt;T&gt;(this);<a name="line.808"></a>
+<FONT color="green">809</FONT>        }<a name="line.809"></a>
+<FONT color="green">810</FONT>        instruction.execute(this.ic);<a name="line.810"></a>
+<FONT color="green">811</FONT>      }<a name="line.811"></a>
+<FONT color="green">812</FONT>    <a name="line.812"></a>
+<FONT color="green">813</FONT>      /**<a name="line.813"></a>
+<FONT color="green">814</FONT>       * Repeatedly calls the {@link #step()} method until this {@link<a name="line.814"></a>
+<FONT color="green">815</FONT>       * Thread} has completed execution.<a name="line.815"></a>
+<FONT color="green">816</FONT>       *<a name="line.816"></a>
+<FONT color="green">817</FONT>       * &lt;p&gt;This method may be invoked only when {@link #isViable()}<a name="line.817"></a>
+<FONT color="green">818</FONT>       * returns {@code true}.&lt;/p&gt;<a name="line.818"></a>
+<FONT color="green">819</FONT>       *<a name="line.819"></a>
+<FONT color="green">820</FONT>       * @exception IllegalStateException if this {@link Thread}<a name="line.820"></a>
+<FONT color="green">821</FONT>       * {@linkplain #isViable() is not viable}<a name="line.821"></a>
+<FONT color="green">822</FONT>       */<a name="line.822"></a>
+<FONT color="green">823</FONT>      @Override<a name="line.823"></a>
+<FONT color="green">824</FONT>      public final void run() {<a name="line.824"></a>
+<FONT color="green">825</FONT>        this.ensureViable();<a name="line.825"></a>
+<FONT color="green">826</FONT>        final Logger logger = Logger.getLogger(this.getClass().getName());<a name="line.826"></a>
+<FONT color="green">827</FONT>        assert logger != null;<a name="line.827"></a>
+<FONT color="green">828</FONT>        final boolean finer = logger.isLoggable(Level.FINER);<a name="line.828"></a>
+<FONT color="green">829</FONT>        final ProgramCounter&lt;T&gt; pc = this.getProgramCounter();<a name="line.829"></a>
+<FONT color="green">830</FONT>        assert pc != null;<a name="line.830"></a>
+<FONT color="green">831</FONT>        while (this.isViable()) {<a name="line.831"></a>
+<FONT color="green">832</FONT>          final Instruction&lt;T&gt; currentInstruction = pc.getInstruction();<a name="line.832"></a>
+<FONT color="green">833</FONT>          assert currentInstruction != null;<a name="line.833"></a>
+<FONT color="green">834</FONT>          if (finer) {<a name="line.834"></a>
+<FONT color="green">835</FONT>            final int index = pc.getIndex();<a name="line.835"></a>
+<FONT color="green">836</FONT>            logger.logp(Level.FINER, this.getClass().getName(), "run", "Before running {0} {1} ({2}) at input position {3}", new Object[] { this, currentInstruction, Integer.valueOf(index), Integer.valueOf(this.getItemPointer()) });<a name="line.836"></a>
+<FONT color="green">837</FONT>          }<a name="line.837"></a>
+<FONT color="green">838</FONT>          this.step();<a name="line.838"></a>
+<FONT color="green">839</FONT>          if (finer) {<a name="line.839"></a>
+<FONT color="green">840</FONT>            if (this.isViable()) {<a name="line.840"></a>
+<FONT color="green">841</FONT>              logger.logp(Level.FINER, this.getClass().getName(), "run", "After running {0} {1}; input position is now {2}", new Object[] { this, currentInstruction, Integer.valueOf(this.getItemPointer()) });<a name="line.841"></a>
+<FONT color="green">842</FONT>            } else {<a name="line.842"></a>
+<FONT color="green">843</FONT>              logger.logp(Level.FINER, this.getClass().getName(), "run", "Thread {0} is no longer viable", this);<a name="line.843"></a>
+<FONT color="green">844</FONT>            }<a name="line.844"></a>
+<FONT color="green">845</FONT>          }<a name="line.845"></a>
+<FONT color="green">846</FONT>        }<a name="line.846"></a>
+<FONT color="green">847</FONT>      }<a name="line.847"></a>
+<FONT color="green">848</FONT>    <a name="line.848"></a>
+<FONT color="green">849</FONT>      /**<a name="line.849"></a>
+<FONT color="green">850</FONT>       * Returns {@code true} if and only if this {@link Thread}'s<a name="line.850"></a>
+<FONT color="green">851</FONT>       * {@linkplain #getState() associated state} is {@link State#VIABLE<a name="line.851"></a>
+<FONT color="green">852</FONT>       * VIABLE} and if its associated {@link ProgramCounter}'s {@link<a name="line.852"></a>
+<FONT color="green">853</FONT>       * ProgramCounter#isValid()} method returns {@code true}.<a name="line.853"></a>
+<FONT color="green">854</FONT>       *<a name="line.854"></a>
+<FONT color="green">855</FONT>       * &lt;p&gt;This method may be invoked in all states.&lt;/p&gt;<a name="line.855"></a>
+<FONT color="green">856</FONT>       *<a name="line.856"></a>
+<FONT color="green">857</FONT>       * @return {@code true} if and only if this {@link Thread} is viable<a name="line.857"></a>
+<FONT color="green">858</FONT>       */<a name="line.858"></a>
+<FONT color="green">859</FONT>      public final boolean isViable() {<a name="line.859"></a>
+<FONT color="green">860</FONT>        // Do not call getProgramCounter() here; just access the field<a name="line.860"></a>
+<FONT color="green">861</FONT>        // directly.  This avoids an infinite loop.<a name="line.861"></a>
+<FONT color="green">862</FONT>        return this.getState() == State.VIABLE &amp;&amp; this.programCounter != null &amp;&amp; this.programCounter.isValid();<a name="line.862"></a>
+<FONT color="green">863</FONT>      }<a name="line.863"></a>
+<FONT color="green">864</FONT>    <a name="line.864"></a>
+<FONT color="green">865</FONT>      /**<a name="line.865"></a>
+<FONT color="green">866</FONT>       * Causes this {@link Thread} to irrevocably enter the {@link<a name="line.866"></a>
+<FONT color="green">867</FONT>       * State#MATCH MATCH} state.<a name="line.867"></a>
+<FONT color="green">868</FONT>       *<a name="line.868"></a>
+<FONT color="green">869</FONT>       * &lt;p&gt;This method may be invoked only when {@link #isViable()}<a name="line.869"></a>
+<FONT color="green">870</FONT>       * returns {@code true}.&lt;/p&gt;<a name="line.870"></a>
+<FONT color="green">871</FONT>       *<a name="line.871"></a>
+<FONT color="green">872</FONT>       * @exception IllegalStateException if this {@link Thread}<a name="line.872"></a>
+<FONT color="green">873</FONT>       * {@linkplain #isViable() is not viable}<a name="line.873"></a>
+<FONT color="green">874</FONT>       */<a name="line.874"></a>
+<FONT color="green">875</FONT>      public final void match() {<a name="line.875"></a>
+<FONT color="green">876</FONT>        this.ensureViable();<a name="line.876"></a>
+<FONT color="green">877</FONT>        this.state = State.MATCH;<a name="line.877"></a>
+<FONT color="green">878</FONT>      }<a name="line.878"></a>
+<FONT color="green">879</FONT>    <a name="line.879"></a>
+<FONT color="green">880</FONT>      /**<a name="line.880"></a>
+<FONT color="green">881</FONT>       * Causes this {@link Thread} to irrevocably enter the {@link<a name="line.881"></a>
+<FONT color="green">882</FONT>       * State#DEAD DEAD} state.<a name="line.882"></a>
+<FONT color="green">883</FONT>       *<a name="line.883"></a>
+<FONT color="green">884</FONT>       * &lt;p&gt;This method may be invoked in all states except {@link<a name="line.884"></a>
+<FONT color="green">885</FONT>       * State#MATCH MATCH}.&lt;/p&gt;<a name="line.885"></a>
+<FONT color="green">886</FONT>       *<a name="line.886"></a>
+<FONT color="green">887</FONT>       * @exception IllegalStateException if this {@link Thread} is<a name="line.887"></a>
+<FONT color="green">888</FONT>       * currently in the {@link State#MATCH MATCH} state<a name="line.888"></a>
+<FONT color="green">889</FONT>       */<a name="line.889"></a>
+<FONT color="green">890</FONT>      public final void die() {<a name="line.890"></a>
+<FONT color="green">891</FONT>        if (State.MATCH == this.getState()) {<a name="line.891"></a>
+<FONT color="green">892</FONT>          throw new IllegalStateException();<a name="line.892"></a>
+<FONT color="green">893</FONT>        }<a name="line.893"></a>
+<FONT color="green">894</FONT>        this.state = State.DEAD;<a name="line.894"></a>
+<FONT color="green">895</FONT>        this.itemPointer = INVALID_INPUT_POINTER;<a name="line.895"></a>
+<FONT color="green">896</FONT>        if (this.captureGroups != null) {<a name="line.896"></a>
+<FONT color="green">897</FONT>          this.captureGroups.clear();<a name="line.897"></a>
+<FONT color="green">898</FONT>        }<a name="line.898"></a>
+<FONT color="green">899</FONT>      }<a name="line.899"></a>
+<FONT color="green">900</FONT>    <a name="line.900"></a>
+<FONT color="green">901</FONT>      /**<a name="line.901"></a>
+<FONT color="green">902</FONT>       * Returns the {@link State} of this {@link Thread}.  This method<a name="line.902"></a>
+<FONT color="green">903</FONT>       * never returns {@code null}.<a name="line.903"></a>
+<FONT color="green">904</FONT>       *<a name="line.904"></a>
+<FONT color="green">905</FONT>       * @return a non-{@code null} {@link State}<a name="line.905"></a>
+<FONT color="green">906</FONT>       */<a name="line.906"></a>
+<FONT color="green">907</FONT>      public final State getState() {<a name="line.907"></a>
+<FONT color="green">908</FONT>        assert this.state != null;<a name="line.908"></a>
+<FONT color="green">909</FONT>        return this.state;<a name="line.909"></a>
+<FONT color="green">910</FONT>      }<a name="line.910"></a>
+<FONT color="green">911</FONT>    <a name="line.911"></a>
+<FONT color="green">912</FONT>      public final Set&lt;Object&gt; getGroupKeySet() {<a name="line.912"></a>
+<FONT color="green">913</FONT>        final Set&lt;Object&gt; returnValue;<a name="line.913"></a>
+<FONT color="green">914</FONT>        if (this.captureGroups == null || this.captureGroups.isEmpty()) {<a name="line.914"></a>
+<FONT color="green">915</FONT>          returnValue = Collections.emptySet();<a name="line.915"></a>
+<FONT color="green">916</FONT>        } else {<a name="line.916"></a>
+<FONT color="green">917</FONT>          returnValue = Collections.unmodifiableSet(this.captureGroups.keySet());<a name="line.917"></a>
+<FONT color="green">918</FONT>        }<a name="line.918"></a>
+<FONT color="green">919</FONT>        return returnValue;<a name="line.919"></a>
+<FONT color="green">920</FONT>      }<a name="line.920"></a>
+<FONT color="green">921</FONT>    <a name="line.921"></a>
+<FONT color="green">922</FONT>      public final int getGroupCount() {<a name="line.922"></a>
+<FONT color="green">923</FONT>        final int result;<a name="line.923"></a>
+<FONT color="green">924</FONT>        if (this.captureGroups == null || this.captureGroups.isEmpty()) {<a name="line.924"></a>
+<FONT color="green">925</FONT>          result = 0;<a name="line.925"></a>
+<FONT color="green">926</FONT>        } else {<a name="line.926"></a>
+<FONT color="green">927</FONT>          result = this.captureGroups.size();<a name="line.927"></a>
+<FONT color="green">928</FONT>        }<a name="line.928"></a>
+<FONT color="green">929</FONT>        return result;<a name="line.929"></a>
+<FONT color="green">930</FONT>      }<a name="line.930"></a>
+<FONT color="green">931</FONT>    <a name="line.931"></a>
+<FONT color="green">932</FONT>      public final List&lt;T&gt; getGroup(final Object key) {<a name="line.932"></a>
+<FONT color="green">933</FONT>        List&lt;T&gt; result = null;<a name="line.933"></a>
+<FONT color="green">934</FONT>        if (this.captureGroups != null) {<a name="line.934"></a>
+<FONT color="green">935</FONT>          final CaptureGroup&lt;T&gt; cg = this.captureGroups.get(key);<a name="line.935"></a>
+<FONT color="green">936</FONT>          if (cg != null) {<a name="line.936"></a>
+<FONT color="green">937</FONT>            result = cg.getItems();<a name="line.937"></a>
+<FONT color="green">938</FONT>          }<a name="line.938"></a>
 <FONT color="green">939</FONT>        }<a name="line.939"></a>
-<FONT color="green">940</FONT>      }<a name="line.940"></a>
-<FONT color="green">941</FONT>    <a name="line.941"></a>
-<FONT color="green">942</FONT>      @Override<a name="line.942"></a>
-<FONT color="green">943</FONT>      public Thread&lt;T&gt; clone() {<a name="line.943"></a>
-<FONT color="green">944</FONT>        this.ensureViable();<a name="line.944"></a>
-<FONT color="green">945</FONT>        Thread&lt;T&gt; clone = null;<a name="line.945"></a>
-<FONT color="green">946</FONT>        try {<a name="line.946"></a>
-<FONT color="green">947</FONT>          @SuppressWarnings("unchecked")<a name="line.947"></a>
-<FONT color="green">948</FONT>          final Thread&lt;T&gt; temp = (Thread&lt;T&gt;)super.clone();<a name="line.948"></a>
-<FONT color="green">949</FONT>          clone = temp;<a name="line.949"></a>
-<FONT color="green">950</FONT>        } catch (final CloneNotSupportedException cannotHappen) {<a name="line.950"></a>
-<FONT color="green">951</FONT>          throw (InternalError)new InternalError().initCause(cannotHappen);<a name="line.951"></a>
+<FONT color="green">940</FONT>        return result;<a name="line.940"></a>
+<FONT color="green">941</FONT>      }<a name="line.941"></a>
+<FONT color="green">942</FONT>    <a name="line.942"></a>
+<FONT color="green">943</FONT>      /**<a name="line.943"></a>
+<FONT color="green">944</FONT>       * Does nothing if this {@link Thread} {@linkplain #isViable() is viable}.<a name="line.944"></a>
+<FONT color="green">945</FONT>       *<a name="line.945"></a>
+<FONT color="green">946</FONT>       * @exception IllegalStateException if this {@link Thread}<a name="line.946"></a>
+<FONT color="green">947</FONT>       * {@linkplain #isViable() is not viable}<a name="line.947"></a>
+<FONT color="green">948</FONT>       */<a name="line.948"></a>
+<FONT color="green">949</FONT>      private final void ensureViable() {<a name="line.949"></a>
+<FONT color="green">950</FONT>        if (!this.isViable()) {<a name="line.950"></a>
+<FONT color="green">951</FONT>          throw new IllegalStateException("Thread is not viable");<a name="line.951"></a>
 <FONT color="green">952</FONT>        }<a name="line.952"></a>
-<FONT color="green">953</FONT>        assert clone != null;<a name="line.953"></a>
-<FONT color="green">954</FONT>        <a name="line.954"></a>
-<FONT color="green">955</FONT>        // Clone our ProgramCounter.<a name="line.955"></a>
-<FONT color="green">956</FONT>        final ProgramCounter&lt;T&gt; programCounter = this.getProgramCounter();<a name="line.956"></a>
-<FONT color="green">957</FONT>        if (programCounter != null) {<a name="line.957"></a>
-<FONT color="green">958</FONT>          clone.programCounter = programCounter.clone();<a name="line.958"></a>
-<FONT color="green">959</FONT>        }<a name="line.959"></a>
-<FONT color="green">960</FONT>    <a name="line.960"></a>
-<FONT color="green">961</FONT>        // TODO: Clone our variables?<a name="line.961"></a>
-<FONT color="green">962</FONT>    <a name="line.962"></a>
-<FONT color="green">963</FONT>        // Clone our capture groups.<a name="line.963"></a>
-<FONT color="green">964</FONT>        if (this.captureGroups != null) {<a name="line.964"></a>
-<FONT color="green">965</FONT>          clone.captureGroups = deepClone(this.captureGroups);<a name="line.965"></a>
-<FONT color="green">966</FONT>        }<a name="line.966"></a>
-<FONT color="green">967</FONT>    <a name="line.967"></a>
-<FONT color="green">968</FONT>        // With all of his state set, make sure that he's VIABLE.<a name="line.968"></a>
-<FONT color="green">969</FONT>        assert clone.isViable();<a name="line.969"></a>
-<FONT color="green">970</FONT>    <a name="line.970"></a>
-<FONT color="green">971</FONT>        return clone;<a name="line.971"></a>
-<FONT color="green">972</FONT>      }<a name="line.972"></a>
+<FONT color="green">953</FONT>      }<a name="line.953"></a>
+<FONT color="green">954</FONT>    <a name="line.954"></a>
+<FONT color="green">955</FONT>      @Override<a name="line.955"></a>
+<FONT color="green">956</FONT>      public Thread&lt;T&gt; clone() {<a name="line.956"></a>
+<FONT color="green">957</FONT>        this.ensureViable();<a name="line.957"></a>
+<FONT color="green">958</FONT>        Thread&lt;T&gt; clone = null;<a name="line.958"></a>
+<FONT color="green">959</FONT>        try {<a name="line.959"></a>
+<FONT color="green">960</FONT>          @SuppressWarnings("unchecked")<a name="line.960"></a>
+<FONT color="green">961</FONT>          final Thread&lt;T&gt; temp = (Thread&lt;T&gt;)super.clone();<a name="line.961"></a>
+<FONT color="green">962</FONT>          clone = temp;<a name="line.962"></a>
+<FONT color="green">963</FONT>        } catch (final CloneNotSupportedException cannotHappen) {<a name="line.963"></a>
+<FONT color="green">964</FONT>          throw (InternalError)new InternalError().initCause(cannotHappen);<a name="line.964"></a>
+<FONT color="green">965</FONT>        }<a name="line.965"></a>
+<FONT color="green">966</FONT>        assert clone != null;<a name="line.966"></a>
+<FONT color="green">967</FONT>        <a name="line.967"></a>
+<FONT color="green">968</FONT>        // Clone our ProgramCounter.<a name="line.968"></a>
+<FONT color="green">969</FONT>        final ProgramCounter&lt;T&gt; programCounter = this.getProgramCounter();<a name="line.969"></a>
+<FONT color="green">970</FONT>        if (programCounter != null) {<a name="line.970"></a>
+<FONT color="green">971</FONT>          clone.programCounter = programCounter.clone();<a name="line.971"></a>
+<FONT color="green">972</FONT>        }<a name="line.972"></a>
 <FONT color="green">973</FONT>    <a name="line.973"></a>
-<FONT color="green">974</FONT>      @Override<a name="line.974"></a>
-<FONT color="green">975</FONT>      public int hashCode() {<a name="line.975"></a>
-<FONT color="green">976</FONT>        int result = 17;<a name="line.976"></a>
-<FONT color="green">977</FONT>        <a name="line.977"></a>
-<FONT color="green">978</FONT>        final Object id = this.getId();<a name="line.978"></a>
-<FONT color="green">979</FONT>        int c = id == null ? 0 : id.hashCode();<a name="line.979"></a>
-<FONT color="green">980</FONT>        result = result * 37 + c;<a name="line.980"></a>
-<FONT color="green">981</FONT>    <a name="line.981"></a>
-<FONT color="green">982</FONT>        c = this.getItemPointer();<a name="line.982"></a>
-<FONT color="green">983</FONT>        result = result * 37 + c;<a name="line.983"></a>
-<FONT color="green">984</FONT>    <a name="line.984"></a>
-<FONT color="green">985</FONT>        c = this.getState().hashCode();<a name="line.985"></a>
-<FONT color="green">986</FONT>        result = result * 37 + c;<a name="line.986"></a>
-<FONT color="green">987</FONT>    <a name="line.987"></a>
-<FONT color="green">988</FONT>        c = this.items == null ? 0 : this.items.hashCode();<a name="line.988"></a>
-<FONT color="green">989</FONT>        result = result * 37 + c;<a name="line.989"></a>
-<FONT color="green">990</FONT>    <a name="line.990"></a>
-<FONT color="green">991</FONT>        // We don't call getProgramCounter() because hashCode() must be a<a name="line.991"></a>
-<FONT color="green">992</FONT>        // method that is permissible to call in any state.<a name="line.992"></a>
-<FONT color="green">993</FONT>        c = this.programCounter.hashCode();<a name="line.993"></a>
-<FONT color="green">994</FONT>        result = result * 37 + c;<a name="line.994"></a>
-<FONT color="green">995</FONT>    <a name="line.995"></a>
-<FONT color="green">996</FONT>        c = this.captureGroups == null ? 0 : this.captureGroups.hashCode();<a name="line.996"></a>
-<FONT color="green">997</FONT>        result = result * 37 + c;<a name="line.997"></a>
-<FONT color="green">998</FONT>    <a name="line.998"></a>
-<FONT color="green">999</FONT>        return result;<a name="line.999"></a>
-<FONT color="green">1000</FONT>      }<a name="line.1000"></a>
-<FONT color="green">1001</FONT>    <a name="line.1001"></a>
-<FONT color="green">1002</FONT>      @Override<a name="line.1002"></a>
-<FONT color="green">1003</FONT>      public boolean equals(final Object other) {<a name="line.1003"></a>
-<FONT color="green">1004</FONT>        if (other == this) {<a name="line.1004"></a>
-<FONT color="green">1005</FONT>          return true;<a name="line.1005"></a>
-<FONT color="green">1006</FONT>        } else if (this.getClass().equals(other.getClass())) {<a name="line.1006"></a>
-<FONT color="green">1007</FONT>          final Thread him = (Thread)other;<a name="line.1007"></a>
+<FONT color="green">974</FONT>        // TODO: Clone our variables?<a name="line.974"></a>
+<FONT color="green">975</FONT>    <a name="line.975"></a>
+<FONT color="green">976</FONT>        // Clone our capture groups.<a name="line.976"></a>
+<FONT color="green">977</FONT>        if (this.captureGroups != null) {<a name="line.977"></a>
+<FONT color="green">978</FONT>          clone.captureGroups = deepClone(this.captureGroups);<a name="line.978"></a>
+<FONT color="green">979</FONT>        }<a name="line.979"></a>
+<FONT color="green">980</FONT>    <a name="line.980"></a>
+<FONT color="green">981</FONT>        // With all of his state set, make sure that he's VIABLE.<a name="line.981"></a>
+<FONT color="green">982</FONT>        assert clone.isViable();<a name="line.982"></a>
+<FONT color="green">983</FONT>    <a name="line.983"></a>
+<FONT color="green">984</FONT>        return clone;<a name="line.984"></a>
+<FONT color="green">985</FONT>      }<a name="line.985"></a>
+<FONT color="green">986</FONT>    <a name="line.986"></a>
+<FONT color="green">987</FONT>      @Override<a name="line.987"></a>
+<FONT color="green">988</FONT>      public int hashCode() {<a name="line.988"></a>
+<FONT color="green">989</FONT>        int result = 17;<a name="line.989"></a>
+<FONT color="green">990</FONT>        <a name="line.990"></a>
+<FONT color="green">991</FONT>        final Object id = this.getId();<a name="line.991"></a>
+<FONT color="green">992</FONT>        int c = id == null ? 0 : id.hashCode();<a name="line.992"></a>
+<FONT color="green">993</FONT>        result = result * 37 + c;<a name="line.993"></a>
+<FONT color="green">994</FONT>    <a name="line.994"></a>
+<FONT color="green">995</FONT>        c = this.getItemPointer();<a name="line.995"></a>
+<FONT color="green">996</FONT>        result = result * 37 + c;<a name="line.996"></a>
+<FONT color="green">997</FONT>    <a name="line.997"></a>
+<FONT color="green">998</FONT>        c = this.getState().hashCode();<a name="line.998"></a>
+<FONT color="green">999</FONT>        result = result * 37 + c;<a name="line.999"></a>
+<FONT color="green">1000</FONT>    <a name="line.1000"></a>
+<FONT color="green">1001</FONT>        c = this.items == null ? 0 : this.items.hashCode();<a name="line.1001"></a>
+<FONT color="green">1002</FONT>        result = result * 37 + c;<a name="line.1002"></a>
+<FONT color="green">1003</FONT>    <a name="line.1003"></a>
+<FONT color="green">1004</FONT>        // We don't call getProgramCounter() because hashCode() must be a<a name="line.1004"></a>
+<FONT color="green">1005</FONT>        // method that is permissible to call in any state.<a name="line.1005"></a>
+<FONT color="green">1006</FONT>        c = this.programCounter.hashCode();<a name="line.1006"></a>
+<FONT color="green">1007</FONT>        result = result * 37 + c;<a name="line.1007"></a>
 <FONT color="green">1008</FONT>    <a name="line.1008"></a>
-<FONT color="green">1009</FONT>          final int myItemPointer = this.getItemPointer();<a name="line.1009"></a>
-<FONT color="green">1010</FONT>          if (him.getItemPointer() != myItemPointer) {<a name="line.1010"></a>
-<FONT color="green">1011</FONT>            return false;<a name="line.1011"></a>
-<FONT color="green">1012</FONT>          }<a name="line.1012"></a>
-<FONT color="green">1013</FONT>    <a name="line.1013"></a>
-<FONT color="green">1014</FONT>          final Object id = this.getId();<a name="line.1014"></a>
-<FONT color="green">1015</FONT>          if (id == null) {<a name="line.1015"></a>
-<FONT color="green">1016</FONT>            if (him.getId() != null) {<a name="line.1016"></a>
-<FONT color="green">1017</FONT>              return false;<a name="line.1017"></a>
-<FONT color="green">1018</FONT>            }<a name="line.1018"></a>
-<FONT color="green">1019</FONT>          }<a name="line.1019"></a>
-<FONT color="green">1020</FONT>    <a name="line.1020"></a>
-<FONT color="green">1021</FONT>          final State state = this.getState();<a name="line.1021"></a>
-<FONT color="green">1022</FONT>          assert state != null;<a name="line.1022"></a>
-<FONT color="green">1023</FONT>          if (state != him.getState()) {<a name="line.1023"></a>
+<FONT color="green">1009</FONT>        c = this.captureGroups == null ? 0 : this.captureGroups.hashCode();<a name="line.1009"></a>
+<FONT color="green">1010</FONT>        result = result * 37 + c;<a name="line.1010"></a>
+<FONT color="green">1011</FONT>    <a name="line.1011"></a>
+<FONT color="green">1012</FONT>        return result;<a name="line.1012"></a>
+<FONT color="green">1013</FONT>      }<a name="line.1013"></a>
+<FONT color="green">1014</FONT>    <a name="line.1014"></a>
+<FONT color="green">1015</FONT>      @Override<a name="line.1015"></a>
+<FONT color="green">1016</FONT>      public boolean equals(final Object other) {<a name="line.1016"></a>
+<FONT color="green">1017</FONT>        if (other == this) {<a name="line.1017"></a>
+<FONT color="green">1018</FONT>          return true;<a name="line.1018"></a>
+<FONT color="green">1019</FONT>        } else if (this.getClass().equals(other.getClass())) {<a name="line.1019"></a>
+<FONT color="green">1020</FONT>          final Thread him = (Thread)other;<a name="line.1020"></a>
+<FONT color="green">1021</FONT>    <a name="line.1021"></a>
+<FONT color="green">1022</FONT>          final int myItemPointer = this.getItemPointer();<a name="line.1022"></a>
+<FONT color="green">1023</FONT>          if (him.getItemPointer() != myItemPointer) {<a name="line.1023"></a>
 <FONT color="green">1024</FONT>            return false;<a name="line.1024"></a>
 <FONT color="green">1025</FONT>          }<a name="line.1025"></a>
 <FONT color="green">1026</FONT>    <a name="line.1026"></a>
-<FONT color="green">1027</FONT>          if (this.items == null) {<a name="line.1027"></a>
-<FONT color="green">1028</FONT>            if (him.items != null) {<a name="line.1028"></a>
-<FONT color="green">1029</FONT>              return false;<a name="line.1029"></a>
-<FONT color="green">1030</FONT>            }<a name="line.1030"></a>
-<FONT color="green">1031</FONT>          } else if (!this.items.equals(him.items)) {<a name="line.1031"></a>
-<FONT color="green">1032</FONT>            return false;<a name="line.1032"></a>
-<FONT color="green">1033</FONT>          }<a name="line.1033"></a>
-<FONT color="green">1034</FONT>    <a name="line.1034"></a>
-<FONT color="green">1035</FONT>          // We don't call getProgramCounter() because hashCode() must be<a name="line.1035"></a>
-<FONT color="green">1036</FONT>          // a method that is permissible to call in any state.<a name="line.1036"></a>
-<FONT color="green">1037</FONT>          if (this.programCounter == null) {<a name="line.1037"></a>
-<FONT color="green">1038</FONT>            if (him.programCounter != null) {<a name="line.1038"></a>
-<FONT color="green">1039</FONT>              return false;<a name="line.1039"></a>
-<FONT color="green">1040</FONT>            }<a name="line.1040"></a>
-<FONT color="green">1041</FONT>          } else if (!this.programCounter.equals(him.programCounter)) {<a name="line.1041"></a>
-<FONT color="green">1042</FONT>            return false;<a name="line.1042"></a>
-<FONT color="green">1043</FONT>          }<a name="line.1043"></a>
-<FONT color="green">1044</FONT>    <a name="line.1044"></a>
-<FONT color="green">1045</FONT>          if (this.captureGroups == null) {<a name="line.1045"></a>
-<FONT color="green">1046</FONT>            if (him.captureGroups != null) {<a name="line.1046"></a>
-<FONT color="green">1047</FONT>              return false;<a name="line.1047"></a>
-<FONT color="green">1048</FONT>            }<a name="line.1048"></a>
-<FONT color="green">1049</FONT>          } else if (!this.captureGroups.equals(him.captureGroups)) {<a name="line.1049"></a>
-<FONT color="green">1050</FONT>            return false;<a name="line.1050"></a>
-<FONT color="green">1051</FONT>          }<a name="line.1051"></a>
-<FONT color="green">1052</FONT>    <a name="line.1052"></a>
-<FONT color="green">1053</FONT>          return true;<a name="line.1053"></a>
-<FONT color="green">1054</FONT>    <a name="line.1054"></a>
-<FONT color="green">1055</FONT>        } else {<a name="line.1055"></a>
-<FONT color="green">1056</FONT>          return false;<a name="line.1056"></a>
-<FONT color="green">1057</FONT>        }<a name="line.1057"></a>
-<FONT color="green">1058</FONT>      }<a name="line.1058"></a>
-<FONT color="green">1059</FONT>    <a name="line.1059"></a>
-<FONT color="green">1060</FONT>      @Override<a name="line.1060"></a>
-<FONT color="green">1061</FONT>      public String toString() {<a name="line.1061"></a>
-<FONT color="green">1062</FONT>        final Object id = this.getId();<a name="line.1062"></a>
-<FONT color="green">1063</FONT>        if (id == null) {<a name="line.1063"></a>
-<FONT color="green">1064</FONT>          return super.toString();<a name="line.1064"></a>
-<FONT color="green">1065</FONT>        } else {<a name="line.1065"></a>
-<FONT color="green">1066</FONT>          return id.toString();<a name="line.1066"></a>
-<FONT color="green">1067</FONT>        }<a name="line.1067"></a>
-<FONT color="green">1068</FONT>      }<a name="line.1068"></a>
-<FONT color="green">1069</FONT>    <a name="line.1069"></a>
-<FONT color="green">1070</FONT>    <a name="line.1070"></a>
-<FONT color="green">1071</FONT>      /*<a name="line.1071"></a>
-<FONT color="green">1072</FONT>       * Static methods.<a name="line.1072"></a>
-<FONT color="green">1073</FONT>       */<a name="line.1073"></a>
-<FONT color="green">1074</FONT>    <a name="line.1074"></a>
-<FONT color="green">1075</FONT>    <a name="line.1075"></a>
-<FONT color="green">1076</FONT>      private static final &lt;T&gt; Map&lt;Object, CaptureGroup&lt;T&gt;&gt; deepClone(final Map&lt;Object, CaptureGroup&lt;T&gt;&gt; suppliedCaptureGroups) {<a name="line.1076"></a>
-<FONT color="green">1077</FONT>        final Map&lt;Object, CaptureGroup&lt;T&gt;&gt; captureGroups;<a name="line.1077"></a>
-<FONT color="green">1078</FONT>        if (suppliedCaptureGroups != null) {<a name="line.1078"></a>
-<FONT color="green">1079</FONT>          captureGroups = new HashMap&lt;Object, CaptureGroup&lt;T&gt;&gt;(suppliedCaptureGroups.size());<a name="line.1079"></a>
-<FONT color="green">1080</FONT>          final Set&lt;Entry&lt;Object, CaptureGroup&lt;T&gt;&gt;&gt; entries = suppliedCaptureGroups.entrySet();<a name="line.1080"></a>
-<FONT color="green">1081</FONT>          if (entries != null &amp;&amp; !entries.isEmpty()) {<a name="line.1081"></a>
-<FONT color="green">1082</FONT>            for (final Entry&lt;Object, CaptureGroup&lt;T&gt;&gt; entry : entries) {<a name="line.1082"></a>
-<FONT color="green">1083</FONT>              if (entry != null) {<a name="line.1083"></a>
-<FONT color="green">1084</FONT>                final CaptureGroup&lt;T&gt; cg = entry.getValue();<a name="line.1084"></a>
-<FONT color="green">1085</FONT>                if (cg == null) {<a name="line.1085"></a>
-<FONT color="green">1086</FONT>                  captureGroups.put(entry.getKey(), null);<a name="line.1086"></a>
-<FONT color="green">1087</FONT>                } else {<a name="line.1087"></a>
-<FONT color="green">1088</FONT>                  captureGroups.put(entry.getKey(), cg.clone());<a name="line.1088"></a>
-<FONT color="green">1089</FONT>                }<a name="line.1089"></a>
-<FONT color="green">1090</FONT>              }<a name="line.1090"></a>
-<FONT color="green">1091</FONT>            }<a name="line.1091"></a>
-<FONT color="green">1092</FONT>          }<a name="line.1092"></a>
-<FONT color="green">1093</FONT>        } else {<a name="line.1093"></a>
-<FONT color="green">1094</FONT>          captureGroups = null;<a name="line.1094"></a>
-<FONT color="green">1095</FONT>        }<a name="line.1095"></a>
-<FONT color="green">1096</FONT>        return captureGroups;<a name="line.1096"></a>
-<FONT color="green">1097</FONT>      }<a name="line.1097"></a>
-<FONT color="green">1098</FONT>    <a name="line.1098"></a>
-<FONT color="green">1099</FONT>    }<a name="line.1099"></a>
+<FONT color="green">1027</FONT>          final Object id = this.getId();<a name="line.1027"></a>
+<FONT color="green">1028</FONT>          if (id == null) {<a name="line.1028"></a>
+<FONT color="green">1029</FONT>            if (him.getId() != null) {<a name="line.1029"></a>
+<FONT color="green">1030</FONT>              return false;<a name="line.1030"></a>
+<FONT color="green">1031</FONT>            }<a name="line.1031"></a>
+<FONT color="green">1032</FONT>          }<a name="line.1032"></a>
+<FONT color="green">1033</FONT>    <a name="line.1033"></a>
+<FONT color="green">1034</FONT>          final State state = this.getState();<a name="line.1034"></a>
+<FONT color="green">1035</FONT>          assert state != null;<a name="line.1035"></a>
+<FONT color="green">1036</FONT>          if (state != him.getState()) {<a name="line.1036"></a>
+<FONT color="green">1037</FONT>            return false;<a name="line.1037"></a>
+<FONT color="green">1038</FONT>          }<a name="line.1038"></a>
+<FONT color="green">1039</FONT>    <a name="line.1039"></a>
+<FONT color="green">1040</FONT>          if (this.items == null) {<a name="line.1040"></a>
+<FONT color="green">1041</FONT>            if (him.items != null) {<a name="line.1041"></a>
+<FONT color="green">1042</FONT>              return false;<a name="line.1042"></a>
+<FONT color="green">1043</FONT>            }<a name="line.1043"></a>
+<FONT color="green">1044</FONT>          } else if (!this.items.equals(him.items)) {<a name="line.1044"></a>
+<FONT color="green">1045</FONT>            return false;<a name="line.1045"></a>
+<FONT color="green">1046</FONT>          }<a name="line.1046"></a>
+<FONT color="green">1047</FONT>    <a name="line.1047"></a>
+<FONT color="green">1048</FONT>          // We don't call getProgramCounter() because hashCode() must be<a name="line.1048"></a>
+<FONT color="green">1049</FONT>          // a method that is permissible to call in any state.<a name="line.1049"></a>
+<FONT color="green">1050</FONT>          if (this.programCounter == null) {<a name="line.1050"></a>
+<FONT color="green">1051</FONT>            if (him.programCounter != null) {<a name="line.1051"></a>
+<FONT color="green">1052</FONT>              return false;<a name="line.1052"></a>
+<FONT color="green">1053</FONT>            }<a name="line.1053"></a>
+<FONT color="green">1054</FONT>          } else if (!this.programCounter.equals(him.programCounter)) {<a name="line.1054"></a>
+<FONT color="green">1055</FONT>            return false;<a name="line.1055"></a>
+<FONT color="green">1056</FONT>          }<a name="line.1056"></a>
+<FONT color="green">1057</FONT>    <a name="line.1057"></a>
+<FONT color="green">1058</FONT>          if (this.captureGroups == null) {<a name="line.1058"></a>
+<FONT color="green">1059</FONT>            if (him.captureGroups != null) {<a name="line.1059"></a>
+<FONT color="green">1060</FONT>              return false;<a name="line.1060"></a>
+<FONT color="green">1061</FONT>            }<a name="line.1061"></a>
+<FONT color="green">1062</FONT>          } else if (!this.captureGroups.equals(him.captureGroups)) {<a name="line.1062"></a>
+<FONT color="green">1063</FONT>            return false;<a name="line.1063"></a>
+<FONT color="green">1064</FONT>          }<a name="line.1064"></a>
+<FONT color="green">1065</FONT>    <a name="line.1065"></a>
+<FONT color="green">1066</FONT>          return true;<a name="line.1066"></a>
+<FONT color="green">1067</FONT>    <a name="line.1067"></a>
+<FONT color="green">1068</FONT>        } else {<a name="line.1068"></a>
+<FONT color="green">1069</FONT>          return false;<a name="line.1069"></a>
+<FONT color="green">1070</FONT>        }<a name="line.1070"></a>
+<FONT color="green">1071</FONT>      }<a name="line.1071"></a>
+<FONT color="green">1072</FONT>    <a name="line.1072"></a>
+<FONT color="green">1073</FONT>      @Override<a name="line.1073"></a>
+<FONT color="green">1074</FONT>      public String toString() {<a name="line.1074"></a>
+<FONT color="green">1075</FONT>        final Object id = this.getId();<a name="line.1075"></a>
+<FONT color="green">1076</FONT>        if (id == null) {<a name="line.1076"></a>
+<FONT color="green">1077</FONT>          return super.toString();<a name="line.1077"></a>
+<FONT color="green">1078</FONT>        } else {<a name="line.1078"></a>
+<FONT color="green">1079</FONT>          return id.toString();<a name="line.1079"></a>
+<FONT color="green">1080</FONT>        }<a name="line.1080"></a>
+<FONT color="green">1081</FONT>      }<a name="line.1081"></a>
+<FONT color="green">1082</FONT>    <a name="line.1082"></a>
+<FONT color="green">1083</FONT>    <a name="line.1083"></a>
+<FONT color="green">1084</FONT>      /*<a name="line.1084"></a>
+<FONT color="green">1085</FONT>       * Static methods.<a name="line.1085"></a>
+<FONT color="green">1086</FONT>       */<a name="line.1086"></a>
+<FONT color="green">1087</FONT>    <a name="line.1087"></a>
+<FONT color="green">1088</FONT>    <a name="line.1088"></a>
+<FONT color="green">1089</FONT>      private static final &lt;T&gt; Map&lt;Object, CaptureGroup&lt;T&gt;&gt; deepClone(final Map&lt;Object, CaptureGroup&lt;T&gt;&gt; suppliedCaptureGroups) {<a name="line.1089"></a>
+<FONT color="green">1090</FONT>        final Map&lt;Object, CaptureGroup&lt;T&gt;&gt; captureGroups;<a name="line.1090"></a>
+<FONT color="green">1091</FONT>        if (suppliedCaptureGroups != null) {<a name="line.1091"></a>
+<FONT color="green">1092</FONT>          captureGroups = new HashMap&lt;Object, CaptureGroup&lt;T&gt;&gt;(suppliedCaptureGroups.size());<a name="line.1092"></a>
+<FONT color="green">1093</FONT>          final Set&lt;Entry&lt;Object, CaptureGroup&lt;T&gt;&gt;&gt; entries = suppliedCaptureGroups.entrySet();<a name="line.1093"></a>
+<FONT color="green">1094</FONT>          if (entries != null &amp;&amp; !entries.isEmpty()) {<a name="line.1094"></a>
+<FONT color="green">1095</FONT>            for (final Entry&lt;Object, CaptureGroup&lt;T&gt;&gt; entry : entries) {<a name="line.1095"></a>
+<FONT color="green">1096</FONT>              if (entry != null) {<a name="line.1096"></a>
+<FONT color="green">1097</FONT>                final CaptureGroup&lt;T&gt; cg = entry.getValue();<a name="line.1097"></a>
+<FONT color="green">1098</FONT>                if (cg == null) {<a name="line.1098"></a>
+<FONT color="green">1099</FONT>                  captureGroups.put(entry.getKey(), null);<a name="line.1099"></a>
+<FONT color="green">1100</FONT>                } else {<a name="line.1100"></a>
+<FONT color="green">1101</FONT>                  captureGroups.put(entry.getKey(), cg.clone());<a name="line.1101"></a>
+<FONT color="green">1102</FONT>                }<a name="line.1102"></a>
+<FONT color="green">1103</FONT>              }<a name="line.1103"></a>
+<FONT color="green">1104</FONT>            }<a name="line.1104"></a>
+<FONT color="green">1105</FONT>          }<a name="line.1105"></a>
+<FONT color="green">1106</FONT>        } else {<a name="line.1106"></a>
+<FONT color="green">1107</FONT>          captureGroups = null;<a name="line.1107"></a>
+<FONT color="green">1108</FONT>        }<a name="line.1108"></a>
+<FONT color="green">1109</FONT>        return captureGroups;<a name="line.1109"></a>
+<FONT color="green">1110</FONT>      }<a name="line.1110"></a>
+<FONT color="green">1111</FONT>    <a name="line.1111"></a>
+<FONT color="green">1112</FONT>    }<a name="line.1112"></a>
 
 
 

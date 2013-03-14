@@ -20,7 +20,7 @@
 <FONT color="green">017</FONT>      private static final ProgramCounter&lt;Character&gt; simpleProgramCounter;<a name="line.17"></a>
 <FONT color="green">018</FONT>      <a name="line.18"></a>
 <FONT color="green">019</FONT>      static {<a name="line.19"></a>
-<FONT color="green">020</FONT>        simpleProgramCounter = new ProgramCounter&lt;Character&gt;(Program.singleton(new NotNullMVELFilter&lt;Character&gt;("this.charValue() == 'a'")));<a name="line.20"></a>
+<FONT color="green">020</FONT>        simpleProgramCounter = new ProgramCounter&lt;Character&gt;(Program.singleton(new InstanceOfMVELFilter&lt;Character&gt;(Object.class, "this.charValue() == 'a'")));<a name="line.20"></a>
 <FONT color="green">021</FONT>      }<a name="line.21"></a>
 <FONT color="green">022</FONT>    <a name="line.22"></a>
 <FONT color="green">023</FONT>      public TestCaseThread() {<a name="line.23"></a>
