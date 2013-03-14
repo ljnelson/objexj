@@ -112,9 +112,29 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
   /**
    * An {@code enum} representing the possible states a {@link Thread}
    * can be in.
+   *
+   * @author <a href="http://about.me/lairdnelson"
+   * target="_parent">Laird Nelson</a>
    */
   public enum State {
-    DEAD, MATCH, VIABLE
+
+    /**
+     * A {@link State} indicating the associated {@link Thread} is
+     * completely non-viable and is essentially useless.
+     */
+    DEAD, 
+
+    /**
+     * A {@link State} indicating that a {@link Thread} has fulfilled
+     * its purpose and is no longer viable.
+     */
+    MATCH, 
+
+    /**
+     * A {@link State} indicating that a {@link Thread} is in a normal
+     * state and is fully viable.
+     */
+    VIABLE
   }
 
   /**
@@ -218,8 +238,21 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
    */
   private Map<Object, CaptureGroup<T>> captureGroups;
 
+  /**
+   * A {@link Map} of global variables maintained by this {@link
+   * Thread}.
+   *
+   * <p>This field may be {@code null}.</p>
+   *
+   * @see #getVariables()
+   */
   private Map<Object, Object> variables;
 
+  /**
+   * An {@link InstructionContext} that wraps this {@link Thread}.
+   *
+   * <p>This field may be {@code null}.</p>
+   */
   private InstructionContext<T> ic;
 
   /**
@@ -430,10 +463,29 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
     return returnValue;
   }
 
+  /**
+   * Returns the item pointer associated with this {@link Thread}.
+   *
+   * @return the item pointer associated with this {@link Thread}
+   */
   private final int getItemPointer() {
     return this.itemPointer;
   }
 
+  /**
+   * Returns a non-{@code null} {@link Map} of variables associated
+   * with this {@link Thread}.
+   *
+   * <p>The {@link Map} that is returned is returned by reference, and
+   * modifications to it are visible to other consumers of this
+   * method.  If subclasses choose to override this method, they must
+   * preserve these semantics.</p>
+   *
+   * @return a non-{@code null} {@link Map} of variable values indexed
+   * by arbitrary keys
+   *
+   * @see MVELFilter
+   */
   public Map<Object, Object> getVariables() {
     if (this.variables == null) {
       this.variables = new HashMap<Object, Object>();
@@ -489,6 +541,23 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
   }
 
   /**
+   * Creates a new {@link Thread} and returns it.
+   *
+   * @param id the id for the new {@link Thread}; may be {@code null}
+   * in which case a generated identifier will be used instead; only
+   * its {@link Object#toString()} method will be called
+   *
+   * @param programCounterIndex the position within the associaged
+   * {@link #getProgramCounter() ProgramCounter} from which to begin
+   * execution; may be relative or absolute depending on the value of
+   * the {@code relative} parameter
+   *
+   * @param relative whether the {@code programCounterIndex} parameter
+   * represents a relative position or an absolute index
+   *
+   * @return a non-{@code null} new {@link Thread} not identical to
+   * this one
+   *
    * @exception IllegalStateException if this {@link Thread}
    * {@linkplain #isViable() is not viable}
    */
@@ -633,6 +702,15 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
     return this.items.get(this.getItemPointer());
   }
 
+  /**
+   * Returns {@code true} if the supplied {@code itemPointer}
+   * parameter is valid.
+   *
+   * @param itemPointer the item pointer to consider
+   *
+   * @return {@code true} if the supplied {@code itemPointer}
+   * parameter is valid; {@code false} otherwise
+   */
   private final boolean isValidItemPointer(final int itemPointer) {
     if (this.items == null || this.items.isEmpty()) {
       // We can have null or empty input.  In such a case, a value
@@ -909,6 +987,17 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
     return this.state;
   }
 
+  /**
+   * Returns a non-{@code null} {@link Set} of {@link Object}s
+   * representing the keys under which {@link CaptureGroup}s are
+   * indexed.
+   *
+   * @return a non-{@code null} {@link Set} of {@link Object}s
+   * representing the keys under which {@link CaptureGroup}s are
+   * indexed
+   *
+   * @see #getSubmatches()
+   */
   public final Set<Object> getGroupKeySet() {
     final Set<Object> returnValue;
     if (this.captureGroups == null || this.captureGroups.isEmpty()) {
@@ -919,6 +1008,13 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
     return returnValue;
   }
 
+  /**
+   * Returns the number of {@link CaptureGroup}s this {@link Thread}
+   * is currently tracking.
+   *
+   * @return the number of {@link CaptureGroup}s this {@link Thread}
+   * is currently tracking
+   */
   public final int getGroupCount() {
     final int result;
     if (this.captureGroups == null || this.captureGroups.isEmpty()) {
@@ -929,6 +1025,16 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
     return result;
   }
 
+  /**
+   * Returns the {@link List} of items captured under the supplied
+   * {@link Object} key.
+   *
+   * <p>This method may return {@code null}.</p>
+   *
+   * @param key the key in question; may be {@code null}
+   *
+   * @return a {@link List} of items; may be {@code null}
+   */
   public final List<T> getGroup(final Object key) {
     List<T> result = null;
     if (this.captureGroups != null) {
@@ -952,9 +1058,28 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
     }
   }
 
+  /**
+   * {@linkplain Object#clone() Clones} this {@link Thread} and
+   * returns the clone.
+   *
+   * <p>This method never returns {@code null}.</p>
+   *
+   * <h2>Design Notes</h2>
+   *
+   * <p>{@link Thread}s internally store {@link Map}s of {@link
+   * CaptureGroup}s.  These {@link Map}s are {@linkplain
+   * #deepClone(Map) deeply cloned}&mdash;that is, the {@link Map}
+   * itself is {@link Object#clone() cloned} as well as the {@link
+   * CaptureGroup#clone() CaptureGroup}s inside them.</p>
+   *
+   * <p>As of this writing, the internal {@link Map} of variables is
+   * not deeply cloned.  This means that two {@link Thread}s might
+   * share variable map keys and values.</p>
+   *
+   * @return a non-{@code null} clone of this {@link Thread}
+   */
   @Override
   public Thread<T> clone() {
-    this.ensureViable();
     Thread<T> clone = null;
     try {
       @SuppressWarnings("unchecked")
@@ -984,6 +1109,11 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
     return clone;
   }
 
+  /**
+   * Returns a hashcode for this {@link Thread}.
+   *
+   * @return a hashcode for this {@link Thread}
+   */
   @Override
   public int hashCode() {
     int result = 17;
@@ -1012,6 +1142,13 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
     return result;
   }
 
+  /**
+   * Returns {@code true} if the supplied {@link Object} is equal to
+   * this {@link Thread}.
+   *
+   * @return {@code true} if the supplied {@link Object} is equal to
+   * this {@link Thread}.
+   */
   @Override
   public boolean equals(final Object other) {
     if (other == this) {
@@ -1070,6 +1207,13 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
     }
   }
 
+  /**
+   * Returns a non-{@code null} {@link String} representation of this
+   * {@link Thread}.
+   *
+   * @return a non-{@code null} {@link String} representation of this
+   * {@link Thread}
+   */
   @Override
   public String toString() {
     final Object id = this.getId();
@@ -1086,6 +1230,32 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
    */
 
 
+  /**
+   * {@linkplain Object#clone() Clones} the supplied {@link Map} of
+   * {@link CaptureGroups} by creating a new {@link HashMap} using its
+   * {@linkplain HashMap#HashMap(Map) copy constructor} supplied with
+   * the value of the {@code suppliedCaptureGroups} parameter.
+   *
+   * <p>In addition, each {@link CaptureGroup} in the supplied {@link
+   * Map} is {@linkplain CaptureGroup#clone() cloned}.</p>
+   *
+   * <p>The end result is a {@link Map} of {@link CaptureGroup}s
+   * indexed by {@link Object}s that is {@linkplain
+   * Object#equals(Object) equal to} the supplied {@link
+   * suppliedCaptureGroups} parameter, but not identical to it, and
+   * containing {@linkplain Map#values() values} that are not
+   * identical to the {@linkplain Map#values() values} in the supplied
+   * {@code suppliedCaptureGroups} parameter.</p>
+   *
+   * @param suppliedCaptureGroups a {@link Map} of {@link
+   * CaptureGroup}s indexed by arbitrary, possibly {@code null}, keys;
+   * may be {@code null} in which case {@code null} will be returned
+   *
+   * @return a {@link Map} equal to the supplied {@link
+   * suppliedCaptureGroups} parameter, but guaranteed not to be
+   * identical to it; or {@code null} if the supplied {@code
+   * suppliedCaptureGroups} parameter is {@code null}
+   */
   private static final <T> Map<Object, CaptureGroup<T>> deepClone(final Map<Object, CaptureGroup<T>> suppliedCaptureGroups) {
     final Map<Object, CaptureGroup<T>> captureGroups;
     if (suppliedCaptureGroups != null) {

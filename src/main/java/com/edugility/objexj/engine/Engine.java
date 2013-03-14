@@ -58,6 +58,12 @@ import com.edugility.objexj.parser.Parser;
  * target="_parent">Laird Nelson</a>
  *
  * @see #run(Program, List)
+ *
+ * @see <a
+ * href="http://swtch.com/~rsc/regexp/regexp2.html" target="_parent">R. S. Cox. (2009,
+ * December). <span style="font-style: italic;">Regular Expression Matching: the Virtual Machine
+ * Approach</span> [Online]. Available:
+ * http://swtch.com/~rsc/regexp/regexp2.html</a>
  */
 public class Engine<T> {
 
