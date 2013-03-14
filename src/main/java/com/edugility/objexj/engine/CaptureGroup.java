@@ -37,6 +37,9 @@ import java.util.List;
  * A sub-{@link List} of items as captured by a {@link
  * com.edugility.objexj.engine.Thread}.
  *
+ * @param <T> the type of {@link Object} which will govern {@link
+ * List}s produced by this {@link CaptureGroup}
+ *
  * @author <a href="http://about.me/lairdnelson"
  * target="_parent">Laird Nelson</a>
  */

@@ -38,6 +38,10 @@ import java.util.List;
  * {@linkplain InstructionContext#atStart() at the beginning of the
  * input}.
  *
+ * @param <T> the type of {@link Object} that {@link
+ * InstructionContext} instances passed to the {@link
+ * #execute(InstructionContext)} method can work with
+ *
  * @author <a href="http://about.me/lairdnelson"
  * target="_parent">Laird Nelson</a>
  */

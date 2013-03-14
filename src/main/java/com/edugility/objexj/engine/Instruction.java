@@ -41,6 +41,10 @@ import java.util.regex.Pattern;
  * com.edugility.objexj.engine.Thread thread} of execution in an
  * {@code objexj} {@linkplain Engine virtual machine}.
  *
+ * @param <T> the type of {@link Object} that {@link
+ * InstructionContext} instances passed to the {@link
+ * #execute(InstructionContext)} method can work with
+ *
  * @author <a href="http://about.me/lairdnelson">Laird Nelson</a>
  *
  * @see Engine
@@ -160,6 +164,9 @@ public abstract class Instruction<T> implements Serializable {
   /**
    * Parses the supplied {@code line} and returns a new {@link
    * Instruction} instance appropriate for this input.
+   *
+   * @param <T> the type of {@link Object} the resulting {@link
+   * Instruction} will work with
    *
    * @param line the {@link String} to parse; must not be {@code null}
    *

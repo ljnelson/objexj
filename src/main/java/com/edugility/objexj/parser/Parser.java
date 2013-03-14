@@ -75,6 +75,9 @@ public class Parser {
    * Reader} machinery and then calls the {@link
    * #parse(PostfixTokenizer)} method and returns its result.
    *
+   * @param <T> the type of {@link Object} the resulting {@link
+   * Program} will work with
+   *
    * @param input the {@link String} representation of a {@link
    * Program}; must not be {@code null}
    *

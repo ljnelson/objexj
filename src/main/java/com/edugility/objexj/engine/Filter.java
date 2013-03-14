@@ -35,6 +35,8 @@ package com.edugility.objexj.engine;
  * read from} and {@linkplain InstructionContext#read() produces an
  * <code>Object</code>} that is non-{@code null}.
  *
+ * @param <T> the type of {@link Object} that can be filtered
+ *
  * @author <a href="http://about.me/lairdnelson"
  * target="_parent">Laird Nelson</a>
  */

@@ -694,6 +694,9 @@ public final class Program<T> extends LinkedList<Instruction<T>> {
    * Creates a new {@link Program} that contains only the supplied
    * {@link Instruction}.
    *
+   * @param <T> the type of {@link Object}s the returned {@link
+   * Program} will be able to match
+   *
    * @param instruction the {@link Instruction} to wrap with a new
    * {@link Program}; if {@code null} an {@linkplain
    * LinkedList#isEmpty() empty} {@link Program} is returned instead

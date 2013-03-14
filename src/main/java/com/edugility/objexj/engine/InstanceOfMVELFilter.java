@@ -40,6 +40,9 @@ import org.mvel2.MVEL;
  * of a specified {@link Class} before applying further <a
  * href="http://mvel.codehaus.org/">MVEL</a>-based filters to it.
  *
+ * @param <T> the type of {@link Object} that can be {@linkplain
+ * #accept(Object, Map) accepted}
+ *
  * @author <a href="http://about.me/lairdnelson"
  * target="_parent">Laird Nelson</a>
  */

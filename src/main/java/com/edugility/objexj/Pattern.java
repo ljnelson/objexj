@@ -213,6 +213,10 @@ public class Pattern<T> {
   /**
    * Compiles a new {@link Pattern} from the supplied source code.
    *
+   * @param <T> the type of {@link Object} the resulting {@link
+   * Pattern} will be capable of {@linkplain Pattern#matcher(List)
+   * producing} {@link Matcher}s for
+   *
    * @param source the source code for the {@link Pattern}; must not
    * be {@code null}
    *

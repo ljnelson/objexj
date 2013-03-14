@@ -30,6 +30,7 @@ package com.edugility.objexj.parser;
 import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
+import java.io.Serializable; // for javadoc only
 
 import java.text.ParsePosition;
 import java.text.ParseException;
@@ -46,30 +47,214 @@ import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * A {@link ParsePosition} and an {@link Iterator} of {@link Token}s
+ * that converts a {@link PushbackReader} of a textual objexj pattern
+ * into a series of {@link Token}s in postfix order.
+ *
+ * <p>A {@link PostfixTokenizer} is the lexer component of the
+ * lex-then-parse series of events that go into compiling an objexj
+ * pattern.</p>
+ *
+ * @author <a href="http://about.me/lairdnelson"
+ * target="_parent">Laird Nelson</a>
+ *
+ * @see Parser
+ *
+ * @see <a
+ * href="http://en.wikipedia.org/wiki/Shunting-yard_algorithm">Shunting-yard
+ * algorithm. (2013, March 14). In Wikipedia, The Free
+ * Encyclopedia. Retrieved 20:42, March 14, 2013, from
+ * http://en.wikipedia.org/w/index.php?title=Shunting-yard_algorithm&oldid=544128320</a>
+ */
 public class PostfixTokenizer extends ParsePosition implements Iterator<Token> {
 
+  /**
+   * The version of this class for {@link Serializable serialization
+   * purposes}.
+   */
   private static final long serialVersionUID = 1L;
 
+  /**
+   * A state a {@link PostfixTokenizer} may be in.
+   *
+   * @author <a href="http://about.me/lairdnelson"
+   * target="_parent">Laird Nelson</a>
+   */
   private enum State {
-    BEGIN_ATOM, END_ATOM, START, START_SAVING_OR_FILTER, INVALID, FILTER, MVEL, END_OF_FILTER, OPERATOR, LEFT_PAREN, RIGHT_PAREN, STOP_SAVING_OR_END_OF_INPUT_OR_NEXT_IN_SEQUENCE, END
+
+    /**
+     * A {@link PostfixTokenizer.State} indicating the {@link
+     * PostfixTokenizer} is expecting a begin-input marker (usually
+     * {@code ^}).
+     */
+    BEGIN_ATOM, 
+
+    /**
+     * A {@link PostfixTokenizer.State} indicating the {@link
+     * PostfixTokenizer} is expecting an end-of-input marker (usually
+     * {@code $})
+     */
+    END_ATOM, 
+
+    /**
+     * A {@link PostfixTokenizer.State} indicating the {@link
+     * PostfixTokenizer} is beginning its lexing operation.
+     */
+    START, 
+
+    /**
+     * A {@link PostfixTokenizer.State} indicating the {@link
+     * PostfixTokenizer} is expecting either a start-saving marker
+     * (usually {@code (}) or a filter token.
+     */
+    START_SAVING_OR_FILTER, 
+
+    /**
+     * A {@link PostfixTokenizer.State} indicating the {@link
+     * PostfixTokenizer} is in an invalid state and is essentially
+     * useless.
+     */
+    INVALID, 
+
+    /**
+     * A {@link PostfixTokenizer.State} indicating the {@link
+     * PostfixTokenizer} is expecting a filter token.
+     */
+    FILTER, 
+
+    /**
+     * A {@link PostfixTokenizer.State} indicating the {@link
+     * PostfixTokenizer} is expecting an <a
+     * href="http://mvel.codehaus.org/">MVEL</a> expression modifier
+     * to a filter token.
+     */
+    MVEL, 
+
+    /**
+     * A {@link PostfixTokenizer.State} indicating the {@link
+     * PostfixTokenizer} has just completed parsing a filter token.
+     */
+    END_OF_FILTER,
+
+    /**
+     * A {@link PostfixTokenizer.State} indicating the {@link
+     * PostfixTokenizer} is expecting an operator token.
+     */
+    OPERATOR, 
+
+    /**
+     * A {@link PostfixTokenizer.State} indicating the {@link
+     * PostfixTokenizer} is expecting a left parenthesis character (a
+     * token that represents both a begin-saving operator and a
+     * precedence adjuster).
+     */
+    LEFT_PAREN, 
+
+    /**
+     * A {@link PostfixTokenizer.State} indicating the {@link
+     * PostfixTokenizer} is expecting a right parenthesis character (a
+     * token that represents both a stop-saving operator and a
+     * precedence adjuster).
+     */
+    RIGHT_PAREN, 
+
+    /**
+     * A {@link PostfixTokenizer.State} indicating the {@link
+     * PostfixTokenizer} could forward to several other states.
+     */
+    STOP_SAVING_OR_END_OF_INPUT_OR_NEXT_IN_SEQUENCE, 
+
+    /**
+     * A {@link PostfixTokenizer.State} indicating the {@link
+     * PostfixTokenizer} is at the end of its lexing.
+     */
+    END
   }
 
+  /**
+   * A {@link Map} of {@link Token}s indexed by their character
+   * representations.  The representations are stored as {@link
+   * Integer}s rather than {@link Character}s for convenience since
+   * certain {@link Reader} operations return {@code int}s, not {@code
+   * char}s.
+   *
+   * <p>This field is never {@code null}.</p>
+   *
+   * @see #setupTokens(Map)
+   */
   private final Map<Integer, Token> tokens;
 
+  /**
+   * The {@link Logger} used by this {@link PostfixTokenizer} to log messages.
+   *
+   * <p>This field is never {@code null} in normal situations; it
+   * might be {@code null} in some rare serialization edge cases.</p>
+   */
   private transient Logger logger;
 
+  /**
+   * The {@link PushbackReader} responsible for reading characters
+   * from a textual objexj pattern.
+   *
+   * <p>This field is never {@code null} in normal situations.  It
+   * might be {@code null} in some rare serialization edge cases.</p>
+   */
   private transient final PushbackReader reader;
 
+  /**
+   * A {@link LinkedList} of {@link Token}s that is iterated over by
+   * this {@link PostfixTokenizer}.
+   *
+   * <p>This field is never {@code null} in normal situations.  It
+   * might be {@code null} in some rare serialization edge cases.</p>
+   */
   final transient LinkedList<Token> output;
 
+  /**
+   * A {@link Throwable} encountered during iteration.
+   *
+   * <p>This field may be {@code null}.</p>
+   */
   private transient Throwable error;
 
+  /**
+   * The {@link PostfixTokenizer.State} this {@link PostfixTokenizer}
+   * is currently in.
+   *
+   * <p>This field may be {@code null}.</p>
+   */
   private transient State state;
 
+  /**
+   * The current position of this {@link PostfixTokenizer} within its
+   * associated {@link #reader}.
+   */
   private transient int position;
 
+  /**
+   * A {@link Deque} of {@link Token}s used during lexing.
+   *
+   * <p>This field is never {@code null} in normal situations.  It
+   * might be {@code null} in some rare serialization edge cases.</p>
+   */
   private transient final Deque<Token> stack;
 
+  /**
+   * Creates a new {@link PostfixTokenizer}.
+   *
+   * @param reader the {@link PushbackReader} that produces characters
+   * to read; must not be {@code null}
+   *
+   * @exception IllegalArgumentException if {@code reader} is {@code
+   * null}
+   *
+   * @exception IOException if the supplied {@link PushbackReader} has
+   * trouble reading
+   *
+   * @exception ParseException if the supplied {@link PushbackReader}
+   * yields an unparseable pattern
+   */
   public PostfixTokenizer(final PushbackReader reader) throws IOException, ParseException {
     super(0);
     this.logger = Logger.getLogger(this.getClass().getName());
@@ -77,29 +262,64 @@ public class PostfixTokenizer extends ParsePosition implements Iterator<Token> {
     if (reader == null) {
       throw new IllegalArgumentException("reader", new NullPointerException("reader"));
     }
-    this.tokens = new HashMap<Integer, Token>();
-    this.setupTokens();
     this.output = new LinkedList<Token>();
     this.stack = new ArrayDeque<Token>();
     this.reader = reader;
     this.state = State.START;
+    this.tokens = new HashMap<Integer, Token>();
+    this.setupTokens(this.tokens);
     this.prime();
   }
 
+  /**
+   * Returns the position of this {@link PostfixTokenizer} within its
+   * associated {@link PushbackReader}.
+   *
+   * @return the position of this {@link PostfixTokenizer} within its
+   * associated {@link PushbackReader}
+   */
   @Override
   public int getIndex() {
     return this.position;
   }
 
+  /**
+   * Sets the position of this {@link PostfixTokenizer} within its
+   * associated {@link PushbackReader}.
+   *
+   * <p>This method does not actually advance the {@link
+   * PushbackReader}; it is simply used to update an internal variable
+   * that keeps track of where the {@link PushbackReader} is within
+   * its stream.</p>
+   *
+   * @param index the new position
+   */
   @Override
   public void setIndex(final int index) {
     this.position = index;
   }
 
+  /**
+   * Builds an appropriate exception message for an unexpected
+   * character during lexing.
+   *
+   * @param c the unexpected character
+   *
+   * @return a non-{@code null} error message
+   */
   private final String buildExceptionMessage(final int c) {
     return String.format("Unexpected character (%c) at position %d in Reader %s", c, this.getErrorIndex(), this.reader);
   }
 
+  /**
+   * Lexes as little as possible to instantiate a {@link Token} so
+   * that {@linkplain #next() iteration} can then take place.
+   *
+   * @exception IOException if a reading error occurs
+   *
+   * @exception ParseException if a non-sensical textual pattern was
+   * encountered
+   */
   private final void prime() throws IOException, ParseException {
     if (this.state == State.INVALID) {
       throw new IllegalStateException();
@@ -530,13 +750,11 @@ public class PostfixTokenizer extends ParsePosition implements Iterator<Token> {
 
   }
 
-  private final Token createFilterToken(final StringBuilder sb) {
-    if (sb == null) {
-      throw new IllegalArgumentException("sb", new NullPointerException("sb"));
-    }
-    return new Token(Token.Type.FILTER, sb.toString());
-  }
-
+  /**
+   * Inserts a set of {@link Token}s into the {@linkplain #output
+   * output <code>List</code>} that logically belong at the beginning
+   * of any unanchored pattern expression.
+   */
   private final void insertBeginAtomZeroOrMoreAndCatenation() {
     this.output.add(this.tokenFor('^'));
     this.insertCatenation();
@@ -544,15 +762,33 @@ public class PostfixTokenizer extends ParsePosition implements Iterator<Token> {
     this.insertCatenation();
   }
 
+  /**
+   * Insert a sequence of {@link Token]s into the {@linkplain #output
+   * output <code>List</code>} representing zero or more occurrences
+   * of any Java {@link Object}.
+   */
   private final void insertZeroOrMoreAnything() {
     this.output.add(new Token(Token.Type.FILTER, "java.lang.Object"));
     this.handleOperator(this.tokenFor('*'));
   }
 
+  /**
+   * Handles the concatenation operation.
+   */
   private final boolean insertCatenation() {
     return this.handleOperator(this.tokenFor('/'));
   }
 
+  /**
+   * Processes the supplied operator {@link Token} according to the <a
+   * href="http://en.wikipedia.org/wiki/Shunting-yard_algorithm">shunting-yard
+   * algorithm</a>.
+   *
+   * @param o1 the operator {@link Token}; must not be {@code null}
+   *
+   * @exception IllegalArgumentException if {@code o1} is {@code null}
+   * or if it is {@linkplain Token#isOperator() not an operator}
+   */
   private final boolean handleOperator(final Token o1) {
     if (o1 == null) {
       throw new IllegalArgumentException("o1", new NullPointerException("o1"));
@@ -573,6 +809,15 @@ public class PostfixTokenizer extends ParsePosition implements Iterator<Token> {
     return added;
   }
 
+  /**
+   * Pushes the supplied {@link Token} on the {@linkplain #stack
+   * stack}, after checking for error conditions.
+   *
+   * @param token the {@link Token} to push; must not be {@code null}
+   *
+   * @exception IllegalArgumentException if {@code token} is {@code
+   * null} or is inappropriate for pushing
+   */
   private final void push(final Token token) {
     if (this.logger.isLoggable(Level.FINER)) {
       this.logger.entering(this.getClass().getName(), "push", token);
@@ -588,6 +833,38 @@ public class PostfixTokenizer extends ParsePosition implements Iterator<Token> {
     }
   }
 
+  /**
+   * Returns the appropriate {@link PostfixTokenizer.State} this
+   * {@link PostfixTokenizer} should transition to after processing
+   * the supplied {@link Token}.
+   *
+   * <p>This method never returns {@code null}.</p>
+   *
+   * <p>The {@code token} parameter must be non-{@code null} and must
+   * {@linkplain Token#getType() have a <code>Type</code>} that is
+   * equal to one of the following:</p>
+   *
+   * <ul>
+   *
+   * <li>{@link Token.Type#ONE_OR_MORE}</li>
+   *
+   * <li>{@link Token.Type#ZERO_OR_MORE}</li>
+   *
+   * <li>{@link Token.Type#ZERO_OR_ONE}</li>
+   *
+   * <li>{@link Token.Type#ALTERNATION}</li>
+   *
+   * <li>{@link Token.Type#CATENATION}</li>
+   *
+   * </ul>
+   *
+   * @param token the {@link Token} to process; must not be {@code null}
+   *
+   * @return a non-{@code null} {@link PostfixTokenizer.State}
+   *
+   * @exception IllegalArgumentException if {@code token} does not
+   * meet the conditions described earlier
+   */
   private final State stateAfterOperator(final Token token) {
     if (token == null) {
       throw new IllegalArgumentException("token", new NullPointerException("token"));
@@ -607,25 +884,51 @@ public class PostfixTokenizer extends ParsePosition implements Iterator<Token> {
     }
   }
 
-  private final void setupTokens() {
-    this.tokens.clear();
-    this.tokens.put(Integer.valueOf('^'), new Token(Token.Type.BEGIN_ATOM));
-    this.tokens.put(Integer.valueOf('$'), new Token(Token.Type.END_ATOM));
-    this.tokens.put(Integer.valueOf('+'), new Token(Token.Type.ONE_OR_MORE));
-    this.tokens.put(Integer.valueOf('*'), new Token(Token.Type.ZERO_OR_MORE));
-    this.tokens.put(Integer.valueOf('?'), new Token(Token.Type.ZERO_OR_ONE));
-    this.tokens.put(Integer.valueOf('|'), new Token(Token.Type.ALTERNATION));
+  /**
+   * Manipulates the supplied {@link Map} to contain {@link Token}s
+   * indexed under the characters (expressed as {@link Integer}s) that
+   * identify them.
+   *
+   * @param tokens the {@link Map} of {@link Token}s to manipulate;
+   * must not be {@code null}
+   *
+   * @exception IllegalArgumentException if {@code tokens} is {@code
+   * null}
+   */
+  private final void setupTokens(final Map<Integer, Token> tokens) {
+    if (tokens == null) {
+      throw new IllegalArgumentException("tokens", new NullPointerException("tokens"));
+    }
+    tokens.clear();
+    tokens.put(Integer.valueOf('^'), new Token(Token.Type.BEGIN_ATOM));
+    tokens.put(Integer.valueOf('$'), new Token(Token.Type.END_ATOM));
+    tokens.put(Integer.valueOf('+'), new Token(Token.Type.ONE_OR_MORE));
+    tokens.put(Integer.valueOf('*'), new Token(Token.Type.ZERO_OR_MORE));
+    tokens.put(Integer.valueOf('?'), new Token(Token.Type.ZERO_OR_ONE));
+    tokens.put(Integer.valueOf('|'), new Token(Token.Type.ALTERNATION));
     final Token catenation = new Token(Token.Type.CATENATION);
-    this.tokens.put(Integer.valueOf('/'), catenation);
-    this.tokens.put(Integer.valueOf(','), catenation);
-    this.tokens.put(Integer.valueOf('('), new Token(Token.Type.START_SAVING));
-    this.tokens.put(Integer.valueOf(')'), new Token(Token.Type.STOP_SAVING));
+    tokens.put(Integer.valueOf('/'), catenation);
+    tokens.put(Integer.valueOf(','), catenation);
+    tokens.put(Integer.valueOf('('), new Token(Token.Type.START_SAVING));
+    tokens.put(Integer.valueOf(')'), new Token(Token.Type.STOP_SAVING));
   }
 
+  /**
+   * Returns a {@link Token} suitable for the supplied character.
+   *
+   * <p>This method never returns {@code null}.</p>
+   *
+   * @param c a character known to identify a {@link Token}
+   *
+   * @return a suitable {@link Token}; never {@code null}
+   *
+   * @exception IllegalArgumentException if {@code c} does not pick
+   * out a {@link Token}
+   */
   private final Token tokenFor(final int c) {
     final Token token = this.tokens.get(Integer.valueOf(c));
     if (token == null) {
-      throw new IllegalArgumentException("c: " + (char)c);
+      throw new IllegalArgumentException(String.format("c: %c", (char)c));
     }
     return token;
   }
@@ -652,12 +955,30 @@ public class PostfixTokenizer extends ParsePosition implements Iterator<Token> {
     return true;
   }
 
+  /**
+   * Reads a character from this {@link PostfixTokenizer}'s
+   * {@linkplain #reader affiliated <code>PushbackReader</code>} and
+   * {@linkplain #setIndex(int) advances the position}.
+   *
+   * @return a character
+   *
+   * @exception IOException if there was a problem reading
+   */
   private final int read() throws IOException {
     final int c = this.reader.read();
     this.setIndex(this.getIndex() + 1);
     return c;
   }
 
+  /**
+   * "Unreads" a character from this {@link PostfixTokenizer}'s
+   * {@linkplain #reader affiliated <code>PushbackReader</code>} and
+   * {@linkplain #setIndex(int) decrements the position}.
+   *
+   * @return the new position
+   *
+   * @exception IOException if there was a problem reading
+   */
   private final int unread(final int c) throws IOException {
     this.reader.unread(c);
     final int newPosition = this.getIndex() - 1;
@@ -666,6 +987,12 @@ public class PostfixTokenizer extends ParsePosition implements Iterator<Token> {
   }
 
   /**
+   * Returns {@code true} if this {@link PostfixTokenizer} has more
+   * {@link Token}s to iterate over.
+   *
+   * @return {@code true} if this {@link PostfixTokenizer} has more
+   * {@link Token}s to iterate over
+   *
    * @exception IllegalStateException if a prior invocation of {@link
    * #next()} caused an error; see {@linkplain Throwable#getCause()
    * its cause} for the root problem
@@ -678,6 +1005,15 @@ public class PostfixTokenizer extends ParsePosition implements Iterator<Token> {
     return !this.output.isEmpty();
   }
 
+  /**
+   * Returns the next {@link Token} lexed from this {@link
+   * PostfixTokenizer}'s underlying {@link Reader}.
+   *
+   * @return a non-{@code null} {@link Token}
+   *
+   * @exception NoSuchElementException if the next element could not
+   * be produced
+   */
   @Override
   public Token next() {
     if (this.error != null) {
@@ -698,11 +1034,23 @@ public class PostfixTokenizer extends ParsePosition implements Iterator<Token> {
     return returnValue;
   }
 
+  /**
+   * Throws an {@link UnsupportedOperationException} when invoked.
+   *
+   * @exception UnsupportedOperationException when invoked
+   */
   @Override
-  public void remove() {
+  public final void remove() {
     throw new UnsupportedOperationException();
   }
 
+  /**
+   * Returns a non-{@code null} {@link String} representation of this
+   * {@link PostfixTokenizer}.
+   *
+   * @return a non-{@code null} {@link String} representation of this
+   * {@link PostfixTokenizer}
+   */
   @Override
   public String toString() {
     return this.reader.toString();
