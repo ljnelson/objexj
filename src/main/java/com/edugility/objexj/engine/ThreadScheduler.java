@@ -30,6 +30,18 @@ package com.edugility.objexj.engine;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * An interface indicating that implementations are capable of
+ * scheduling {@link Thread}s.
+ *
+ * @param <T> the type of {@link Object} manipulated by {@link
+ * Thread}s scheduled by instances of this class
+ *
+ * @author <a href="http://about.me/lairdnelson"
+ * target="_parent">Laird Nelson</a>
+ *
+ * @see Thread
+ */
 public interface ThreadScheduler<T> {
 
   /**

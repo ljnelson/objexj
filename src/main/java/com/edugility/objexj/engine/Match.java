@@ -27,14 +27,45 @@
  */
 package com.edugility.objexj.engine;
 
+/**
+ * An {@link Instruction} that causes an {@link InstructionContext} to
+ * be {@linkplain InstructionContext#match() placed into the match
+ * state}.
+ *
+ * @param <T> the type of {@link Object} managed by {@link
+ * InstructionContext}s passed to the {@link
+ * #execute(InstructionContext)} method
+ *
+ * @author <a href="http://about.me/lairdnelson"
+ * target="_parent">Laird Nelson</a>
+ *
+ * @see InstructionContext
+ *
+ * @see InstructionContext#match()
+ */
 public class Match<T> extends Instruction<T> {
 
+  /**
+   * The version of this class for {@linkplain Serializable
+   * serialization purposes}.
+   */
   private static final long serialVersionUID = 1L;
 
+  /**
+   * Creates a new {@link Match} instruction.
+   */
   public Match() {
     super();
   }
 
+  /**
+   * Calls {@link InstructionContext#match()} when invoked.
+   *
+   * @param context an {@link InstructionContext}; must not be {@code
+   * null}
+   *
+   * @exception IllegalArgumentException if {@code context} is {@code null}
+   */
   @Override
   public final void execute(final InstructionContext<T> context) {
     if (context == null) {
@@ -42,6 +73,5 @@ public class Match<T> extends Instruction<T> {
     }
     context.match();
   }
-
 
 }

@@ -29,22 +29,73 @@ package com.edugility.objexj.engine;
 
 import java.util.List;
 
+/**
+ * An {@link Instruction} that stops saving a capture group by calling
+ * {@link InstructionContext#stop(Object)} followed by {@link
+ * InstructionContext#advanceProgramCounter()}.
+ *
+ * @param <T> the type of {@link Object}s that {@link
+ * InstructionContext}s supplied to the {@link
+ * #execute(InstructionContext)} method work with
+ *
+ * @author <a href="http://about.me/lairdnelson"
+ * target="_parent">Laird Nelson</a>
+ *
+ * @see InstructionContext#advanceProgramCounter()
+ *
+ * @see InstructionContext#stop(Object)
+ */
 public class Stop<T> extends Instruction<T> {
 
+  /**
+   * The version of this class for {@linkplain Serializable
+   * serialization purposes}.
+   */
   private static final long serialVersionUID = 1L;
 
+  /**
+   * The key identifying the capture group to save.
+   *
+   * <p>This field may be {@code null}.</p>
+   */
   private final Object key;
 
+  /**
+   * Creates a new {@link Stop} instruction.
+   *
+   * @param key the key identifying the capture group to save; may be
+   * {@code null}
+   */
   public Stop(final String key) {
     super();
     this.key = key;
   }
 
+  /**
+   * Creates a new {@link Stop} instruction.
+   *
+   * @param key the key identifying the capture group to save; may be
+   * {@code null}
+   */
   public Stop(final Object key) {
     super();
     this.key = key;
   }
 
+  /**
+   * Calls {@link InstructionContext#stop(Object)} followed by {@link
+   * InstructionContext#advanceProgramCounter()}.
+   *
+   * @param context an {@link InstructionContext}; must not be {@code
+   * null}
+   *
+   * @exception IllegalArgumentException if {@code context} is {@code
+   * null}
+   *
+   * @see InstructionContext#advanceProgramCounter()
+   *
+   * @see InstructionContext#stop(Object)
+   */
   @Override
   public final void execute(final InstructionContext<T> context) {
     if (context == null) {
@@ -54,6 +105,13 @@ public class Stop<T> extends Instruction<T> {
     context.advanceProgramCounter();
   }
 
+  /**
+   * Returns a non-{@code null} {@link String} representation of this
+   * {@link Stop} instruction.
+   *
+   * @return a non-{@code null} {@link String} representation of this
+   * {@link Stop} instruction
+   */
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder(super.toString()).append(" ");

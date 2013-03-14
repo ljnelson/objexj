@@ -27,10 +27,26 @@
  */
 package com.edugility.objexj.engine;
 
+import java.io.Serializable; // for javadoc only
+
+/**
+ * An {@link IllegalStateException} indicating that a {@link
+ * ProgramCounter} was invalid.
+ *
+ * @author <a href="http://about.me/lairdnelson"
+ * target="_parent">Laird Nelson</a>
+ */
 public class InvalidProgramCounterException extends IllegalStateException {
 
+  /**
+   * The version of this class for {@linkplain Serializable
+   * serialization purposes}.
+   */
   private static final long serialVersionUID = 1L;
 
+  /**
+   * Creates a new {@link InvalidProgramCounterException}.
+   */
   public InvalidProgramCounterException() {
     super();
   }

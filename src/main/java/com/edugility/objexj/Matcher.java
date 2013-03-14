@@ -44,9 +44,13 @@ import com.edugility.objexj.engine.Program;
  * produced it stores results about any match that might have
  * occurred.</p>
  *
+ * <p>{@link Matcher}s are not safe for use by multiple Java
+ * {@linkplain java.lang.Thread threads}.</p>
+ *
  * @param <T> the kind of {@link Object} any input consists of
  *
- * @author <a href="http://about.me/lairdnelson" target="_parent">Laird Nelson</a>
+ * @author <a href="http://about.me/lairdnelson"
+ * target="_parent">Laird Nelson</a>
  *
  * @see Pattern
  *
@@ -55,6 +59,9 @@ import com.edugility.objexj.engine.Program;
  * @see #matches()
  *
  * @see #lookingAt()
+ *
+ * @see <a href="../../../../syntax.html" target="_parent">Syntax
+ * Guide</a>
  */
 public class Matcher<T> {
 
@@ -163,7 +170,7 @@ public class Matcher<T> {
     if (matchResult == null) {
       result = 0;
     } else {
-      result = matchResult.groupCount();
+      result = matchResult.getGroupCount();
     }
     return result;
   }
@@ -189,7 +196,7 @@ public class Matcher<T> {
     if (matchResult == null) {
       result = null;
     } else {
-      result = matchResult.group(index);
+      result = matchResult.getGroup(Integer.valueOf(index));
     }
     return result;
   }

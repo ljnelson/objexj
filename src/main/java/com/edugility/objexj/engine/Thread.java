@@ -998,8 +998,8 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
    *
    * @see #getSubmatches()
    */
-  public final Set<Object> getGroupKeySet() {
-    final Set<Object> returnValue;
+  public final Set<?> getGroupKeySet() {
+    final Set<?> returnValue;
     if (this.captureGroups == null || this.captureGroups.isEmpty()) {
       returnValue = Collections.emptySet();
     } else {

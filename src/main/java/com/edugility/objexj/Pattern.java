@@ -47,13 +47,34 @@ import com.edugility.objexj.parser.Parser;
  * bear a striking and intentional similarity to regular regular
  * expressions.</p>
  *
+ * <p>A normal user interaction with this class might consist of code
+ * like the following:</p>
+ *
+ * <blockquote><pre>
+ * final {@link Pattern}<Exception> p = Pattern.{@link #compile(String)
+ * compile}("<a href="../../../../syntax.html"
+ * target="_parent">^javax.persistence.PersistenceException/java.lang.Throwable*</a>");
+ * assert p != null;
+ * final {@link Matcher}<{@link Exception}> matcher = p.{@link #matcher(List) matcher}(listOfExceptions);
+ * assert matcher != null;
+ * // Call matcher.{@link Matcher#lookingAt() lookingAt()} or....</pre></blockquote>
+ *
+ * <p>{@link Pattern}s are not safe for use by multiple Java
+ * {@linkplain java.lang.Thread threads}.</p>
+ *
  * @param <T> the type of {@link Object} a {@link Pattern} can match
  *
- * @author <a href="http://about.me/lairdnelson" target="_parent">Laird Nelson</a>
+ * @author <a href="http://about.me/lairdnelson"
+ * target="_parent">Laird Nelson</a>
  *
  * @see #compile(String)
  *
- * @see <a href="../../../../syntax.html" target="_parent">Syntax Guide</a>
+ * @see #matcher(List)
+ *
+ * @see Matcher
+ *
+ * @see <a href="../../../../syntax.html" target="_parent">Syntax
+ * Guide</a>
  */
 public class Pattern<T> {
 
