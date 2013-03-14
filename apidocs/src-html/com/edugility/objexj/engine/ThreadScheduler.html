@@ -33,46 +33,58 @@
 <FONT color="green">030</FONT>    import java.util.List;<a name="line.30"></a>
 <FONT color="green">031</FONT>    import java.util.Map;<a name="line.31"></a>
 <FONT color="green">032</FONT>    <a name="line.32"></a>
-<FONT color="green">033</FONT>    public interface ThreadScheduler&lt;T&gt; {<a name="line.33"></a>
-<FONT color="green">034</FONT>    <a name="line.34"></a>
-<FONT color="green">035</FONT>      /**<a name="line.35"></a>
-<FONT color="green">036</FONT>       * Creates a new {@link Thread} and returns it.  Implementations of<a name="line.36"></a>
-<FONT color="green">037</FONT>       * this method must not return {@code null}.<a name="line.37"></a>
-<FONT color="green">038</FONT>       *<a name="line.38"></a>
-<FONT color="green">039</FONT>       * @param id the identifier for the new {@link Thread}; may be<a name="line.39"></a>
-<FONT color="green">040</FONT>       * {@code null} and used only for its {@link Object#toString()}<a name="line.40"></a>
-<FONT color="green">041</FONT>       * method<a name="line.41"></a>
-<FONT color="green">042</FONT>       *<a name="line.42"></a>
-<FONT color="green">043</FONT>       * @param programCounter a non-{@code null} {@link ProgramCounter}<a name="line.43"></a>
-<FONT color="green">044</FONT>       * to initialize the new {@link Thread} with<a name="line.44"></a>
-<FONT color="green">045</FONT>       *<a name="line.45"></a>
-<FONT color="green">046</FONT>       * @param items a possibly {@code null} {@link List} of items that<a name="line.46"></a>
-<FONT color="green">047</FONT>       * the new {@link Thread} may {@linkplain Thread#read() read from}<a name="line.47"></a>
-<FONT color="green">048</FONT>       *<a name="line.48"></a>
-<FONT color="green">049</FONT>       * @param itemPointer the starting index within the supplied {@link<a name="line.49"></a>
-<FONT color="green">050</FONT>       * List} of items from which the new {@link Thread} will {@linkplain<a name="line.50"></a>
-<FONT color="green">051</FONT>       * Thread#read() read}<a name="line.51"></a>
-<FONT color="green">052</FONT>       *<a name="line.52"></a>
-<FONT color="green">053</FONT>       * @param captureGroups any {@link CaptureGroup}s that the new<a name="line.53"></a>
-<FONT color="green">054</FONT>       * {@link Thread} should start out with; may be {@code null} or<a name="line.54"></a>
-<FONT color="green">055</FONT>       * {@linkplain Map#isEmpty() empty}<a name="line.55"></a>
-<FONT color="green">056</FONT>       *<a name="line.56"></a>
-<FONT color="green">057</FONT>       * @return a new non-{@code null} {@link Thread}<a name="line.57"></a>
-<FONT color="green">058</FONT>       */<a name="line.58"></a>
-<FONT color="green">059</FONT>      public Thread&lt;T&gt; newThread(final Object id, final ProgramCounter&lt;T&gt; programCounter, final List&lt;T&gt; items, final int itemPointer, final Map&lt;Object, CaptureGroup&lt;T&gt;&gt; captureGroups, final Map&lt;Object, Object&gt; variables);<a name="line.59"></a>
-<FONT color="green">060</FONT>    <a name="line.60"></a>
-<FONT color="green">061</FONT>      /**<a name="line.61"></a>
-<FONT color="green">062</FONT>       * Schedules the supplied {@link Thread} for execution immediately<a name="line.62"></a>
-<FONT color="green">063</FONT>       * or later.<a name="line.63"></a>
+<FONT color="green">033</FONT>    /**<a name="line.33"></a>
+<FONT color="green">034</FONT>     * An interface indicating that implementations are capable of<a name="line.34"></a>
+<FONT color="green">035</FONT>     * scheduling {@link Thread}s.<a name="line.35"></a>
+<FONT color="green">036</FONT>     *<a name="line.36"></a>
+<FONT color="green">037</FONT>     * @param &lt;T&gt; the type of {@link Object} manipulated by {@link<a name="line.37"></a>
+<FONT color="green">038</FONT>     * Thread}s scheduled by instances of this class<a name="line.38"></a>
+<FONT color="green">039</FONT>     *<a name="line.39"></a>
+<FONT color="green">040</FONT>     * @author &lt;a href="http://about.me/lairdnelson"<a name="line.40"></a>
+<FONT color="green">041</FONT>     * target="_parent"&gt;Laird Nelson&lt;/a&gt;<a name="line.41"></a>
+<FONT color="green">042</FONT>     *<a name="line.42"></a>
+<FONT color="green">043</FONT>     * @see Thread<a name="line.43"></a>
+<FONT color="green">044</FONT>     */<a name="line.44"></a>
+<FONT color="green">045</FONT>    public interface ThreadScheduler&lt;T&gt; {<a name="line.45"></a>
+<FONT color="green">046</FONT>    <a name="line.46"></a>
+<FONT color="green">047</FONT>      /**<a name="line.47"></a>
+<FONT color="green">048</FONT>       * Creates a new {@link Thread} and returns it.  Implementations of<a name="line.48"></a>
+<FONT color="green">049</FONT>       * this method must not return {@code null}.<a name="line.49"></a>
+<FONT color="green">050</FONT>       *<a name="line.50"></a>
+<FONT color="green">051</FONT>       * @param id the identifier for the new {@link Thread}; may be<a name="line.51"></a>
+<FONT color="green">052</FONT>       * {@code null} and used only for its {@link Object#toString()}<a name="line.52"></a>
+<FONT color="green">053</FONT>       * method<a name="line.53"></a>
+<FONT color="green">054</FONT>       *<a name="line.54"></a>
+<FONT color="green">055</FONT>       * @param programCounter a non-{@code null} {@link ProgramCounter}<a name="line.55"></a>
+<FONT color="green">056</FONT>       * to initialize the new {@link Thread} with<a name="line.56"></a>
+<FONT color="green">057</FONT>       *<a name="line.57"></a>
+<FONT color="green">058</FONT>       * @param items a possibly {@code null} {@link List} of items that<a name="line.58"></a>
+<FONT color="green">059</FONT>       * the new {@link Thread} may {@linkplain Thread#read() read from}<a name="line.59"></a>
+<FONT color="green">060</FONT>       *<a name="line.60"></a>
+<FONT color="green">061</FONT>       * @param itemPointer the starting index within the supplied {@link<a name="line.61"></a>
+<FONT color="green">062</FONT>       * List} of items from which the new {@link Thread} will {@linkplain<a name="line.62"></a>
+<FONT color="green">063</FONT>       * Thread#read() read}<a name="line.63"></a>
 <FONT color="green">064</FONT>       *<a name="line.64"></a>
-<FONT color="green">065</FONT>       * @return {@code true} if the supplied {@link Thread} was<a name="line.65"></a>
-<FONT color="green">066</FONT>       * scheduled; {@code false} otherwise<a name="line.66"></a>
-<FONT color="green">067</FONT>       *<a name="line.67"></a>
-<FONT color="green">068</FONT>       * @exception IllegalArgumentException if {@code t} is {@code null}<a name="line.68"></a>
-<FONT color="green">069</FONT>       */<a name="line.69"></a>
-<FONT color="green">070</FONT>      public boolean schedule(final Thread&lt;T&gt; t);<a name="line.70"></a>
-<FONT color="green">071</FONT>      <a name="line.71"></a>
-<FONT color="green">072</FONT>    }<a name="line.72"></a>
+<FONT color="green">065</FONT>       * @param captureGroups any {@link CaptureGroup}s that the new<a name="line.65"></a>
+<FONT color="green">066</FONT>       * {@link Thread} should start out with; may be {@code null} or<a name="line.66"></a>
+<FONT color="green">067</FONT>       * {@linkplain Map#isEmpty() empty}<a name="line.67"></a>
+<FONT color="green">068</FONT>       *<a name="line.68"></a>
+<FONT color="green">069</FONT>       * @return a new non-{@code null} {@link Thread}<a name="line.69"></a>
+<FONT color="green">070</FONT>       */<a name="line.70"></a>
+<FONT color="green">071</FONT>      public Thread&lt;T&gt; newThread(final Object id, final ProgramCounter&lt;T&gt; programCounter, final List&lt;T&gt; items, final int itemPointer, final Map&lt;Object, CaptureGroup&lt;T&gt;&gt; captureGroups, final Map&lt;Object, Object&gt; variables);<a name="line.71"></a>
+<FONT color="green">072</FONT>    <a name="line.72"></a>
+<FONT color="green">073</FONT>      /**<a name="line.73"></a>
+<FONT color="green">074</FONT>       * Schedules the supplied {@link Thread} for execution immediately<a name="line.74"></a>
+<FONT color="green">075</FONT>       * or later.<a name="line.75"></a>
+<FONT color="green">076</FONT>       *<a name="line.76"></a>
+<FONT color="green">077</FONT>       * @return {@code true} if the supplied {@link Thread} was<a name="line.77"></a>
+<FONT color="green">078</FONT>       * scheduled; {@code false} otherwise<a name="line.78"></a>
+<FONT color="green">079</FONT>       *<a name="line.79"></a>
+<FONT color="green">080</FONT>       * @exception IllegalArgumentException if {@code t} is {@code null}<a name="line.80"></a>
+<FONT color="green">081</FONT>       */<a name="line.81"></a>
+<FONT color="green">082</FONT>      public boolean schedule(final Thread&lt;T&gt; t);<a name="line.82"></a>
+<FONT color="green">083</FONT>      <a name="line.83"></a>
+<FONT color="green">084</FONT>    }<a name="line.84"></a>
 
 
 

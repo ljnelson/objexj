@@ -697,17 +697,20 @@
 <FONT color="green">694</FONT>       * Creates a new {@link Program} that contains only the supplied<a name="line.694"></a>
 <FONT color="green">695</FONT>       * {@link Instruction}.<a name="line.695"></a>
 <FONT color="green">696</FONT>       *<a name="line.696"></a>
-<FONT color="green">697</FONT>       * @param instruction the {@link Instruction} to wrap with a new<a name="line.697"></a>
-<FONT color="green">698</FONT>       * {@link Program}; if {@code null} an {@linkplain<a name="line.698"></a>
-<FONT color="green">699</FONT>       * LinkedList#isEmpty() empty} {@link Program} is returned instead<a name="line.699"></a>
-<FONT color="green">700</FONT>       *<a name="line.700"></a>
-<FONT color="green">701</FONT>       * @return a non-{@code null} {@link Program}<a name="line.701"></a>
-<FONT color="green">702</FONT>       */<a name="line.702"></a>
-<FONT color="green">703</FONT>      public static final &lt;T&gt; Program&lt;T&gt; singleton(final Instruction&lt;T&gt; instruction) {<a name="line.703"></a>
-<FONT color="green">704</FONT>        return new Program&lt;T&gt;(instruction);<a name="line.704"></a>
-<FONT color="green">705</FONT>      }<a name="line.705"></a>
-<FONT color="green">706</FONT>    <a name="line.706"></a>
-<FONT color="green">707</FONT>    }<a name="line.707"></a>
+<FONT color="green">697</FONT>       * @param &lt;T&gt; the type of {@link Object}s the returned {@link<a name="line.697"></a>
+<FONT color="green">698</FONT>       * Program} will be able to match<a name="line.698"></a>
+<FONT color="green">699</FONT>       *<a name="line.699"></a>
+<FONT color="green">700</FONT>       * @param instruction the {@link Instruction} to wrap with a new<a name="line.700"></a>
+<FONT color="green">701</FONT>       * {@link Program}; if {@code null} an {@linkplain<a name="line.701"></a>
+<FONT color="green">702</FONT>       * LinkedList#isEmpty() empty} {@link Program} is returned instead<a name="line.702"></a>
+<FONT color="green">703</FONT>       *<a name="line.703"></a>
+<FONT color="green">704</FONT>       * @return a non-{@code null} {@link Program}<a name="line.704"></a>
+<FONT color="green">705</FONT>       */<a name="line.705"></a>
+<FONT color="green">706</FONT>      public static final &lt;T&gt; Program&lt;T&gt; singleton(final Instruction&lt;T&gt; instruction) {<a name="line.706"></a>
+<FONT color="green">707</FONT>        return new Program&lt;T&gt;(instruction);<a name="line.707"></a>
+<FONT color="green">708</FONT>      }<a name="line.708"></a>
+<FONT color="green">709</FONT>    <a name="line.709"></a>
+<FONT color="green">710</FONT>    }<a name="line.710"></a>
 
 
 

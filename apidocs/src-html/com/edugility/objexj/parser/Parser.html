@@ -78,424 +78,427 @@
 <FONT color="green">075</FONT>       * Reader} machinery and then calls the {@link<a name="line.75"></a>
 <FONT color="green">076</FONT>       * #parse(PostfixTokenizer)} method and returns its result.<a name="line.76"></a>
 <FONT color="green">077</FONT>       *<a name="line.77"></a>
-<FONT color="green">078</FONT>       * @param input the {@link String} representation of a {@link<a name="line.78"></a>
-<FONT color="green">079</FONT>       * Program}; must not be {@code null}<a name="line.79"></a>
+<FONT color="green">078</FONT>       * @param &lt;T&gt; the type of {@link Object} the resulting {@link<a name="line.78"></a>
+<FONT color="green">079</FONT>       * Program} will work with<a name="line.79"></a>
 <FONT color="green">080</FONT>       *<a name="line.80"></a>
-<FONT color="green">081</FONT>       * @exception IllegalArgumentException if {@code input} is {@code<a name="line.81"></a>
-<FONT color="green">082</FONT>       * null}<a name="line.82"></a>
+<FONT color="green">081</FONT>       * @param input the {@link String} representation of a {@link<a name="line.81"></a>
+<FONT color="green">082</FONT>       * Program}; must not be {@code null}<a name="line.82"></a>
 <FONT color="green">083</FONT>       *<a name="line.83"></a>
-<FONT color="green">084</FONT>       * @exception IOException if the {@link String} could not be read<a name="line.84"></a>
-<FONT color="green">085</FONT>       *<a name="line.85"></a>
-<FONT color="green">086</FONT>       * @see #parse(PostfixTokenizer)<a name="line.86"></a>
-<FONT color="green">087</FONT>       *<a name="line.87"></a>
-<FONT color="green">088</FONT>       * @see PostfixTokenizer<a name="line.88"></a>
-<FONT color="green">089</FONT>       */<a name="line.89"></a>
-<FONT color="green">090</FONT>      public &lt;T&gt; Program&lt;T&gt; parse(final String input) throws IOException, ParseException {<a name="line.90"></a>
-<FONT color="green">091</FONT>        if (input == null) {<a name="line.91"></a>
-<FONT color="green">092</FONT>          throw new IllegalArgumentException("input", new NullPointerException("input"));<a name="line.92"></a>
-<FONT color="green">093</FONT>        }<a name="line.93"></a>
-<FONT color="green">094</FONT>        final StringReader sr = new StringReader(input);<a name="line.94"></a>
-<FONT color="green">095</FONT>        final PushbackReader reader = new PushbackReader(sr) {<a name="line.95"></a>
-<FONT color="green">096</FONT>            @Override<a name="line.96"></a>
-<FONT color="green">097</FONT>            public String toString() {<a name="line.97"></a>
-<FONT color="green">098</FONT>              return sr.toString();<a name="line.98"></a>
-<FONT color="green">099</FONT>            }<a name="line.99"></a>
-<FONT color="green">100</FONT>          };<a name="line.100"></a>
-<FONT color="green">101</FONT>        try {<a name="line.101"></a>
-<FONT color="green">102</FONT>          return this.parse(new State&lt;T&gt;(new PostfixTokenizer(reader)));<a name="line.102"></a>
-<FONT color="green">103</FONT>        } finally {<a name="line.103"></a>
-<FONT color="green">104</FONT>          try {<a name="line.104"></a>
-<FONT color="green">105</FONT>            reader.close();<a name="line.105"></a>
-<FONT color="green">106</FONT>          } catch (final IOException logMe) {<a name="line.106"></a>
-<FONT color="green">107</FONT>            final Logger logger = Logger.getLogger(this.getClass().getName());<a name="line.107"></a>
-<FONT color="green">108</FONT>            assert logger != null;<a name="line.108"></a>
-<FONT color="green">109</FONT>            if (logger.isLoggable(Level.SEVERE)) {<a name="line.109"></a>
-<FONT color="green">110</FONT>              logger.logp(Level.SEVERE, this.getClass().getName(), "parse", "Error closing reader", logMe);<a name="line.110"></a>
-<FONT color="green">111</FONT>            }<a name="line.111"></a>
-<FONT color="green">112</FONT>          }<a name="line.112"></a>
-<FONT color="green">113</FONT>        }<a name="line.113"></a>
-<FONT color="green">114</FONT>      }<a name="line.114"></a>
-<FONT color="green">115</FONT>    <a name="line.115"></a>
-<FONT color="green">116</FONT>      /**<a name="line.116"></a>
-<FONT color="green">117</FONT>       * Receives a feed of {@link Token}s from the supplied {@link<a name="line.117"></a>
-<FONT color="green">118</FONT>       * PostfixTokenizer} and parses them into a {@link Program}.<a name="line.118"></a>
-<FONT color="green">119</FONT>       *<a name="line.119"></a>
-<FONT color="green">120</FONT>       * &lt;p&gt;This method never returns {@code null}.&lt;/p&gt;<a name="line.120"></a>
-<FONT color="green">121</FONT>       *<a name="line.121"></a>
-<FONT color="green">122</FONT>       * @param &lt;T&gt; the type of {@link Object} the returned {@link<a name="line.122"></a>
-<FONT color="green">123</FONT>       * Program} will be capable of matching<a name="line.123"></a>
+<FONT color="green">084</FONT>       * @exception IllegalArgumentException if {@code input} is {@code<a name="line.84"></a>
+<FONT color="green">085</FONT>       * null}<a name="line.85"></a>
+<FONT color="green">086</FONT>       *<a name="line.86"></a>
+<FONT color="green">087</FONT>       * @exception IOException if the {@link String} could not be read<a name="line.87"></a>
+<FONT color="green">088</FONT>       *<a name="line.88"></a>
+<FONT color="green">089</FONT>       * @see #parse(PostfixTokenizer)<a name="line.89"></a>
+<FONT color="green">090</FONT>       *<a name="line.90"></a>
+<FONT color="green">091</FONT>       * @see PostfixTokenizer<a name="line.91"></a>
+<FONT color="green">092</FONT>       */<a name="line.92"></a>
+<FONT color="green">093</FONT>      public &lt;T&gt; Program&lt;T&gt; parse(final String input) throws IOException, ParseException {<a name="line.93"></a>
+<FONT color="green">094</FONT>        if (input == null) {<a name="line.94"></a>
+<FONT color="green">095</FONT>          throw new IllegalArgumentException("input", new NullPointerException("input"));<a name="line.95"></a>
+<FONT color="green">096</FONT>        }<a name="line.96"></a>
+<FONT color="green">097</FONT>        final StringReader sr = new StringReader(input);<a name="line.97"></a>
+<FONT color="green">098</FONT>        final PushbackReader reader = new PushbackReader(sr) {<a name="line.98"></a>
+<FONT color="green">099</FONT>            @Override<a name="line.99"></a>
+<FONT color="green">100</FONT>            public String toString() {<a name="line.100"></a>
+<FONT color="green">101</FONT>              return sr.toString();<a name="line.101"></a>
+<FONT color="green">102</FONT>            }<a name="line.102"></a>
+<FONT color="green">103</FONT>          };<a name="line.103"></a>
+<FONT color="green">104</FONT>        try {<a name="line.104"></a>
+<FONT color="green">105</FONT>          return this.parse(new State&lt;T&gt;(new PostfixTokenizer(reader)));<a name="line.105"></a>
+<FONT color="green">106</FONT>        } finally {<a name="line.106"></a>
+<FONT color="green">107</FONT>          try {<a name="line.107"></a>
+<FONT color="green">108</FONT>            reader.close();<a name="line.108"></a>
+<FONT color="green">109</FONT>          } catch (final IOException logMe) {<a name="line.109"></a>
+<FONT color="green">110</FONT>            final Logger logger = Logger.getLogger(this.getClass().getName());<a name="line.110"></a>
+<FONT color="green">111</FONT>            assert logger != null;<a name="line.111"></a>
+<FONT color="green">112</FONT>            if (logger.isLoggable(Level.SEVERE)) {<a name="line.112"></a>
+<FONT color="green">113</FONT>              logger.logp(Level.SEVERE, this.getClass().getName(), "parse", "Error closing reader", logMe);<a name="line.113"></a>
+<FONT color="green">114</FONT>            }<a name="line.114"></a>
+<FONT color="green">115</FONT>          }<a name="line.115"></a>
+<FONT color="green">116</FONT>        }<a name="line.116"></a>
+<FONT color="green">117</FONT>      }<a name="line.117"></a>
+<FONT color="green">118</FONT>    <a name="line.118"></a>
+<FONT color="green">119</FONT>      /**<a name="line.119"></a>
+<FONT color="green">120</FONT>       * Receives a feed of {@link Token}s from the supplied {@link<a name="line.120"></a>
+<FONT color="green">121</FONT>       * PostfixTokenizer} and parses them into a {@link Program}.<a name="line.121"></a>
+<FONT color="green">122</FONT>       *<a name="line.122"></a>
+<FONT color="green">123</FONT>       * &lt;p&gt;This method never returns {@code null}.&lt;/p&gt;<a name="line.123"></a>
 <FONT color="green">124</FONT>       *<a name="line.124"></a>
-<FONT color="green">125</FONT>       * @param tokenizer the {@link PostfixTokenizer} that provides a<a name="line.125"></a>
-<FONT color="green">126</FONT>       * token stream; must not be {@code null}<a name="line.126"></a>
+<FONT color="green">125</FONT>       * @param &lt;T&gt; the type of {@link Object} the returned {@link<a name="line.125"></a>
+<FONT color="green">126</FONT>       * Program} will be capable of matching<a name="line.126"></a>
 <FONT color="green">127</FONT>       *<a name="line.127"></a>
-<FONT color="green">128</FONT>       * @return a non-{@code null} {@link Program}<a name="line.128"></a>
-<FONT color="green">129</FONT>       *<a name="line.129"></a>
-<FONT color="green">130</FONT>       * @exception IllegalArgumentException if {@code tokenizer} is<a name="line.130"></a>
-<FONT color="green">131</FONT>       * {@code null}<a name="line.131"></a>
-<FONT color="green">132</FONT>       */<a name="line.132"></a>
-<FONT color="green">133</FONT>      public &lt;T&gt; Program&lt;T&gt; parse(final PostfixTokenizer tokenizer) throws ParseException {<a name="line.133"></a>
-<FONT color="green">134</FONT>        if (tokenizer == null) {<a name="line.134"></a>
-<FONT color="green">135</FONT>          throw new IllegalArgumentException("tokenizer", new NullPointerException("tokenizer"));<a name="line.135"></a>
-<FONT color="green">136</FONT>        }<a name="line.136"></a>
-<FONT color="green">137</FONT>        return this.parse(new State&lt;T&gt;(tokenizer));<a name="line.137"></a>
-<FONT color="green">138</FONT>      }<a name="line.138"></a>
-<FONT color="green">139</FONT>    <a name="line.139"></a>
-<FONT color="green">140</FONT>      /**<a name="line.140"></a>
-<FONT color="green">141</FONT>       * Parses the supplied {@link State} into a {@link Program}.<a name="line.141"></a>
-<FONT color="green">142</FONT>       *<a name="line.142"></a>
-<FONT color="green">143</FONT>       * @param &lt;T&gt; the type of {@link Object} the returned {@link<a name="line.143"></a>
-<FONT color="green">144</FONT>       * Program} will be capable of matching<a name="line.144"></a>
+<FONT color="green">128</FONT>       * @param tokenizer the {@link PostfixTokenizer} that provides a<a name="line.128"></a>
+<FONT color="green">129</FONT>       * token stream; must not be {@code null}<a name="line.129"></a>
+<FONT color="green">130</FONT>       *<a name="line.130"></a>
+<FONT color="green">131</FONT>       * @return a non-{@code null} {@link Program}<a name="line.131"></a>
+<FONT color="green">132</FONT>       *<a name="line.132"></a>
+<FONT color="green">133</FONT>       * @exception IllegalArgumentException if {@code tokenizer} is<a name="line.133"></a>
+<FONT color="green">134</FONT>       * {@code null}<a name="line.134"></a>
+<FONT color="green">135</FONT>       */<a name="line.135"></a>
+<FONT color="green">136</FONT>      public &lt;T&gt; Program&lt;T&gt; parse(final PostfixTokenizer tokenizer) throws ParseException {<a name="line.136"></a>
+<FONT color="green">137</FONT>        if (tokenizer == null) {<a name="line.137"></a>
+<FONT color="green">138</FONT>          throw new IllegalArgumentException("tokenizer", new NullPointerException("tokenizer"));<a name="line.138"></a>
+<FONT color="green">139</FONT>        }<a name="line.139"></a>
+<FONT color="green">140</FONT>        return this.parse(new State&lt;T&gt;(tokenizer));<a name="line.140"></a>
+<FONT color="green">141</FONT>      }<a name="line.141"></a>
+<FONT color="green">142</FONT>    <a name="line.142"></a>
+<FONT color="green">143</FONT>      /**<a name="line.143"></a>
+<FONT color="green">144</FONT>       * Parses the supplied {@link State} into a {@link Program}.<a name="line.144"></a>
 <FONT color="green">145</FONT>       *<a name="line.145"></a>
-<FONT color="green">146</FONT>       * @param parsingState the {@link State} to parse; really just a<a name="line.146"></a>
-<FONT color="green">147</FONT>       * state-holding wrapper around a {@link PostfixTokenizer}; must not<a name="line.147"></a>
-<FONT color="green">148</FONT>       * be {@code null}<a name="line.148"></a>
-<FONT color="green">149</FONT>       *<a name="line.149"></a>
-<FONT color="green">150</FONT>       * @return a non-{@code null} {@link Program}<a name="line.150"></a>
-<FONT color="green">151</FONT>       *<a name="line.151"></a>
-<FONT color="green">152</FONT>       * @exception IllegalArgumentException if {@code parsingState} is<a name="line.152"></a>
-<FONT color="green">153</FONT>       * {@code null}<a name="line.153"></a>
-<FONT color="green">154</FONT>       */<a name="line.154"></a>
-<FONT color="green">155</FONT>      private final &lt;T&gt; Program&lt;T&gt; parse(final Parser.State&lt;T&gt; parsingState) throws ParseException {<a name="line.155"></a>
-<FONT color="green">156</FONT>        if (parsingState == null) {<a name="line.156"></a>
-<FONT color="green">157</FONT>          throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));<a name="line.157"></a>
-<FONT color="green">158</FONT>        }<a name="line.158"></a>
-<FONT color="green">159</FONT>    <a name="line.159"></a>
-<FONT color="green">160</FONT>        while (parsingState.hasNext()) {<a name="line.160"></a>
-<FONT color="green">161</FONT>          final Token token = parsingState.next();<a name="line.161"></a>
-<FONT color="green">162</FONT>          if (token != null) {<a name="line.162"></a>
-<FONT color="green">163</FONT>    <a name="line.163"></a>
-<FONT color="green">164</FONT>            final Token.Type tokenType = token.getType();<a name="line.164"></a>
-<FONT color="green">165</FONT>            assert tokenType != null;<a name="line.165"></a>
+<FONT color="green">146</FONT>       * @param &lt;T&gt; the type of {@link Object} the returned {@link<a name="line.146"></a>
+<FONT color="green">147</FONT>       * Program} will be capable of matching<a name="line.147"></a>
+<FONT color="green">148</FONT>       *<a name="line.148"></a>
+<FONT color="green">149</FONT>       * @param parsingState the {@link State} to parse; really just a<a name="line.149"></a>
+<FONT color="green">150</FONT>       * state-holding wrapper around a {@link PostfixTokenizer}; must not<a name="line.150"></a>
+<FONT color="green">151</FONT>       * be {@code null}<a name="line.151"></a>
+<FONT color="green">152</FONT>       *<a name="line.152"></a>
+<FONT color="green">153</FONT>       * @return a non-{@code null} {@link Program}<a name="line.153"></a>
+<FONT color="green">154</FONT>       *<a name="line.154"></a>
+<FONT color="green">155</FONT>       * @exception IllegalArgumentException if {@code parsingState} is<a name="line.155"></a>
+<FONT color="green">156</FONT>       * {@code null}<a name="line.156"></a>
+<FONT color="green">157</FONT>       */<a name="line.157"></a>
+<FONT color="green">158</FONT>      private final &lt;T&gt; Program&lt;T&gt; parse(final Parser.State&lt;T&gt; parsingState) throws ParseException {<a name="line.158"></a>
+<FONT color="green">159</FONT>        if (parsingState == null) {<a name="line.159"></a>
+<FONT color="green">160</FONT>          throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));<a name="line.160"></a>
+<FONT color="green">161</FONT>        }<a name="line.161"></a>
+<FONT color="green">162</FONT>    <a name="line.162"></a>
+<FONT color="green">163</FONT>        while (parsingState.hasNext()) {<a name="line.163"></a>
+<FONT color="green">164</FONT>          final Token token = parsingState.next();<a name="line.164"></a>
+<FONT color="green">165</FONT>          if (token != null) {<a name="line.165"></a>
 <FONT color="green">166</FONT>    <a name="line.166"></a>
-<FONT color="green">167</FONT>            switch (tokenType) {          <a name="line.167"></a>
-<FONT color="green">168</FONT>    <a name="line.168"></a>
-<FONT color="green">169</FONT>            case ALTERNATION:<a name="line.169"></a>
-<FONT color="green">170</FONT>              this.alternate(parsingState);<a name="line.170"></a>
-<FONT color="green">171</FONT>              break;<a name="line.171"></a>
-<FONT color="green">172</FONT>    <a name="line.172"></a>
-<FONT color="green">173</FONT>            case BEGIN_ATOM:<a name="line.173"></a>
-<FONT color="green">174</FONT>              this.beginInput(parsingState);<a name="line.174"></a>
-<FONT color="green">175</FONT>              break;<a name="line.175"></a>
-<FONT color="green">176</FONT>    <a name="line.176"></a>
-<FONT color="green">177</FONT>            case CATENATION:<a name="line.177"></a>
-<FONT color="green">178</FONT>              this.catenate(parsingState);<a name="line.178"></a>
-<FONT color="green">179</FONT>              break;<a name="line.179"></a>
-<FONT color="green">180</FONT>    <a name="line.180"></a>
-<FONT color="green">181</FONT>            case END_ATOM:<a name="line.181"></a>
-<FONT color="green">182</FONT>              this.endInput(parsingState);<a name="line.182"></a>
-<FONT color="green">183</FONT>              break;<a name="line.183"></a>
-<FONT color="green">184</FONT>    <a name="line.184"></a>
-<FONT color="green">185</FONT>            case FILTER:<a name="line.185"></a>
-<FONT color="green">186</FONT>              this.filter(parsingState);<a name="line.186"></a>
-<FONT color="green">187</FONT>              break;<a name="line.187"></a>
-<FONT color="green">188</FONT>    <a name="line.188"></a>
-<FONT color="green">189</FONT>            case ONE_OR_MORE:<a name="line.189"></a>
-<FONT color="green">190</FONT>              this.oneOrMore(parsingState);<a name="line.190"></a>
-<FONT color="green">191</FONT>              break;<a name="line.191"></a>
-<FONT color="green">192</FONT>    <a name="line.192"></a>
-<FONT color="green">193</FONT>            case START_SAVING:<a name="line.193"></a>
-<FONT color="green">194</FONT>              this.startSaving(parsingState);<a name="line.194"></a>
-<FONT color="green">195</FONT>              break;<a name="line.195"></a>
-<FONT color="green">196</FONT>    <a name="line.196"></a>
-<FONT color="green">197</FONT>            case ZERO_OR_MORE:<a name="line.197"></a>
-<FONT color="green">198</FONT>              this.zeroOrMore(parsingState);<a name="line.198"></a>
-<FONT color="green">199</FONT>              break;<a name="line.199"></a>
-<FONT color="green">200</FONT>    <a name="line.200"></a>
-<FONT color="green">201</FONT>            case ZERO_OR_ONE:<a name="line.201"></a>
-<FONT color="green">202</FONT>              this.zeroOrOne(parsingState);<a name="line.202"></a>
-<FONT color="green">203</FONT>              break;<a name="line.203"></a>
-<FONT color="green">204</FONT>    <a name="line.204"></a>
-<FONT color="green">205</FONT>            case STOP_SAVING:<a name="line.205"></a>
-<FONT color="green">206</FONT>              this.stopSaving(parsingState);<a name="line.206"></a>
-<FONT color="green">207</FONT>              break;<a name="line.207"></a>
-<FONT color="green">208</FONT>    <a name="line.208"></a>
-<FONT color="green">209</FONT>            default:<a name="line.209"></a>
-<FONT color="green">210</FONT>              parsingState.setErrorIndex(parsingState.getIndex());<a name="line.210"></a>
-<FONT color="green">211</FONT>              throw new ParseException(String.format("Unknown token type: %s", tokenType), parsingState.getErrorIndex());<a name="line.211"></a>
-<FONT color="green">212</FONT>            }<a name="line.212"></a>
-<FONT color="green">213</FONT>          }<a name="line.213"></a>
-<FONT color="green">214</FONT>    <a name="line.214"></a>
-<FONT color="green">215</FONT>        }<a name="line.215"></a>
-<FONT color="green">216</FONT>        final Program&lt;T&gt; program;<a name="line.216"></a>
-<FONT color="green">217</FONT>        final int stackSize = parsingState.stackSize();<a name="line.217"></a>
-<FONT color="green">218</FONT>        switch (stackSize) {<a name="line.218"></a>
-<FONT color="green">219</FONT>        case 0:<a name="line.219"></a>
-<FONT color="green">220</FONT>          throw new IllegalStateException();<a name="line.220"></a>
-<FONT color="green">221</FONT>        case 1:<a name="line.221"></a>
-<FONT color="green">222</FONT>          program = new Program&lt;T&gt;();<a name="line.222"></a>
-<FONT color="green">223</FONT>          program.add(new Save&lt;T&gt;(0));<a name="line.223"></a>
-<FONT color="green">224</FONT>          program.addAll(parsingState.pop());<a name="line.224"></a>
-<FONT color="green">225</FONT>          program.add(new Stop&lt;T&gt;(0));<a name="line.225"></a>
-<FONT color="green">226</FONT>          break;<a name="line.226"></a>
-<FONT color="green">227</FONT>        default:<a name="line.227"></a>
-<FONT color="green">228</FONT>          throw new IllegalStateException("Unexpected stack size: " + parsingState);<a name="line.228"></a>
-<FONT color="green">229</FONT>        }<a name="line.229"></a>
-<FONT color="green">230</FONT>        assert program != null;<a name="line.230"></a>
-<FONT color="green">231</FONT>        program.setSource(parsingState.tokenizer);<a name="line.231"></a>
-<FONT color="green">232</FONT>        program.add(new Match&lt;T&gt;());<a name="line.232"></a>
-<FONT color="green">233</FONT>        return program;<a name="line.233"></a>
-<FONT color="green">234</FONT>      }<a name="line.234"></a>
-<FONT color="green">235</FONT>    <a name="line.235"></a>
-<FONT color="green">236</FONT>      private final &lt;T&gt; void beginInput(final State&lt;T&gt; parsingState) {<a name="line.236"></a>
-<FONT color="green">237</FONT>        if (parsingState == null) {<a name="line.237"></a>
-<FONT color="green">238</FONT>          throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));<a name="line.238"></a>
-<FONT color="green">239</FONT>        }<a name="line.239"></a>
-<FONT color="green">240</FONT>        parsingState.push(Program.singleton(new BeginInput&lt;T&gt;()));<a name="line.240"></a>
-<FONT color="green">241</FONT>      }<a name="line.241"></a>
-<FONT color="green">242</FONT>    <a name="line.242"></a>
-<FONT color="green">243</FONT>      private final &lt;T&gt; void endInput(final State&lt;T&gt; parsingState) {<a name="line.243"></a>
-<FONT color="green">244</FONT>        if (parsingState == null) {<a name="line.244"></a>
-<FONT color="green">245</FONT>          throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));<a name="line.245"></a>
-<FONT color="green">246</FONT>        }<a name="line.246"></a>
-<FONT color="green">247</FONT>        parsingState.push(Program.singleton(new EndInput&lt;T&gt;()));<a name="line.247"></a>
-<FONT color="green">248</FONT>      }<a name="line.248"></a>
-<FONT color="green">249</FONT>    <a name="line.249"></a>
-<FONT color="green">250</FONT>      private final &lt;T&gt; void filter(final State&lt;T&gt; parsingState) {<a name="line.250"></a>
-<FONT color="green">251</FONT>        if (parsingState == null) {<a name="line.251"></a>
-<FONT color="green">252</FONT>          throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));<a name="line.252"></a>
-<FONT color="green">253</FONT>        }<a name="line.253"></a>
-<FONT color="green">254</FONT>        final Token token = parsingState.getToken();<a name="line.254"></a>
-<FONT color="green">255</FONT>        assert token != null;<a name="line.255"></a>
-<FONT color="green">256</FONT>        assert Token.Type.FILTER == token.getType();<a name="line.256"></a>
-<FONT color="green">257</FONT>    <a name="line.257"></a>
-<FONT color="green">258</FONT>        boolean exact = false;<a name="line.258"></a>
-<FONT color="green">259</FONT>        String filterType = token.getFilterType();<a name="line.259"></a>
-<FONT color="green">260</FONT>        if (filterType != null) {<a name="line.260"></a>
-<FONT color="green">261</FONT>          final char c = filterType.charAt(0);<a name="line.261"></a>
-<FONT color="green">262</FONT>          if (c == '=') {<a name="line.262"></a>
-<FONT color="green">263</FONT>            exact = true;        <a name="line.263"></a>
-<FONT color="green">264</FONT>          }<a name="line.264"></a>
-<FONT color="green">265</FONT>        }<a name="line.265"></a>
-<FONT color="green">266</FONT>    <a name="line.266"></a>
-<FONT color="green">267</FONT>        parsingState.push(Program.singleton(new InstanceOfMVELFilter&lt;T&gt;(token.getFilterType(), token.getValue())));<a name="line.267"></a>
-<FONT color="green">268</FONT>      }<a name="line.268"></a>
+<FONT color="green">167</FONT>            final Token.Type tokenType = token.getType();<a name="line.167"></a>
+<FONT color="green">168</FONT>            assert tokenType != null;<a name="line.168"></a>
+<FONT color="green">169</FONT>    <a name="line.169"></a>
+<FONT color="green">170</FONT>            switch (tokenType) {          <a name="line.170"></a>
+<FONT color="green">171</FONT>    <a name="line.171"></a>
+<FONT color="green">172</FONT>            case ALTERNATION:<a name="line.172"></a>
+<FONT color="green">173</FONT>              this.alternate(parsingState);<a name="line.173"></a>
+<FONT color="green">174</FONT>              break;<a name="line.174"></a>
+<FONT color="green">175</FONT>    <a name="line.175"></a>
+<FONT color="green">176</FONT>            case BEGIN_ATOM:<a name="line.176"></a>
+<FONT color="green">177</FONT>              this.beginInput(parsingState);<a name="line.177"></a>
+<FONT color="green">178</FONT>              break;<a name="line.178"></a>
+<FONT color="green">179</FONT>    <a name="line.179"></a>
+<FONT color="green">180</FONT>            case CATENATION:<a name="line.180"></a>
+<FONT color="green">181</FONT>              this.catenate(parsingState);<a name="line.181"></a>
+<FONT color="green">182</FONT>              break;<a name="line.182"></a>
+<FONT color="green">183</FONT>    <a name="line.183"></a>
+<FONT color="green">184</FONT>            case END_ATOM:<a name="line.184"></a>
+<FONT color="green">185</FONT>              this.endInput(parsingState);<a name="line.185"></a>
+<FONT color="green">186</FONT>              break;<a name="line.186"></a>
+<FONT color="green">187</FONT>    <a name="line.187"></a>
+<FONT color="green">188</FONT>            case FILTER:<a name="line.188"></a>
+<FONT color="green">189</FONT>              this.filter(parsingState);<a name="line.189"></a>
+<FONT color="green">190</FONT>              break;<a name="line.190"></a>
+<FONT color="green">191</FONT>    <a name="line.191"></a>
+<FONT color="green">192</FONT>            case ONE_OR_MORE:<a name="line.192"></a>
+<FONT color="green">193</FONT>              this.oneOrMore(parsingState);<a name="line.193"></a>
+<FONT color="green">194</FONT>              break;<a name="line.194"></a>
+<FONT color="green">195</FONT>    <a name="line.195"></a>
+<FONT color="green">196</FONT>            case START_SAVING:<a name="line.196"></a>
+<FONT color="green">197</FONT>              this.startSaving(parsingState);<a name="line.197"></a>
+<FONT color="green">198</FONT>              break;<a name="line.198"></a>
+<FONT color="green">199</FONT>    <a name="line.199"></a>
+<FONT color="green">200</FONT>            case ZERO_OR_MORE:<a name="line.200"></a>
+<FONT color="green">201</FONT>              this.zeroOrMore(parsingState);<a name="line.201"></a>
+<FONT color="green">202</FONT>              break;<a name="line.202"></a>
+<FONT color="green">203</FONT>    <a name="line.203"></a>
+<FONT color="green">204</FONT>            case ZERO_OR_ONE:<a name="line.204"></a>
+<FONT color="green">205</FONT>              this.zeroOrOne(parsingState);<a name="line.205"></a>
+<FONT color="green">206</FONT>              break;<a name="line.206"></a>
+<FONT color="green">207</FONT>    <a name="line.207"></a>
+<FONT color="green">208</FONT>            case STOP_SAVING:<a name="line.208"></a>
+<FONT color="green">209</FONT>              this.stopSaving(parsingState);<a name="line.209"></a>
+<FONT color="green">210</FONT>              break;<a name="line.210"></a>
+<FONT color="green">211</FONT>    <a name="line.211"></a>
+<FONT color="green">212</FONT>            default:<a name="line.212"></a>
+<FONT color="green">213</FONT>              parsingState.setErrorIndex(parsingState.getIndex());<a name="line.213"></a>
+<FONT color="green">214</FONT>              throw new ParseException(String.format("Unknown token type: %s", tokenType), parsingState.getErrorIndex());<a name="line.214"></a>
+<FONT color="green">215</FONT>            }<a name="line.215"></a>
+<FONT color="green">216</FONT>          }<a name="line.216"></a>
+<FONT color="green">217</FONT>    <a name="line.217"></a>
+<FONT color="green">218</FONT>        }<a name="line.218"></a>
+<FONT color="green">219</FONT>        final Program&lt;T&gt; program;<a name="line.219"></a>
+<FONT color="green">220</FONT>        final int stackSize = parsingState.stackSize();<a name="line.220"></a>
+<FONT color="green">221</FONT>        switch (stackSize) {<a name="line.221"></a>
+<FONT color="green">222</FONT>        case 0:<a name="line.222"></a>
+<FONT color="green">223</FONT>          throw new IllegalStateException();<a name="line.223"></a>
+<FONT color="green">224</FONT>        case 1:<a name="line.224"></a>
+<FONT color="green">225</FONT>          program = new Program&lt;T&gt;();<a name="line.225"></a>
+<FONT color="green">226</FONT>          program.add(new Save&lt;T&gt;(0));<a name="line.226"></a>
+<FONT color="green">227</FONT>          program.addAll(parsingState.pop());<a name="line.227"></a>
+<FONT color="green">228</FONT>          program.add(new Stop&lt;T&gt;(0));<a name="line.228"></a>
+<FONT color="green">229</FONT>          break;<a name="line.229"></a>
+<FONT color="green">230</FONT>        default:<a name="line.230"></a>
+<FONT color="green">231</FONT>          throw new IllegalStateException("Unexpected stack size: " + parsingState);<a name="line.231"></a>
+<FONT color="green">232</FONT>        }<a name="line.232"></a>
+<FONT color="green">233</FONT>        assert program != null;<a name="line.233"></a>
+<FONT color="green">234</FONT>        program.setSource(parsingState.tokenizer);<a name="line.234"></a>
+<FONT color="green">235</FONT>        program.add(new Match&lt;T&gt;());<a name="line.235"></a>
+<FONT color="green">236</FONT>        return program;<a name="line.236"></a>
+<FONT color="green">237</FONT>      }<a name="line.237"></a>
+<FONT color="green">238</FONT>    <a name="line.238"></a>
+<FONT color="green">239</FONT>      private final &lt;T&gt; void beginInput(final State&lt;T&gt; parsingState) {<a name="line.239"></a>
+<FONT color="green">240</FONT>        if (parsingState == null) {<a name="line.240"></a>
+<FONT color="green">241</FONT>          throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));<a name="line.241"></a>
+<FONT color="green">242</FONT>        }<a name="line.242"></a>
+<FONT color="green">243</FONT>        parsingState.push(Program.singleton(new BeginInput&lt;T&gt;()));<a name="line.243"></a>
+<FONT color="green">244</FONT>      }<a name="line.244"></a>
+<FONT color="green">245</FONT>    <a name="line.245"></a>
+<FONT color="green">246</FONT>      private final &lt;T&gt; void endInput(final State&lt;T&gt; parsingState) {<a name="line.246"></a>
+<FONT color="green">247</FONT>        if (parsingState == null) {<a name="line.247"></a>
+<FONT color="green">248</FONT>          throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));<a name="line.248"></a>
+<FONT color="green">249</FONT>        }<a name="line.249"></a>
+<FONT color="green">250</FONT>        parsingState.push(Program.singleton(new EndInput&lt;T&gt;()));<a name="line.250"></a>
+<FONT color="green">251</FONT>      }<a name="line.251"></a>
+<FONT color="green">252</FONT>    <a name="line.252"></a>
+<FONT color="green">253</FONT>      private final &lt;T&gt; void filter(final State&lt;T&gt; parsingState) {<a name="line.253"></a>
+<FONT color="green">254</FONT>        if (parsingState == null) {<a name="line.254"></a>
+<FONT color="green">255</FONT>          throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));<a name="line.255"></a>
+<FONT color="green">256</FONT>        }<a name="line.256"></a>
+<FONT color="green">257</FONT>        final Token token = parsingState.getToken();<a name="line.257"></a>
+<FONT color="green">258</FONT>        assert token != null;<a name="line.258"></a>
+<FONT color="green">259</FONT>        assert Token.Type.FILTER == token.getType();<a name="line.259"></a>
+<FONT color="green">260</FONT>    <a name="line.260"></a>
+<FONT color="green">261</FONT>        boolean exact = false;<a name="line.261"></a>
+<FONT color="green">262</FONT>        String filterType = token.getFilterType();<a name="line.262"></a>
+<FONT color="green">263</FONT>        if (filterType != null) {<a name="line.263"></a>
+<FONT color="green">264</FONT>          final char c = filterType.charAt(0);<a name="line.264"></a>
+<FONT color="green">265</FONT>          if (c == '=') {<a name="line.265"></a>
+<FONT color="green">266</FONT>            exact = true;        <a name="line.266"></a>
+<FONT color="green">267</FONT>          }<a name="line.267"></a>
+<FONT color="green">268</FONT>        }<a name="line.268"></a>
 <FONT color="green">269</FONT>    <a name="line.269"></a>
-<FONT color="green">270</FONT>      private final &lt;T&gt; void catenate(final State&lt;T&gt; parsingState) {<a name="line.270"></a>
-<FONT color="green">271</FONT>        if (parsingState == null) {<a name="line.271"></a>
-<FONT color="green">272</FONT>          throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));<a name="line.272"></a>
-<FONT color="green">273</FONT>        }<a name="line.273"></a>
-<FONT color="green">274</FONT>        assert parsingState.stackSize() &gt;= 2;<a name="line.274"></a>
-<FONT color="green">275</FONT>    <a name="line.275"></a>
-<FONT color="green">276</FONT>        final Program&lt;T&gt; p2 = parsingState.pop();<a name="line.276"></a>
-<FONT color="green">277</FONT>        assert p2 != null;<a name="line.277"></a>
+<FONT color="green">270</FONT>        parsingState.push(Program.singleton(new InstanceOfMVELFilter&lt;T&gt;(token.getFilterType(), token.getValue())));<a name="line.270"></a>
+<FONT color="green">271</FONT>      }<a name="line.271"></a>
+<FONT color="green">272</FONT>    <a name="line.272"></a>
+<FONT color="green">273</FONT>      private final &lt;T&gt; void catenate(final State&lt;T&gt; parsingState) {<a name="line.273"></a>
+<FONT color="green">274</FONT>        if (parsingState == null) {<a name="line.274"></a>
+<FONT color="green">275</FONT>          throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));<a name="line.275"></a>
+<FONT color="green">276</FONT>        }<a name="line.276"></a>
+<FONT color="green">277</FONT>        assert parsingState.stackSize() &gt;= 2;<a name="line.277"></a>
 <FONT color="green">278</FONT>    <a name="line.278"></a>
-<FONT color="green">279</FONT>        final Program&lt;T&gt; p1 = parsingState.peek();<a name="line.279"></a>
-<FONT color="green">280</FONT>        assert p1 != null;<a name="line.280"></a>
+<FONT color="green">279</FONT>        final Program&lt;T&gt; p2 = parsingState.pop();<a name="line.279"></a>
+<FONT color="green">280</FONT>        assert p2 != null;<a name="line.280"></a>
 <FONT color="green">281</FONT>    <a name="line.281"></a>
-<FONT color="green">282</FONT>        /*<a name="line.282"></a>
-<FONT color="green">283</FONT>         * Catenation program fragment:<a name="line.283"></a>
-<FONT color="green">284</FONT>         *<a name="line.284"></a>
-<FONT color="green">285</FONT>         * 34: ...<a name="line.285"></a>
-<FONT color="green">286</FONT>         * 35: (p1)<a name="line.286"></a>
-<FONT color="green">287</FONT>         * 36: (p2)<a name="line.287"></a>
-<FONT color="green">288</FONT>         * 37: ...<a name="line.288"></a>
-<FONT color="green">289</FONT>         */<a name="line.289"></a>
-<FONT color="green">290</FONT>    <a name="line.290"></a>
-<FONT color="green">291</FONT>        p1.addAll(p2);<a name="line.291"></a>
-<FONT color="green">292</FONT>      }<a name="line.292"></a>
+<FONT color="green">282</FONT>        final Program&lt;T&gt; p1 = parsingState.peek();<a name="line.282"></a>
+<FONT color="green">283</FONT>        assert p1 != null;<a name="line.283"></a>
+<FONT color="green">284</FONT>    <a name="line.284"></a>
+<FONT color="green">285</FONT>        /*<a name="line.285"></a>
+<FONT color="green">286</FONT>         * Catenation program fragment:<a name="line.286"></a>
+<FONT color="green">287</FONT>         *<a name="line.287"></a>
+<FONT color="green">288</FONT>         * 34: ...<a name="line.288"></a>
+<FONT color="green">289</FONT>         * 35: (p1)<a name="line.289"></a>
+<FONT color="green">290</FONT>         * 36: (p2)<a name="line.290"></a>
+<FONT color="green">291</FONT>         * 37: ...<a name="line.291"></a>
+<FONT color="green">292</FONT>         */<a name="line.292"></a>
 <FONT color="green">293</FONT>    <a name="line.293"></a>
-<FONT color="green">294</FONT>      private final &lt;T&gt; void alternate(final State&lt;T&gt; parsingState) {<a name="line.294"></a>
-<FONT color="green">295</FONT>        if (parsingState == null) {<a name="line.295"></a>
-<FONT color="green">296</FONT>          throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));<a name="line.296"></a>
-<FONT color="green">297</FONT>        }<a name="line.297"></a>
-<FONT color="green">298</FONT>        assert parsingState.stackSize() &gt;= 2;<a name="line.298"></a>
-<FONT color="green">299</FONT>    <a name="line.299"></a>
-<FONT color="green">300</FONT>        final Program&lt;T&gt; p2 = parsingState.pop();<a name="line.300"></a>
-<FONT color="green">301</FONT>        assert p2 != null;<a name="line.301"></a>
-<FONT color="green">302</FONT>        assert !p2.isEmpty();<a name="line.302"></a>
-<FONT color="green">303</FONT>    <a name="line.303"></a>
-<FONT color="green">304</FONT>        final Program&lt;T&gt; p1 = parsingState.pop();<a name="line.304"></a>
-<FONT color="green">305</FONT>        assert p1 != null;<a name="line.305"></a>
-<FONT color="green">306</FONT>        assert !p1.isEmpty();<a name="line.306"></a>
-<FONT color="green">307</FONT>    <a name="line.307"></a>
-<FONT color="green">308</FONT>        /*<a name="line.308"></a>
-<FONT color="green">309</FONT>         * Alternation program fragment:<a name="line.309"></a>
-<FONT color="green">310</FONT>         *<a name="line.310"></a>
-<FONT color="green">311</FONT>         *  46: ...<a name="line.311"></a>
-<FONT color="green">312</FONT>         *  47: split +1, +(p1.size() + 2)<a name="line.312"></a>
-<FONT color="green">313</FONT>         *  48: (p1)<a name="line.313"></a>
-<FONT color="green">314</FONT>         *  49: jump +(p2.size() + 1)<a name="line.314"></a>
-<FONT color="green">315</FONT>         *  50: (p2)<a name="line.315"></a>
-<FONT color="green">316</FONT>         *  51: ...<a name="line.316"></a>
-<FONT color="green">317</FONT>         */<a name="line.317"></a>
-<FONT color="green">318</FONT>    <a name="line.318"></a>
-<FONT color="green">319</FONT>        final Program&lt;T&gt; p0 = new Program&lt;T&gt;();<a name="line.319"></a>
-<FONT color="green">320</FONT>        p0.add(new Split&lt;T&gt;(1, p1.size() + 2, true));<a name="line.320"></a>
-<FONT color="green">321</FONT>        p0.addAll(p1);<a name="line.321"></a>
-<FONT color="green">322</FONT>        final int target = p2.size() + 1;<a name="line.322"></a>
-<FONT color="green">323</FONT>        p0.add(new Jump&lt;T&gt;(target, true)); // dangling jump target<a name="line.323"></a>
-<FONT color="green">324</FONT>        p0.addAll(p2);<a name="line.324"></a>
-<FONT color="green">325</FONT>    <a name="line.325"></a>
-<FONT color="green">326</FONT>        parsingState.push(p0);<a name="line.326"></a>
-<FONT color="green">327</FONT>      }<a name="line.327"></a>
+<FONT color="green">294</FONT>        p1.addAll(p2);<a name="line.294"></a>
+<FONT color="green">295</FONT>      }<a name="line.295"></a>
+<FONT color="green">296</FONT>    <a name="line.296"></a>
+<FONT color="green">297</FONT>      private final &lt;T&gt; void alternate(final State&lt;T&gt; parsingState) {<a name="line.297"></a>
+<FONT color="green">298</FONT>        if (parsingState == null) {<a name="line.298"></a>
+<FONT color="green">299</FONT>          throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));<a name="line.299"></a>
+<FONT color="green">300</FONT>        }<a name="line.300"></a>
+<FONT color="green">301</FONT>        assert parsingState.stackSize() &gt;= 2;<a name="line.301"></a>
+<FONT color="green">302</FONT>    <a name="line.302"></a>
+<FONT color="green">303</FONT>        final Program&lt;T&gt; p2 = parsingState.pop();<a name="line.303"></a>
+<FONT color="green">304</FONT>        assert p2 != null;<a name="line.304"></a>
+<FONT color="green">305</FONT>        assert !p2.isEmpty();<a name="line.305"></a>
+<FONT color="green">306</FONT>    <a name="line.306"></a>
+<FONT color="green">307</FONT>        final Program&lt;T&gt; p1 = parsingState.pop();<a name="line.307"></a>
+<FONT color="green">308</FONT>        assert p1 != null;<a name="line.308"></a>
+<FONT color="green">309</FONT>        assert !p1.isEmpty();<a name="line.309"></a>
+<FONT color="green">310</FONT>    <a name="line.310"></a>
+<FONT color="green">311</FONT>        /*<a name="line.311"></a>
+<FONT color="green">312</FONT>         * Alternation program fragment:<a name="line.312"></a>
+<FONT color="green">313</FONT>         *<a name="line.313"></a>
+<FONT color="green">314</FONT>         *  46: ...<a name="line.314"></a>
+<FONT color="green">315</FONT>         *  47: split +1, +(p1.size() + 2)<a name="line.315"></a>
+<FONT color="green">316</FONT>         *  48: (p1)<a name="line.316"></a>
+<FONT color="green">317</FONT>         *  49: jump +(p2.size() + 1)<a name="line.317"></a>
+<FONT color="green">318</FONT>         *  50: (p2)<a name="line.318"></a>
+<FONT color="green">319</FONT>         *  51: ...<a name="line.319"></a>
+<FONT color="green">320</FONT>         */<a name="line.320"></a>
+<FONT color="green">321</FONT>    <a name="line.321"></a>
+<FONT color="green">322</FONT>        final Program&lt;T&gt; p0 = new Program&lt;T&gt;();<a name="line.322"></a>
+<FONT color="green">323</FONT>        p0.add(new Split&lt;T&gt;(1, p1.size() + 2, true));<a name="line.323"></a>
+<FONT color="green">324</FONT>        p0.addAll(p1);<a name="line.324"></a>
+<FONT color="green">325</FONT>        final int target = p2.size() + 1;<a name="line.325"></a>
+<FONT color="green">326</FONT>        p0.add(new Jump&lt;T&gt;(target, true)); // dangling jump target<a name="line.326"></a>
+<FONT color="green">327</FONT>        p0.addAll(p2);<a name="line.327"></a>
 <FONT color="green">328</FONT>    <a name="line.328"></a>
-<FONT color="green">329</FONT>      private final &lt;T&gt; void zeroOrMore(final State&lt;T&gt; parsingState) {<a name="line.329"></a>
-<FONT color="green">330</FONT>        if (parsingState == null) {<a name="line.330"></a>
-<FONT color="green">331</FONT>          throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));<a name="line.331"></a>
-<FONT color="green">332</FONT>        }<a name="line.332"></a>
-<FONT color="green">333</FONT>        assert parsingState.stackSize() &gt;= 1;<a name="line.333"></a>
-<FONT color="green">334</FONT>    <a name="line.334"></a>
-<FONT color="green">335</FONT>        final Program&lt;T&gt; p1 = parsingState.pop();<a name="line.335"></a>
-<FONT color="green">336</FONT>        assert p1 != null;<a name="line.336"></a>
+<FONT color="green">329</FONT>        parsingState.push(p0);<a name="line.329"></a>
+<FONT color="green">330</FONT>      }<a name="line.330"></a>
+<FONT color="green">331</FONT>    <a name="line.331"></a>
+<FONT color="green">332</FONT>      private final &lt;T&gt; void zeroOrMore(final State&lt;T&gt; parsingState) {<a name="line.332"></a>
+<FONT color="green">333</FONT>        if (parsingState == null) {<a name="line.333"></a>
+<FONT color="green">334</FONT>          throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));<a name="line.334"></a>
+<FONT color="green">335</FONT>        }<a name="line.335"></a>
+<FONT color="green">336</FONT>        assert parsingState.stackSize() &gt;= 1;<a name="line.336"></a>
 <FONT color="green">337</FONT>    <a name="line.337"></a>
-<FONT color="green">338</FONT>        /*<a name="line.338"></a>
-<FONT color="green">339</FONT>         * Zero or more program fragment<a name="line.339"></a>
-<FONT color="green">340</FONT>         *<a name="line.340"></a>
-<FONT color="green">341</FONT>         * 24 ...<a name="line.341"></a>
-<FONT color="green">342</FONT>         * 25 split +1, +(p1.size() + 2)<a name="line.342"></a>
-<FONT color="green">343</FONT>         * 26 (p1)<a name="line.343"></a>
-<FONT color="green">344</FONT>         * 27 jump -(p1.size() + 1)<a name="line.344"></a>
-<FONT color="green">345</FONT>         * 28 ...<a name="line.345"></a>
-<FONT color="green">346</FONT>         */<a name="line.346"></a>
-<FONT color="green">347</FONT>    <a name="line.347"></a>
-<FONT color="green">348</FONT>        final Program&lt;T&gt; p0 = new Program&lt;T&gt;();<a name="line.348"></a>
-<FONT color="green">349</FONT>        final int target = p1.size() + 2;<a name="line.349"></a>
-<FONT color="green">350</FONT>        p0.add(0, new Split&lt;T&gt;(1, target, true)); // dangling split target<a name="line.350"></a>
-<FONT color="green">351</FONT>        p0.addAll(p1);<a name="line.351"></a>
-<FONT color="green">352</FONT>        p0.add(new Jump&lt;T&gt;(-(p1.size() + 1), true));<a name="line.352"></a>
-<FONT color="green">353</FONT>        <a name="line.353"></a>
-<FONT color="green">354</FONT>        parsingState.push(p0);<a name="line.354"></a>
-<FONT color="green">355</FONT>      }<a name="line.355"></a>
-<FONT color="green">356</FONT>    <a name="line.356"></a>
-<FONT color="green">357</FONT>      private final &lt;T&gt; void zeroOrOne(final State&lt;T&gt; parsingState) {<a name="line.357"></a>
-<FONT color="green">358</FONT>        if (parsingState == null) {<a name="line.358"></a>
-<FONT color="green">359</FONT>          throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));<a name="line.359"></a>
-<FONT color="green">360</FONT>        }<a name="line.360"></a>
-<FONT color="green">361</FONT>        assert parsingState.stackSize() &gt;= 1;<a name="line.361"></a>
-<FONT color="green">362</FONT>    <a name="line.362"></a>
-<FONT color="green">363</FONT>        final Program&lt;T&gt; p1 = parsingState.peek();<a name="line.363"></a>
-<FONT color="green">364</FONT>        assert p1 != null;<a name="line.364"></a>
-<FONT color="green">365</FONT>        assert !p1.isEmpty();<a name="line.365"></a>
-<FONT color="green">366</FONT>    <a name="line.366"></a>
-<FONT color="green">367</FONT>        /*<a name="line.367"></a>
-<FONT color="green">368</FONT>         * Zero or one program fragment:<a name="line.368"></a>
-<FONT color="green">369</FONT>         *<a name="line.369"></a>
-<FONT color="green">370</FONT>         * 17 ...<a name="line.370"></a>
-<FONT color="green">371</FONT>         * 18 split +1, +(p1.size() + 1)<a name="line.371"></a>
-<FONT color="green">372</FONT>         * 19 (p1)<a name="line.372"></a>
-<FONT color="green">373</FONT>         * 20 ...<a name="line.373"></a>
-<FONT color="green">374</FONT>         */<a name="line.374"></a>
-<FONT color="green">375</FONT>    <a name="line.375"></a>
-<FONT color="green">376</FONT>        final int target = p1.size() + 1;<a name="line.376"></a>
-<FONT color="green">377</FONT>        p1.add(0, new Split&lt;T&gt;(1, target, true)); // dangling split target<a name="line.377"></a>
-<FONT color="green">378</FONT>        <a name="line.378"></a>
-<FONT color="green">379</FONT>      }<a name="line.379"></a>
-<FONT color="green">380</FONT>    <a name="line.380"></a>
-<FONT color="green">381</FONT>      private final &lt;T&gt; void oneOrMore(final State&lt;T&gt; parsingState) {<a name="line.381"></a>
-<FONT color="green">382</FONT>        if (parsingState == null) {<a name="line.382"></a>
-<FONT color="green">383</FONT>          throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));<a name="line.383"></a>
-<FONT color="green">384</FONT>        }<a name="line.384"></a>
-<FONT color="green">385</FONT>        assert parsingState.stackSize() &gt;= 1;<a name="line.385"></a>
-<FONT color="green">386</FONT>        <a name="line.386"></a>
-<FONT color="green">387</FONT>        final Program&lt;T&gt; p1 = parsingState.peek();<a name="line.387"></a>
-<FONT color="green">388</FONT>        assert p1 != null;<a name="line.388"></a>
-<FONT color="green">389</FONT>        assert !p1.isEmpty();<a name="line.389"></a>
-<FONT color="green">390</FONT>    <a name="line.390"></a>
-<FONT color="green">391</FONT>        /*<a name="line.391"></a>
-<FONT color="green">392</FONT>         * One or more program fragment:<a name="line.392"></a>
-<FONT color="green">393</FONT>         *<a name="line.393"></a>
-<FONT color="green">394</FONT>         * 66: ...<a name="line.394"></a>
-<FONT color="green">395</FONT>         * 67: (p1)<a name="line.395"></a>
-<FONT color="green">396</FONT>         * 68: split -(p1.size()), +1<a name="line.396"></a>
-<FONT color="green">397</FONT>         * 69: ...<a name="line.397"></a>
-<FONT color="green">398</FONT>         */<a name="line.398"></a>
-<FONT color="green">399</FONT>    <a name="line.399"></a>
-<FONT color="green">400</FONT>        p1.add(new Split&lt;T&gt;(-p1.size(), 1, true));<a name="line.400"></a>
-<FONT color="green">401</FONT>      }<a name="line.401"></a>
+<FONT color="green">338</FONT>        final Program&lt;T&gt; p1 = parsingState.pop();<a name="line.338"></a>
+<FONT color="green">339</FONT>        assert p1 != null;<a name="line.339"></a>
+<FONT color="green">340</FONT>    <a name="line.340"></a>
+<FONT color="green">341</FONT>        /*<a name="line.341"></a>
+<FONT color="green">342</FONT>         * Zero or more program fragment<a name="line.342"></a>
+<FONT color="green">343</FONT>         *<a name="line.343"></a>
+<FONT color="green">344</FONT>         * 24 ...<a name="line.344"></a>
+<FONT color="green">345</FONT>         * 25 split +1, +(p1.size() + 2)<a name="line.345"></a>
+<FONT color="green">346</FONT>         * 26 (p1)<a name="line.346"></a>
+<FONT color="green">347</FONT>         * 27 jump -(p1.size() + 1)<a name="line.347"></a>
+<FONT color="green">348</FONT>         * 28 ...<a name="line.348"></a>
+<FONT color="green">349</FONT>         */<a name="line.349"></a>
+<FONT color="green">350</FONT>    <a name="line.350"></a>
+<FONT color="green">351</FONT>        final Program&lt;T&gt; p0 = new Program&lt;T&gt;();<a name="line.351"></a>
+<FONT color="green">352</FONT>        final int target = p1.size() + 2;<a name="line.352"></a>
+<FONT color="green">353</FONT>        p0.add(0, new Split&lt;T&gt;(1, target, true)); // dangling split target<a name="line.353"></a>
+<FONT color="green">354</FONT>        p0.addAll(p1);<a name="line.354"></a>
+<FONT color="green">355</FONT>        p0.add(new Jump&lt;T&gt;(-(p1.size() + 1), true));<a name="line.355"></a>
+<FONT color="green">356</FONT>        <a name="line.356"></a>
+<FONT color="green">357</FONT>        parsingState.push(p0);<a name="line.357"></a>
+<FONT color="green">358</FONT>      }<a name="line.358"></a>
+<FONT color="green">359</FONT>    <a name="line.359"></a>
+<FONT color="green">360</FONT>      private final &lt;T&gt; void zeroOrOne(final State&lt;T&gt; parsingState) {<a name="line.360"></a>
+<FONT color="green">361</FONT>        if (parsingState == null) {<a name="line.361"></a>
+<FONT color="green">362</FONT>          throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));<a name="line.362"></a>
+<FONT color="green">363</FONT>        }<a name="line.363"></a>
+<FONT color="green">364</FONT>        assert parsingState.stackSize() &gt;= 1;<a name="line.364"></a>
+<FONT color="green">365</FONT>    <a name="line.365"></a>
+<FONT color="green">366</FONT>        final Program&lt;T&gt; p1 = parsingState.peek();<a name="line.366"></a>
+<FONT color="green">367</FONT>        assert p1 != null;<a name="line.367"></a>
+<FONT color="green">368</FONT>        assert !p1.isEmpty();<a name="line.368"></a>
+<FONT color="green">369</FONT>    <a name="line.369"></a>
+<FONT color="green">370</FONT>        /*<a name="line.370"></a>
+<FONT color="green">371</FONT>         * Zero or one program fragment:<a name="line.371"></a>
+<FONT color="green">372</FONT>         *<a name="line.372"></a>
+<FONT color="green">373</FONT>         * 17 ...<a name="line.373"></a>
+<FONT color="green">374</FONT>         * 18 split +1, +(p1.size() + 1)<a name="line.374"></a>
+<FONT color="green">375</FONT>         * 19 (p1)<a name="line.375"></a>
+<FONT color="green">376</FONT>         * 20 ...<a name="line.376"></a>
+<FONT color="green">377</FONT>         */<a name="line.377"></a>
+<FONT color="green">378</FONT>    <a name="line.378"></a>
+<FONT color="green">379</FONT>        final int target = p1.size() + 1;<a name="line.379"></a>
+<FONT color="green">380</FONT>        p1.add(0, new Split&lt;T&gt;(1, target, true)); // dangling split target<a name="line.380"></a>
+<FONT color="green">381</FONT>        <a name="line.381"></a>
+<FONT color="green">382</FONT>      }<a name="line.382"></a>
+<FONT color="green">383</FONT>    <a name="line.383"></a>
+<FONT color="green">384</FONT>      private final &lt;T&gt; void oneOrMore(final State&lt;T&gt; parsingState) {<a name="line.384"></a>
+<FONT color="green">385</FONT>        if (parsingState == null) {<a name="line.385"></a>
+<FONT color="green">386</FONT>          throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));<a name="line.386"></a>
+<FONT color="green">387</FONT>        }<a name="line.387"></a>
+<FONT color="green">388</FONT>        assert parsingState.stackSize() &gt;= 1;<a name="line.388"></a>
+<FONT color="green">389</FONT>        <a name="line.389"></a>
+<FONT color="green">390</FONT>        final Program&lt;T&gt; p1 = parsingState.peek();<a name="line.390"></a>
+<FONT color="green">391</FONT>        assert p1 != null;<a name="line.391"></a>
+<FONT color="green">392</FONT>        assert !p1.isEmpty();<a name="line.392"></a>
+<FONT color="green">393</FONT>    <a name="line.393"></a>
+<FONT color="green">394</FONT>        /*<a name="line.394"></a>
+<FONT color="green">395</FONT>         * One or more program fragment:<a name="line.395"></a>
+<FONT color="green">396</FONT>         *<a name="line.396"></a>
+<FONT color="green">397</FONT>         * 66: ...<a name="line.397"></a>
+<FONT color="green">398</FONT>         * 67: (p1)<a name="line.398"></a>
+<FONT color="green">399</FONT>         * 68: split -(p1.size()), +1<a name="line.399"></a>
+<FONT color="green">400</FONT>         * 69: ...<a name="line.400"></a>
+<FONT color="green">401</FONT>         */<a name="line.401"></a>
 <FONT color="green">402</FONT>    <a name="line.402"></a>
-<FONT color="green">403</FONT>      private final &lt;T&gt; void startSaving(final State&lt;T&gt; parsingState) {<a name="line.403"></a>
-<FONT color="green">404</FONT>        if (parsingState == null) {<a name="line.404"></a>
-<FONT color="green">405</FONT>          throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));<a name="line.405"></a>
-<FONT color="green">406</FONT>        }<a name="line.406"></a>
-<FONT color="green">407</FONT>        parsingState.push(Program.singleton(new Save&lt;T&gt;(Integer.valueOf(parsingState.groupIndex++))));<a name="line.407"></a>
-<FONT color="green">408</FONT>      }<a name="line.408"></a>
-<FONT color="green">409</FONT>    <a name="line.409"></a>
-<FONT color="green">410</FONT>      private final &lt;T&gt; void stopSaving(final State&lt;T&gt; parsingState) {<a name="line.410"></a>
-<FONT color="green">411</FONT>        if (parsingState == null) {<a name="line.411"></a>
-<FONT color="green">412</FONT>          throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));<a name="line.412"></a>
-<FONT color="green">413</FONT>        }<a name="line.413"></a>
-<FONT color="green">414</FONT>        parsingState.push(Program.singleton(new Stop&lt;T&gt;(Integer.valueOf(--parsingState.groupIndex))));<a name="line.414"></a>
-<FONT color="green">415</FONT>      }<a name="line.415"></a>
-<FONT color="green">416</FONT>    <a name="line.416"></a>
-<FONT color="green">417</FONT>    <a name="line.417"></a>
-<FONT color="green">418</FONT>      /*<a name="line.418"></a>
-<FONT color="green">419</FONT>       * Nested and inner classes.<a name="line.419"></a>
-<FONT color="green">420</FONT>       */<a name="line.420"></a>
-<FONT color="green">421</FONT>    <a name="line.421"></a>
-<FONT color="green">422</FONT>    <a name="line.422"></a>
-<FONT color="green">423</FONT>      private static final class State&lt;T&gt; extends ParsePosition implements Iterator&lt;Token&gt; {<a name="line.423"></a>
+<FONT color="green">403</FONT>        p1.add(new Split&lt;T&gt;(-p1.size(), 1, true));<a name="line.403"></a>
+<FONT color="green">404</FONT>      }<a name="line.404"></a>
+<FONT color="green">405</FONT>    <a name="line.405"></a>
+<FONT color="green">406</FONT>      private final &lt;T&gt; void startSaving(final State&lt;T&gt; parsingState) {<a name="line.406"></a>
+<FONT color="green">407</FONT>        if (parsingState == null) {<a name="line.407"></a>
+<FONT color="green">408</FONT>          throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));<a name="line.408"></a>
+<FONT color="green">409</FONT>        }<a name="line.409"></a>
+<FONT color="green">410</FONT>        parsingState.push(Program.singleton(new Save&lt;T&gt;(Integer.valueOf(parsingState.groupIndex++))));<a name="line.410"></a>
+<FONT color="green">411</FONT>      }<a name="line.411"></a>
+<FONT color="green">412</FONT>    <a name="line.412"></a>
+<FONT color="green">413</FONT>      private final &lt;T&gt; void stopSaving(final State&lt;T&gt; parsingState) {<a name="line.413"></a>
+<FONT color="green">414</FONT>        if (parsingState == null) {<a name="line.414"></a>
+<FONT color="green">415</FONT>          throw new IllegalArgumentException("parsingState", new NullPointerException("parsingState"));<a name="line.415"></a>
+<FONT color="green">416</FONT>        }<a name="line.416"></a>
+<FONT color="green">417</FONT>        parsingState.push(Program.singleton(new Stop&lt;T&gt;(Integer.valueOf(--parsingState.groupIndex))));<a name="line.417"></a>
+<FONT color="green">418</FONT>      }<a name="line.418"></a>
+<FONT color="green">419</FONT>    <a name="line.419"></a>
+<FONT color="green">420</FONT>    <a name="line.420"></a>
+<FONT color="green">421</FONT>      /*<a name="line.421"></a>
+<FONT color="green">422</FONT>       * Nested and inner classes.<a name="line.422"></a>
+<FONT color="green">423</FONT>       */<a name="line.423"></a>
 <FONT color="green">424</FONT>    <a name="line.424"></a>
-<FONT color="green">425</FONT>        private int groupIndex;<a name="line.425"></a>
-<FONT color="green">426</FONT>        <a name="line.426"></a>
-<FONT color="green">427</FONT>        private Token token;<a name="line.427"></a>
-<FONT color="green">428</FONT>    <a name="line.428"></a>
-<FONT color="green">429</FONT>        private final Deque&lt;Program&lt;T&gt;&gt; stack;<a name="line.429"></a>
-<FONT color="green">430</FONT>    <a name="line.430"></a>
-<FONT color="green">431</FONT>        private final PostfixTokenizer tokenizer;<a name="line.431"></a>
-<FONT color="green">432</FONT>    <a name="line.432"></a>
-<FONT color="green">433</FONT>        private State(final PostfixTokenizer tokenizer) {<a name="line.433"></a>
-<FONT color="green">434</FONT>          super(-1);<a name="line.434"></a>
-<FONT color="green">435</FONT>          if (tokenizer == null) {<a name="line.435"></a>
-<FONT color="green">436</FONT>            throw new IllegalArgumentException("tokenizer", new NullPointerException("tokenizer"));<a name="line.436"></a>
-<FONT color="green">437</FONT>          }<a name="line.437"></a>
-<FONT color="green">438</FONT>          this.tokenizer = tokenizer;<a name="line.438"></a>
-<FONT color="green">439</FONT>          this.stack = new ArrayDeque&lt;Program&lt;T&gt;&gt;();<a name="line.439"></a>
-<FONT color="green">440</FONT>          this.groupIndex = 1;<a name="line.440"></a>
-<FONT color="green">441</FONT>        }<a name="line.441"></a>
-<FONT color="green">442</FONT>    <a name="line.442"></a>
-<FONT color="green">443</FONT>        public final Token getToken() {<a name="line.443"></a>
-<FONT color="green">444</FONT>          return this.token;<a name="line.444"></a>
-<FONT color="green">445</FONT>        }<a name="line.445"></a>
-<FONT color="green">446</FONT>    <a name="line.446"></a>
-<FONT color="green">447</FONT>        @Override<a name="line.447"></a>
-<FONT color="green">448</FONT>        public final boolean hasNext() {<a name="line.448"></a>
-<FONT color="green">449</FONT>          return this.tokenizer.hasNext();<a name="line.449"></a>
-<FONT color="green">450</FONT>        }<a name="line.450"></a>
-<FONT color="green">451</FONT>    <a name="line.451"></a>
-<FONT color="green">452</FONT>        @Override<a name="line.452"></a>
-<FONT color="green">453</FONT>        public final Token next() {<a name="line.453"></a>
-<FONT color="green">454</FONT>          this.token = this.tokenizer.next();<a name="line.454"></a>
-<FONT color="green">455</FONT>          this.setIndex(this.getIndex() + 1);<a name="line.455"></a>
-<FONT color="green">456</FONT>          return this.token;<a name="line.456"></a>
-<FONT color="green">457</FONT>        }<a name="line.457"></a>
-<FONT color="green">458</FONT>    <a name="line.458"></a>
-<FONT color="green">459</FONT>        @Override<a name="line.459"></a>
-<FONT color="green">460</FONT>        public final void remove() {<a name="line.460"></a>
-<FONT color="green">461</FONT>          this.tokenizer.remove();<a name="line.461"></a>
-<FONT color="green">462</FONT>        }<a name="line.462"></a>
-<FONT color="green">463</FONT>    <a name="line.463"></a>
-<FONT color="green">464</FONT>        public final int stackSize() {<a name="line.464"></a>
-<FONT color="green">465</FONT>          return this.stack.size();<a name="line.465"></a>
-<FONT color="green">466</FONT>        }<a name="line.466"></a>
-<FONT color="green">467</FONT>    <a name="line.467"></a>
-<FONT color="green">468</FONT>        public void push(final Program&lt;T&gt; programFragment) {<a name="line.468"></a>
-<FONT color="green">469</FONT>          if (programFragment == null) {<a name="line.469"></a>
-<FONT color="green">470</FONT>            throw new IllegalArgumentException("programFragment", new NullPointerException("programFragment"));<a name="line.470"></a>
-<FONT color="green">471</FONT>          }<a name="line.471"></a>
-<FONT color="green">472</FONT>          this.stack.push(programFragment);<a name="line.472"></a>
-<FONT color="green">473</FONT>        }<a name="line.473"></a>
-<FONT color="green">474</FONT>    <a name="line.474"></a>
-<FONT color="green">475</FONT>        public Program&lt;T&gt; peek() {<a name="line.475"></a>
-<FONT color="green">476</FONT>          return this.stack.peek();<a name="line.476"></a>
-<FONT color="green">477</FONT>        }<a name="line.477"></a>
-<FONT color="green">478</FONT>    <a name="line.478"></a>
-<FONT color="green">479</FONT>        public Program&lt;T&gt; pop() {<a name="line.479"></a>
-<FONT color="green">480</FONT>          return this.stack.pop();<a name="line.480"></a>
-<FONT color="green">481</FONT>        }<a name="line.481"></a>
-<FONT color="green">482</FONT>    <a name="line.482"></a>
-<FONT color="green">483</FONT>        @Override<a name="line.483"></a>
-<FONT color="green">484</FONT>        public String toString() {<a name="line.484"></a>
-<FONT color="green">485</FONT>          final Formatter f = new Formatter(new StringBuilder());<a name="line.485"></a>
-<FONT color="green">486</FONT>          f.format("Parsing state:%n");<a name="line.486"></a>
-<FONT color="green">487</FONT>          f.format("Current token: %s%n", this.getToken());<a name="line.487"></a>
-<FONT color="green">488</FONT>          f.format("Stack size: %d%n", this.stackSize());<a name="line.488"></a>
-<FONT color="green">489</FONT>          f.format("Stack: %s%n", this.stack);<a name="line.489"></a>
-<FONT color="green">490</FONT>          return f.toString();<a name="line.490"></a>
-<FONT color="green">491</FONT>        }<a name="line.491"></a>
-<FONT color="green">492</FONT>        <a name="line.492"></a>
-<FONT color="green">493</FONT>      }<a name="line.493"></a>
-<FONT color="green">494</FONT>    <a name="line.494"></a>
-<FONT color="green">495</FONT>    }<a name="line.495"></a>
+<FONT color="green">425</FONT>    <a name="line.425"></a>
+<FONT color="green">426</FONT>      private static final class State&lt;T&gt; extends ParsePosition implements Iterator&lt;Token&gt; {<a name="line.426"></a>
+<FONT color="green">427</FONT>    <a name="line.427"></a>
+<FONT color="green">428</FONT>        private int groupIndex;<a name="line.428"></a>
+<FONT color="green">429</FONT>        <a name="line.429"></a>
+<FONT color="green">430</FONT>        private Token token;<a name="line.430"></a>
+<FONT color="green">431</FONT>    <a name="line.431"></a>
+<FONT color="green">432</FONT>        private final Deque&lt;Program&lt;T&gt;&gt; stack;<a name="line.432"></a>
+<FONT color="green">433</FONT>    <a name="line.433"></a>
+<FONT color="green">434</FONT>        private final PostfixTokenizer tokenizer;<a name="line.434"></a>
+<FONT color="green">435</FONT>    <a name="line.435"></a>
+<FONT color="green">436</FONT>        private State(final PostfixTokenizer tokenizer) {<a name="line.436"></a>
+<FONT color="green">437</FONT>          super(-1);<a name="line.437"></a>
+<FONT color="green">438</FONT>          if (tokenizer == null) {<a name="line.438"></a>
+<FONT color="green">439</FONT>            throw new IllegalArgumentException("tokenizer", new NullPointerException("tokenizer"));<a name="line.439"></a>
+<FONT color="green">440</FONT>          }<a name="line.440"></a>
+<FONT color="green">441</FONT>          this.tokenizer = tokenizer;<a name="line.441"></a>
+<FONT color="green">442</FONT>          this.stack = new ArrayDeque&lt;Program&lt;T&gt;&gt;();<a name="line.442"></a>
+<FONT color="green">443</FONT>          this.groupIndex = 1;<a name="line.443"></a>
+<FONT color="green">444</FONT>        }<a name="line.444"></a>
+<FONT color="green">445</FONT>    <a name="line.445"></a>
+<FONT color="green">446</FONT>        public final Token getToken() {<a name="line.446"></a>
+<FONT color="green">447</FONT>          return this.token;<a name="line.447"></a>
+<FONT color="green">448</FONT>        }<a name="line.448"></a>
+<FONT color="green">449</FONT>    <a name="line.449"></a>
+<FONT color="green">450</FONT>        @Override<a name="line.450"></a>
+<FONT color="green">451</FONT>        public final boolean hasNext() {<a name="line.451"></a>
+<FONT color="green">452</FONT>          return this.tokenizer.hasNext();<a name="line.452"></a>
+<FONT color="green">453</FONT>        }<a name="line.453"></a>
+<FONT color="green">454</FONT>    <a name="line.454"></a>
+<FONT color="green">455</FONT>        @Override<a name="line.455"></a>
+<FONT color="green">456</FONT>        public final Token next() {<a name="line.456"></a>
+<FONT color="green">457</FONT>          this.token = this.tokenizer.next();<a name="line.457"></a>
+<FONT color="green">458</FONT>          this.setIndex(this.getIndex() + 1);<a name="line.458"></a>
+<FONT color="green">459</FONT>          return this.token;<a name="line.459"></a>
+<FONT color="green">460</FONT>        }<a name="line.460"></a>
+<FONT color="green">461</FONT>    <a name="line.461"></a>
+<FONT color="green">462</FONT>        @Override<a name="line.462"></a>
+<FONT color="green">463</FONT>        public final void remove() {<a name="line.463"></a>
+<FONT color="green">464</FONT>          this.tokenizer.remove();<a name="line.464"></a>
+<FONT color="green">465</FONT>        }<a name="line.465"></a>
+<FONT color="green">466</FONT>    <a name="line.466"></a>
+<FONT color="green">467</FONT>        public final int stackSize() {<a name="line.467"></a>
+<FONT color="green">468</FONT>          return this.stack.size();<a name="line.468"></a>
+<FONT color="green">469</FONT>        }<a name="line.469"></a>
+<FONT color="green">470</FONT>    <a name="line.470"></a>
+<FONT color="green">471</FONT>        public void push(final Program&lt;T&gt; programFragment) {<a name="line.471"></a>
+<FONT color="green">472</FONT>          if (programFragment == null) {<a name="line.472"></a>
+<FONT color="green">473</FONT>            throw new IllegalArgumentException("programFragment", new NullPointerException("programFragment"));<a name="line.473"></a>
+<FONT color="green">474</FONT>          }<a name="line.474"></a>
+<FONT color="green">475</FONT>          this.stack.push(programFragment);<a name="line.475"></a>
+<FONT color="green">476</FONT>        }<a name="line.476"></a>
+<FONT color="green">477</FONT>    <a name="line.477"></a>
+<FONT color="green">478</FONT>        public Program&lt;T&gt; peek() {<a name="line.478"></a>
+<FONT color="green">479</FONT>          return this.stack.peek();<a name="line.479"></a>
+<FONT color="green">480</FONT>        }<a name="line.480"></a>
+<FONT color="green">481</FONT>    <a name="line.481"></a>
+<FONT color="green">482</FONT>        public Program&lt;T&gt; pop() {<a name="line.482"></a>
+<FONT color="green">483</FONT>          return this.stack.pop();<a name="line.483"></a>
+<FONT color="green">484</FONT>        }<a name="line.484"></a>
+<FONT color="green">485</FONT>    <a name="line.485"></a>
+<FONT color="green">486</FONT>        @Override<a name="line.486"></a>
+<FONT color="green">487</FONT>        public String toString() {<a name="line.487"></a>
+<FONT color="green">488</FONT>          final Formatter f = new Formatter(new StringBuilder());<a name="line.488"></a>
+<FONT color="green">489</FONT>          f.format("Parsing state:%n");<a name="line.489"></a>
+<FONT color="green">490</FONT>          f.format("Current token: %s%n", this.getToken());<a name="line.490"></a>
+<FONT color="green">491</FONT>          f.format("Stack size: %d%n", this.stackSize());<a name="line.491"></a>
+<FONT color="green">492</FONT>          f.format("Stack: %s%n", this.stack);<a name="line.492"></a>
+<FONT color="green">493</FONT>          return f.toString();<a name="line.493"></a>
+<FONT color="green">494</FONT>        }<a name="line.494"></a>
+<FONT color="green">495</FONT>        <a name="line.495"></a>
+<FONT color="green">496</FONT>      }<a name="line.496"></a>
+<FONT color="green">497</FONT>    <a name="line.497"></a>
+<FONT color="green">498</FONT>    }<a name="line.498"></a>
 
 
 

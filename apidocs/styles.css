@@ -6,9 +6,11 @@
 /* Page background color */
 body { background-color: #FFFFFF; color:#333; font-size: 100%; }
 
-body { font-size: 0.875em; line-height: 1.286em; font-family:   "Helvetica", "Arial", sans-serif; }
+body { font-size: 0.875em; line-height: 1.286em; font-family: "Helvetica", "Arial", sans-serif; }
 
 code { color: #777; line-height: 1.286em; font-family: "Consolas", "Lucida Console", "Droid Sans Mono", "Andale Mono", "Monaco", "Lucida Sans Typewriter"; }
+
+pre { color: #777; line-height: 1.286em; font-family: "Consolas", "Lucida Console", "Droid Sans Mono", "Andale Mono", "Monaco", "Lucida Sans Typewriter"; }
 
 a { text-decoration: none; color: #16569A; /* also try #2E85ED, #0033FF, #6C93C6, #1D7BBE, #1D8DD2 */ }
 a:hover { color: #EEEEEE; background-color: #16569A; }
