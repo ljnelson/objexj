@@ -71,7 +71,7 @@
                       
                 
                     
-                 <li id="projectVersion" class="pull-right">Version: 1.0.0-SNAPSHOT</li>
+                 <li id="projectVersion" class="pull-right">Version: 1.0.0</li>
       
                             </ul>
       </div>
@@ -142,7 +142,7 @@
 <div class="source"><pre class="prettyprint">&lt;dependency&gt;
   &lt;groupId&gt;com.edugility&lt;/groupId&gt;
   &lt;artifactId&gt;objexj&lt;/artifactId&gt;
-  &lt;version&gt;1.0.0-SNAPSHOT&lt;/version&gt;
+  &lt;version&gt;1.0.0&lt;/version&gt;
 &lt;/dependency&gt;
 </pre></div></div><div class="section"><h2>Compile a <a href="apidocs/com/edugility/objexj/Pattern.html">Pattern</a><a name="Compile_a_Pattern"></a></h2><p>First, decide on the kind of pattern you want to use. See the <a href="syntax.html">Syntax Guide</a> for help.</p><p>Next, you are probably going to match this pattern over an input list of a particular kind (say, <tt>Number</tt> or <tt>Exception</tt>). For this example, well use <tt>Exception</tt>.</p><p>Next, youll need to <a href="apidocs/com/edugility/objexj/Pattern.html#compileString">compile that source code into an actual <tt>Pattern</tt></a>. To do this, use the <a href="apidocs/com/edugility/objexj/Pattern.html#compileString"><tt>Pattern#compile(String)</tt></a> method:</p>
 <div class="source"><pre class="prettyprint">final Pattern&lt;Exception&gt; p = Pattern.compile(&quot;^(java.lang.Exception)&quot;);
