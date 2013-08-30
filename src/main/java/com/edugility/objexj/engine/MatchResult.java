@@ -127,8 +127,8 @@ public class MatchResult<T> implements Serializable {
    *
    * @see Thread#getGroup(Object)
    */
-  public List<T> getGroup(final Object key) {
-    List<T> result = null;
+  public List<? extends T> getGroup(final Object key) {
+    List<? extends T> result = null;
     if (this.thread != null) {
       result = thread.getGroup(key);
     }

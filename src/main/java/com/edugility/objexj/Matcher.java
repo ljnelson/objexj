@@ -190,9 +190,9 @@ public class Matcher<T> {
    * @see <a href="../../../../syntax.html" target="_parent">Syntax
    * Guide</a>
    */
-  public final List<T> group(final int index) {
+  public final List<? extends T> group(final int index) {
     final MatchResult<T> matchResult = this.getMatchResult();
-    final List<T> result;
+    final List<? extends T> result;
     if (matchResult == null) {
       result = null;
     } else {

@@ -77,7 +77,7 @@ public final class CaptureGroup<T> implements Cloneable, Serializable {
    * will capture a sub-{@link List}.  This field is never {@code
    * null}.
    */
-  private List<T> items;
+  private List<? extends T> items;
 
   /**
    * Creates a new {@link CaptureGroup}.
@@ -95,7 +95,7 @@ public final class CaptureGroup<T> implements Cloneable, Serializable {
    * {@code startIndex} is less than {@code 0} or {@code startIndex}
    * is greater than or equal to {@link List#size() items.size()}
    */ 
-  public CaptureGroup(final List<T> items, final int startIndex) {
+  public CaptureGroup(final List<? extends T> items, final int startIndex) {
     super();
     if (items == null) {
       throw new IllegalArgumentException("items", new NullPointerException("items"));
@@ -126,7 +126,7 @@ public final class CaptureGroup<T> implements Cloneable, Serializable {
    * by the {@link List#subList(int, int)} method (or {@link
    * Collections#emptyList()})
    */
-  public final List<T> getItems() {
+  public final List<? extends T> getItems() {
     if (this.items == null) {
       return Collections.emptyList();
     } else {
@@ -143,7 +143,7 @@ public final class CaptureGroup<T> implements Cloneable, Serializable {
    * @exception IllegalArgumentException if {@code items} is {@code
    * null}
    */
-  private final void setItemList(final List<T> items) {
+  private final void setItemList(final List<? extends T> items) {
     if (items == null) {
       throw new IllegalArgumentException("items", new NullPointerException("items == null"));
     }

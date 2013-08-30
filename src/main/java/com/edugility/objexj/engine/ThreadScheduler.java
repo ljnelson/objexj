@@ -68,7 +68,7 @@ public interface ThreadScheduler<T> {
    *
    * @return a new non-{@code null} {@link Thread}
    */
-  public Thread<T> newThread(final Object id, final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer, final Map<Object, CaptureGroup<T>> captureGroups, final Map<Object, Object> variables);
+  public Thread<T> newThread(final Object id, final ProgramCounter<T> programCounter, final List<? extends T> items, final int itemPointer, final Map<Object, CaptureGroup<T>> captureGroups, final Map<Object, Object> variables);
 
   /**
    * Schedules the supplied {@link Thread} for execution immediately

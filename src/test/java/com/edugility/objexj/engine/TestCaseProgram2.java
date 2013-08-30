@@ -49,7 +49,7 @@ public class TestCaseProgram2 extends AbstractProgramTestCase<Character> {
   public void testMatchWithAAB() {
     final Thread<Character> t = this.run(Arrays.asList('a', 'a', 'b'));
     assertMatch(t);
-    final Map<Object, List<Character>> submatches = t.getSubmatches();
+    final Map<Object, List<? extends Character>> submatches = t.getSubmatches();
     assertNotNull(submatches);
     assertEquals(2, submatches.size());
     assertTrue(submatches.containsKey("FIRST"));

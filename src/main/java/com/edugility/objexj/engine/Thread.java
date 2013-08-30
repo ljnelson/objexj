@@ -164,7 +164,7 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
    *
    * @see #read()
    */
-  private final List<T> items;
+  private final List<? extends T> items;
 
   /**
    * The index used by the {@link #read()} method (and incremented by
@@ -287,7 +287,7 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
    * @exception IllegalArgumentException if any of the preconditions
    * outlined as part of the parameter descriptions is not fulfilled
    */
-  public Thread(final Object id, final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer, final ThreadScheduler<T> threadScheduler) {
+  public Thread(final Object id, final ProgramCounter<T> programCounter, final List<? extends T> items, final int itemPointer, final ThreadScheduler<T> threadScheduler) {
     this(id, programCounter, items, itemPointer, null, null, threadScheduler);
   }
 
@@ -333,7 +333,7 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
    *
    * @see #getVariables()
    */
-  public Thread(final Object id, final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer, final Map<Object, CaptureGroup<T>> captureGroups, final Map<Object, Object> variables, final ThreadScheduler<T> threadScheduler) {
+  public Thread(final Object id, final ProgramCounter<T> programCounter, final List<? extends T> items, final int itemPointer, final Map<Object, CaptureGroup<T>> captureGroups, final Map<Object, Object> variables, final ThreadScheduler<T> threadScheduler) {
     super();
     this.state = State.VIABLE;
 
@@ -434,11 +434,11 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
    * the keys they were stored under as a result of the {@link
    * #save(Object)} and {@link #stop(Object)} operations
    */
-  public final Map<Object, List<T>> getSubmatches() {
+  public final Map<Object, List<? extends T>> getSubmatches() {
     if (State.MATCH != this.getState()) {
       throw new IllegalStateException();
     }
-    Map<Object, List<T>> returnValue = null;
+    Map<Object, List<? extends T>> returnValue = null;
     if (this.captureGroups != null && !this.captureGroups.isEmpty()) {
       final Set<Entry<Object, CaptureGroup<T>>> entries = this.captureGroups.entrySet();
       if (entries != null) {
@@ -448,7 +448,7 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
           if (cg != null) {
             final Object key = entry.getKey();
             if (returnValue == null) {
-              returnValue = new HashMap<Object, List<T>>();
+              returnValue = new HashMap<Object, List<? extends T>>();
             }
             returnValue.put(key, cg.getItems());
           }
@@ -584,7 +584,7 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
    * {@linkplain #isViable() is not viable}
    */
   @Override
-  public final Thread<T> newThread(final Object id, final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer, final Map<Object, CaptureGroup<T>> captureGroups, final Map<Object, Object> variables) {
+  public final Thread<T> newThread(final Object id, final ProgramCounter<T> programCounter, final List<? extends T> items, final int itemPointer, final Map<Object, CaptureGroup<T>> captureGroups, final Map<Object, Object> variables) {
     this.ensureViable();
     if (this.threadScheduler == null) {
       throw new IllegalStateException("threadScheduler == null");
@@ -1035,8 +1035,8 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
    *
    * @return a {@link List} of items; may be {@code null}
    */
-  public final List<T> getGroup(final Object key) {
-    List<T> result = null;
+  public final List<? extends T> getGroup(final Object key) {
+    List<? extends T> result = null;
     if (this.captureGroups != null) {
       final CaptureGroup<T> cg = this.captureGroups.get(key);
       if (cg != null) {

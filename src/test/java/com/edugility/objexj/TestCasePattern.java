@@ -83,7 +83,7 @@ public class TestCasePattern {
     assertNotNull(matcher);
     assertTrue(matcher.matches());
     assertEquals(2, matcher.groupCount());
-    final List<Exception> group1 = matcher.group(1);
+    final List<? extends Exception> group1 = matcher.group(1);
     assertNotNull(group1);
     assertEquals(1, group1.size());
     final Exception group1Exception = group1.get(0);
@@ -106,7 +106,7 @@ public class TestCasePattern {
     assertNotNull(matcher);
     assertTrue(matcher.matches());
     assertEquals(2, matcher.groupCount());
-    final List<Exception> group1 = matcher.group(1);
+    final List<? extends Exception> group1 = matcher.group(1);
     assertNotNull(group1);
     assertEquals(1, group1.size());
     final Exception group1Exception = group1.get(0);
@@ -129,7 +129,7 @@ public class TestCasePattern {
     assertNotNull(matcher);
     assertTrue(matcher.matches());
     assertEquals(1, matcher.groupCount());
-    final List<Exception> group1 = matcher.group(0);
+    final List<? extends Exception> group1 = matcher.group(0);
     assertNotNull(group1);
     assertEquals(1, group1.size());
     final Exception group1Exception = group1.get(0);

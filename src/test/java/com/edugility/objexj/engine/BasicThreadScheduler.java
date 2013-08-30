@@ -72,7 +72,7 @@ public class BasicThreadScheduler<T> implements ThreadScheduler<T> {
    * {@code null} is supplied with a {@code null} value
    */
   @Override
-  public Thread<T> newThread(final Object id, final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer, final Map<Object, CaptureGroup<T>> captureGroups, final Map<Object, Object> variables) {
+  public Thread<T> newThread(final Object id, final ProgramCounter<T> programCounter, final List<? extends T> items, final int itemPointer, final Map<Object, CaptureGroup<T>> captureGroups, final Map<Object, Object> variables) {
     return new Thread<T>(id, programCounter, items, itemPointer, captureGroups, variables, this);
   }
 

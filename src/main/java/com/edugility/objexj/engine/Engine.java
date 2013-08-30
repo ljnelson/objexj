@@ -207,7 +207,7 @@ public class Engine<T> {
      * outlined as part of the parameter descriptions is not fulfilled
      */
     @Override
-    public final Thread<T> newThread(Object id, final ProgramCounter<T> programCounter, final List<T> items, final int itemPointer, final Map<Object, CaptureGroup<T>> captureGroups, final Map<Object, Object> variables) {
+    public final Thread<T> newThread(Object id, final ProgramCounter<T> programCounter, final List<? extends T> items, final int itemPointer, final Map<Object, CaptureGroup<T>> captureGroups, final Map<Object, Object> variables) {
       if (this.logger != null && this.logger.isLoggable(Level.FINER)) {
         this.logger.entering(this.getClass().getName(), "newThread", new Object[] { id, programCounter, items, itemPointer, captureGroups, variables });
       }      
