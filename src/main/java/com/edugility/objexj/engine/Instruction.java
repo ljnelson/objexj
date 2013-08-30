@@ -90,8 +90,10 @@ public abstract class Instruction<T> implements Serializable {
   public abstract void execute(final InstructionContext<T> context);
 
   /**
-   * Loads a {@link Class}.  This implementation uses the {@linkplain
-   * java.lang.Thread#getContextClassLoader() context classloader}.
+   * Loads a {@link Class}.  This implementation uses the {@link
+   * Class#forName(String, boolean, ClassLoader)} method, passing the
+   * supplied {@code className}, {@code true} and the return value of
+   * the {@link Thread#getContextClassLoader()} method as arguments.
    *
    * @param className the name of the class to load; must not be
    * {@code null}
@@ -109,7 +111,7 @@ public abstract class Instruction<T> implements Serializable {
     if (className == null) {
       throw new IllegalArgumentException("className", new NullPointerException("className"));
     }
-    return java.lang.Thread.currentThread().getContextClassLoader().loadClass(className);
+    return Class.forName(className, true, java.lang.Thread.currentThread().getContextClassLoader());
   }
 
   /**
@@ -211,7 +213,7 @@ public abstract class Instruction<T> implements Serializable {
     final String command = String.format("com.edugility.objexj.engine.%s%s", rawCommand.substring(0, 1).toUpperCase(), rawCommand.substring(1));
     assert command != null;
     
-    final Class<?> instructionClass = java.lang.Thread.currentThread().getContextClassLoader().loadClass(command);
+    final Class<?> instructionClass = Class.forName(command, true, java.lang.Thread.currentThread().getContextClassLoader());
     assert instructionClass != null;
     if (!Instruction.class.isAssignableFrom(instructionClass)) {
       throw new IllegalArgumentException("bad instruction: " + command);

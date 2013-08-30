@@ -288,26 +288,26 @@
     <junitVersion>4.11</junitVersion>
     <mavenAssemblyPluginVersion>2.4</mavenAssemblyPluginVersion>
     <mavenCleanPluginVersion>2.5</mavenCleanPluginVersion>
-    <mavenCompilerPluginVersion>3.0</mavenCompilerPluginVersion>
-    <mavenDependencyPluginVersion>2.7</mavenDependencyPluginVersion>
+    <mavenCompilerPluginVersion>3.1</mavenCompilerPluginVersion>
+    <mavenDependencyPluginVersion>2.8</mavenDependencyPluginVersion>
     <mavenDeployPluginVersion>2.7</mavenDeployPluginVersion>
-    <mavenEnforcerPluginVersion>1.2</mavenEnforcerPluginVersion>
+    <mavenEnforcerPluginVersion>1.3.1</mavenEnforcerPluginVersion>
     <mavenGpgPluginVersion>1.4</mavenGpgPluginVersion>
     <mavenInstallPluginVersion>2.4</mavenInstallPluginVersion>
     <mavenJarPluginVersion>2.4</mavenJarPluginVersion>
-    <mavenJavadocPluginVersion>2.9</mavenJavadocPluginVersion>
+    <mavenJavadocPluginVersion>2.9.1</mavenJavadocPluginVersion>
     <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
-    <mavenProjectInfoReportsPlugin>2.6</mavenProjectInfoReportsPlugin>
-    <mavenReleasePluginVersion>2.4</mavenReleasePluginVersion>
+    <mavenProjectInfoReportsPlugin>2.7</mavenProjectInfoReportsPlugin>
+    <mavenReleasePluginVersion>2.4.1</mavenReleasePluginVersion>
     <mavenResourcesPluginVersion>2.6</mavenResourcesPluginVersion>
     <mavenScmManagerPlexusVersion>${mavenScmPluginVersion}</mavenScmManagerPlexusVersion>
     <mavenScmPluginVersion>1.8.1</mavenScmPluginVersion>
-    <mavenSitePluginVersion>3.2</mavenSitePluginVersion>
+    <mavenSitePluginVersion>3.3</mavenSitePluginVersion>
     <mavenSourcePluginVersion>2.2.1</mavenSourcePluginVersion>
-    <mavenSurefirePluginVersion>2.14</mavenSurefirePluginVersion>
+    <mavenSurefirePluginVersion>2.16</mavenSurefirePluginVersion>
     <mvelVersion>2.1.3.Final</mvelVersion>
-    <siteMavenPluginVersion>0.7</siteMavenPluginVersion>
-    <versionsMavenPluginVersion>2.0</versionsMavenPluginVersion>
+    <siteMavenPluginVersion>0.8</siteMavenPluginVersion>
+    <versionsMavenPluginVersion>2.1</versionsMavenPluginVersion>
 
     <!-- Other Properties -->
     <loggingConfigFile>${basedir}/logging.properties</loggingConfigFile>

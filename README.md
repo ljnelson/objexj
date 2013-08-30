@@ -5,7 +5,7 @@
 
 ### January 16, 2012
 
-### <a href="mailto:ljnelson@gmail.com">ljnelson@gmail.com</a>
+### [Laird Nelson][1]
 
 `objexj` is a small project that provides the ability to match *input*
 (a `List` of items) against an *expression*.
@@ -18,11 +18,9 @@ not just characters in a string.
 The syntax hews close to Perl-compatible regular expressions, with a
 few modifications.
 
-The underlying machinery is heavily inspired by [Russ Cox][1]'s
+The underlying machinery is heavily inspired by [Russ Cox][2]'s
 excellent paper entitled [Regular Expression Matching: the Virtual
-Machine Approach][2].
-
-This project is in heavy development.
+Machine Approach][3].
 
 ### Sample Code
 
@@ -53,6 +51,6 @@ This project is in heavy development.
     }
 
 
-
-[1]: https://plus.google.com/116810148281701144465/posts
-[2]: http://swtch.com/~rsc/regexp/regexp2.html
+[1]: http://about.me/lairdnelson
+[2]: https://plus.google.com/116810148281701144465/posts
+[3]: http://swtch.com/~rsc/regexp/regexp2.html
