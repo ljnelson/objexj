@@ -93,7 +93,8 @@ public abstract class Instruction<T> implements Serializable {
    * Loads a {@link Class}.  This implementation uses the {@link
    * Class#forName(String, boolean, ClassLoader)} method, passing the
    * supplied {@code className}, {@code true} and the return value of
-   * the {@link Thread#getContextClassLoader()} method as arguments.
+   * the {@link java.lang.Thread#getContextClassLoader()} method as
+   * arguments.
    *
    * @param className the name of the class to load; must not be
    * {@code null}
