@@ -71,7 +71,7 @@
 <FONT color="green">068</FONT>       *<a name="line.68"></a>
 <FONT color="green">069</FONT>       * @return a new non-{@code null} {@link Thread}<a name="line.69"></a>
 <FONT color="green">070</FONT>       */<a name="line.70"></a>
-<FONT color="green">071</FONT>      public Thread&lt;T&gt; newThread(final Object id, final ProgramCounter&lt;T&gt; programCounter, final List&lt;T&gt; items, final int itemPointer, final Map&lt;Object, CaptureGroup&lt;T&gt;&gt; captureGroups, final Map&lt;Object, Object&gt; variables);<a name="line.71"></a>
+<FONT color="green">071</FONT>      public Thread&lt;T&gt; newThread(final Object id, final ProgramCounter&lt;T&gt; programCounter, final List&lt;? extends T&gt; items, final int itemPointer, final Map&lt;Object, CaptureGroup&lt;T&gt;&gt; captureGroups, final Map&lt;Object, Object&gt; variables);<a name="line.71"></a>
 <FONT color="green">072</FONT>    <a name="line.72"></a>
 <FONT color="green">073</FONT>      /**<a name="line.73"></a>
 <FONT color="green">074</FONT>       * Schedules the supplied {@link Thread} for execution immediately<a name="line.74"></a>

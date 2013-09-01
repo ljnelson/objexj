@@ -193,9 +193,9 @@
 <FONT color="green">190</FONT>       * @see &lt;a href="../../../../syntax.html" target="_parent"&gt;Syntax<a name="line.190"></a>
 <FONT color="green">191</FONT>       * Guide&lt;/a&gt;<a name="line.191"></a>
 <FONT color="green">192</FONT>       */<a name="line.192"></a>
-<FONT color="green">193</FONT>      public final List&lt;T&gt; group(final int index) {<a name="line.193"></a>
+<FONT color="green">193</FONT>      public final List&lt;? extends T&gt; group(final int index) {<a name="line.193"></a>
 <FONT color="green">194</FONT>        final MatchResult&lt;T&gt; matchResult = this.getMatchResult();<a name="line.194"></a>
-<FONT color="green">195</FONT>        final List&lt;T&gt; result;<a name="line.195"></a>
+<FONT color="green">195</FONT>        final List&lt;? extends T&gt; result;<a name="line.195"></a>
 <FONT color="green">196</FONT>        if (matchResult == null) {<a name="line.196"></a>
 <FONT color="green">197</FONT>          result = null;<a name="line.197"></a>
 <FONT color="green">198</FONT>        } else {<a name="line.198"></a>

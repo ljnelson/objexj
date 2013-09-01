@@ -86,7 +86,7 @@
 <FONT color="green">083</FONT>        assertNotNull(matcher);<a name="line.83"></a>
 <FONT color="green">084</FONT>        assertTrue(matcher.matches());<a name="line.84"></a>
 <FONT color="green">085</FONT>        assertEquals(2, matcher.groupCount());<a name="line.85"></a>
-<FONT color="green">086</FONT>        final List&lt;Exception&gt; group1 = matcher.group(1);<a name="line.86"></a>
+<FONT color="green">086</FONT>        final List&lt;? extends Exception&gt; group1 = matcher.group(1);<a name="line.86"></a>
 <FONT color="green">087</FONT>        assertNotNull(group1);<a name="line.87"></a>
 <FONT color="green">088</FONT>        assertEquals(1, group1.size());<a name="line.88"></a>
 <FONT color="green">089</FONT>        final Exception group1Exception = group1.get(0);<a name="line.89"></a>
@@ -109,7 +109,7 @@
 <FONT color="green">106</FONT>        assertNotNull(matcher);<a name="line.106"></a>
 <FONT color="green">107</FONT>        assertTrue(matcher.matches());<a name="line.107"></a>
 <FONT color="green">108</FONT>        assertEquals(2, matcher.groupCount());<a name="line.108"></a>
-<FONT color="green">109</FONT>        final List&lt;Exception&gt; group1 = matcher.group(1);<a name="line.109"></a>
+<FONT color="green">109</FONT>        final List&lt;? extends Exception&gt; group1 = matcher.group(1);<a name="line.109"></a>
 <FONT color="green">110</FONT>        assertNotNull(group1);<a name="line.110"></a>
 <FONT color="green">111</FONT>        assertEquals(1, group1.size());<a name="line.111"></a>
 <FONT color="green">112</FONT>        final Exception group1Exception = group1.get(0);<a name="line.112"></a>
@@ -132,7 +132,7 @@
 <FONT color="green">129</FONT>        assertNotNull(matcher);<a name="line.129"></a>
 <FONT color="green">130</FONT>        assertTrue(matcher.matches());<a name="line.130"></a>
 <FONT color="green">131</FONT>        assertEquals(1, matcher.groupCount());<a name="line.131"></a>
-<FONT color="green">132</FONT>        final List&lt;Exception&gt; group1 = matcher.group(0);<a name="line.132"></a>
+<FONT color="green">132</FONT>        final List&lt;? extends Exception&gt; group1 = matcher.group(0);<a name="line.132"></a>
 <FONT color="green">133</FONT>        assertNotNull(group1);<a name="line.133"></a>
 <FONT color="green">134</FONT>        assertEquals(1, group1.size());<a name="line.134"></a>
 <FONT color="green">135</FONT>        final Exception group1Exception = group1.get(0);<a name="line.135"></a>

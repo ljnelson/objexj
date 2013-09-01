@@ -210,7 +210,7 @@
 <FONT color="green">207</FONT>         * outlined as part of the parameter descriptions is not fulfilled<a name="line.207"></a>
 <FONT color="green">208</FONT>         */<a name="line.208"></a>
 <FONT color="green">209</FONT>        @Override<a name="line.209"></a>
-<FONT color="green">210</FONT>        public final Thread&lt;T&gt; newThread(Object id, final ProgramCounter&lt;T&gt; programCounter, final List&lt;T&gt; items, final int itemPointer, final Map&lt;Object, CaptureGroup&lt;T&gt;&gt; captureGroups, final Map&lt;Object, Object&gt; variables) {<a name="line.210"></a>
+<FONT color="green">210</FONT>        public final Thread&lt;T&gt; newThread(Object id, final ProgramCounter&lt;T&gt; programCounter, final List&lt;? extends T&gt; items, final int itemPointer, final Map&lt;Object, CaptureGroup&lt;T&gt;&gt; captureGroups, final Map&lt;Object, Object&gt; variables) {<a name="line.210"></a>
 <FONT color="green">211</FONT>          if (this.logger != null &amp;&amp; this.logger.isLoggable(Level.FINER)) {<a name="line.211"></a>
 <FONT color="green">212</FONT>            this.logger.entering(this.getClass().getName(), "newThread", new Object[] { id, programCounter, items, itemPointer, captureGroups, variables });<a name="line.212"></a>
 <FONT color="green">213</FONT>          }      <a name="line.213"></a>

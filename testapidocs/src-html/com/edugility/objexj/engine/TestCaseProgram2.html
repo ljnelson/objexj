@@ -52,7 +52,7 @@
 <FONT color="green">049</FONT>      public void testMatchWithAAB() {<a name="line.49"></a>
 <FONT color="green">050</FONT>        final Thread&lt;Character&gt; t = this.run(Arrays.asList('a', 'a', 'b'));<a name="line.50"></a>
 <FONT color="green">051</FONT>        assertMatch(t);<a name="line.51"></a>
-<FONT color="green">052</FONT>        final Map&lt;Object, List&lt;Character&gt;&gt; submatches = t.getSubmatches();<a name="line.52"></a>
+<FONT color="green">052</FONT>        final Map&lt;Object, List&lt;? extends Character&gt;&gt; submatches = t.getSubmatches();<a name="line.52"></a>
 <FONT color="green">053</FONT>        assertNotNull(submatches);<a name="line.53"></a>
 <FONT color="green">054</FONT>        assertEquals(2, submatches.size());<a name="line.54"></a>
 <FONT color="green">055</FONT>        assertTrue(submatches.containsKey("FIRST"));<a name="line.55"></a>

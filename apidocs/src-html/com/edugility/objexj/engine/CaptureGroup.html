@@ -80,7 +80,7 @@
 <FONT color="green">077</FONT>       * will capture a sub-{@link List}.  This field is never {@code<a name="line.77"></a>
 <FONT color="green">078</FONT>       * null}.<a name="line.78"></a>
 <FONT color="green">079</FONT>       */<a name="line.79"></a>
-<FONT color="green">080</FONT>      private List&lt;T&gt; items;<a name="line.80"></a>
+<FONT color="green">080</FONT>      private List&lt;? extends T&gt; items;<a name="line.80"></a>
 <FONT color="green">081</FONT>    <a name="line.81"></a>
 <FONT color="green">082</FONT>      /**<a name="line.82"></a>
 <FONT color="green">083</FONT>       * Creates a new {@link CaptureGroup}.<a name="line.83"></a>
@@ -98,7 +98,7 @@
 <FONT color="green">095</FONT>       * {@code startIndex} is less than {@code 0} or {@code startIndex}<a name="line.95"></a>
 <FONT color="green">096</FONT>       * is greater than or equal to {@link List#size() items.size()}<a name="line.96"></a>
 <FONT color="green">097</FONT>       */ <a name="line.97"></a>
-<FONT color="green">098</FONT>      public CaptureGroup(final List&lt;T&gt; items, final int startIndex) {<a name="line.98"></a>
+<FONT color="green">098</FONT>      public CaptureGroup(final List&lt;? extends T&gt; items, final int startIndex) {<a name="line.98"></a>
 <FONT color="green">099</FONT>        super();<a name="line.99"></a>
 <FONT color="green">100</FONT>        if (items == null) {<a name="line.100"></a>
 <FONT color="green">101</FONT>          throw new IllegalArgumentException("items", new NullPointerException("items"));<a name="line.101"></a>
@@ -129,7 +129,7 @@
 <FONT color="green">126</FONT>       * by the {@link List#subList(int, int)} method (or {@link<a name="line.126"></a>
 <FONT color="green">127</FONT>       * Collections#emptyList()})<a name="line.127"></a>
 <FONT color="green">128</FONT>       */<a name="line.128"></a>
-<FONT color="green">129</FONT>      public final List&lt;T&gt; getItems() {<a name="line.129"></a>
+<FONT color="green">129</FONT>      public final List&lt;? extends T&gt; getItems() {<a name="line.129"></a>
 <FONT color="green">130</FONT>        if (this.items == null) {<a name="line.130"></a>
 <FONT color="green">131</FONT>          return Collections.emptyList();<a name="line.131"></a>
 <FONT color="green">132</FONT>        } else {<a name="line.132"></a>
@@ -146,7 +146,7 @@
 <FONT color="green">143</FONT>       * @exception IllegalArgumentException if {@code items} is {@code<a name="line.143"></a>
 <FONT color="green">144</FONT>       * null}<a name="line.144"></a>
 <FONT color="green">145</FONT>       */<a name="line.145"></a>
-<FONT color="green">146</FONT>      private final void setItemList(final List&lt;T&gt; items) {<a name="line.146"></a>
+<FONT color="green">146</FONT>      private final void setItemList(final List&lt;? extends T&gt; items) {<a name="line.146"></a>
 <FONT color="green">147</FONT>        if (items == null) {<a name="line.147"></a>
 <FONT color="green">148</FONT>          throw new IllegalArgumentException("items", new NullPointerException("items == null"));<a name="line.148"></a>
 <FONT color="green">149</FONT>        }<a name="line.149"></a>

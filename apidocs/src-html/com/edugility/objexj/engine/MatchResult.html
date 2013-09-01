@@ -130,8 +130,8 @@
 <FONT color="green">127</FONT>       *<a name="line.127"></a>
 <FONT color="green">128</FONT>       * @see Thread#getGroup(Object)<a name="line.128"></a>
 <FONT color="green">129</FONT>       */<a name="line.129"></a>
-<FONT color="green">130</FONT>      public List&lt;T&gt; getGroup(final Object key) {<a name="line.130"></a>
-<FONT color="green">131</FONT>        List&lt;T&gt; result = null;<a name="line.131"></a>
+<FONT color="green">130</FONT>      public List&lt;? extends T&gt; getGroup(final Object key) {<a name="line.130"></a>
+<FONT color="green">131</FONT>        List&lt;? extends T&gt; result = null;<a name="line.131"></a>
 <FONT color="green">132</FONT>        if (this.thread != null) {<a name="line.132"></a>
 <FONT color="green">133</FONT>          result = thread.getGroup(key);<a name="line.133"></a>
 <FONT color="green">134</FONT>        }<a name="line.134"></a>

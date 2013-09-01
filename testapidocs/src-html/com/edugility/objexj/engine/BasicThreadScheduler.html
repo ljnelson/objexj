@@ -75,7 +75,7 @@
 <FONT color="green">072</FONT>       * {@code null} is supplied with a {@code null} value<a name="line.72"></a>
 <FONT color="green">073</FONT>       */<a name="line.73"></a>
 <FONT color="green">074</FONT>      @Override<a name="line.74"></a>
-<FONT color="green">075</FONT>      public Thread&lt;T&gt; newThread(final Object id, final ProgramCounter&lt;T&gt; programCounter, final List&lt;T&gt; items, final int itemPointer, final Map&lt;Object, CaptureGroup&lt;T&gt;&gt; captureGroups, final Map&lt;Object, Object&gt; variables) {<a name="line.75"></a>
+<FONT color="green">075</FONT>      public Thread&lt;T&gt; newThread(final Object id, final ProgramCounter&lt;T&gt; programCounter, final List&lt;? extends T&gt; items, final int itemPointer, final Map&lt;Object, CaptureGroup&lt;T&gt;&gt; captureGroups, final Map&lt;Object, Object&gt; variables) {<a name="line.75"></a>
 <FONT color="green">076</FONT>        return new Thread&lt;T&gt;(id, programCounter, items, itemPointer, captureGroups, variables, this);<a name="line.76"></a>
 <FONT color="green">077</FONT>      }<a name="line.77"></a>
 <FONT color="green">078</FONT>    <a name="line.78"></a>

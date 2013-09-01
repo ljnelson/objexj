@@ -167,7 +167,7 @@
 <FONT color="green">164</FONT>       *<a name="line.164"></a>
 <FONT color="green">165</FONT>       * @see #read()<a name="line.165"></a>
 <FONT color="green">166</FONT>       */<a name="line.166"></a>
-<FONT color="green">167</FONT>      private final List&lt;T&gt; items;<a name="line.167"></a>
+<FONT color="green">167</FONT>      private final List&lt;? extends T&gt; items;<a name="line.167"></a>
 <FONT color="green">168</FONT>    <a name="line.168"></a>
 <FONT color="green">169</FONT>      /**<a name="line.169"></a>
 <FONT color="green">170</FONT>       * The index used by the {@link #read()} method (and incremented by<a name="line.170"></a>
@@ -290,7 +290,7 @@
 <FONT color="green">287</FONT>       * @exception IllegalArgumentException if any of the preconditions<a name="line.287"></a>
 <FONT color="green">288</FONT>       * outlined as part of the parameter descriptions is not fulfilled<a name="line.288"></a>
 <FONT color="green">289</FONT>       */<a name="line.289"></a>
-<FONT color="green">290</FONT>      public Thread(final Object id, final ProgramCounter&lt;T&gt; programCounter, final List&lt;T&gt; items, final int itemPointer, final ThreadScheduler&lt;T&gt; threadScheduler) {<a name="line.290"></a>
+<FONT color="green">290</FONT>      public Thread(final Object id, final ProgramCounter&lt;T&gt; programCounter, final List&lt;? extends T&gt; items, final int itemPointer, final ThreadScheduler&lt;T&gt; threadScheduler) {<a name="line.290"></a>
 <FONT color="green">291</FONT>        this(id, programCounter, items, itemPointer, null, null, threadScheduler);<a name="line.291"></a>
 <FONT color="green">292</FONT>      }<a name="line.292"></a>
 <FONT color="green">293</FONT>    <a name="line.293"></a>
@@ -336,7 +336,7 @@
 <FONT color="green">333</FONT>       *<a name="line.333"></a>
 <FONT color="green">334</FONT>       * @see #getVariables()<a name="line.334"></a>
 <FONT color="green">335</FONT>       */<a name="line.335"></a>
-<FONT color="green">336</FONT>      public Thread(final Object id, final ProgramCounter&lt;T&gt; programCounter, final List&lt;T&gt; items, final int itemPointer, final Map&lt;Object, CaptureGroup&lt;T&gt;&gt; captureGroups, final Map&lt;Object, Object&gt; variables, final ThreadScheduler&lt;T&gt; threadScheduler) {<a name="line.336"></a>
+<FONT color="green">336</FONT>      public Thread(final Object id, final ProgramCounter&lt;T&gt; programCounter, final List&lt;? extends T&gt; items, final int itemPointer, final Map&lt;Object, CaptureGroup&lt;T&gt;&gt; captureGroups, final Map&lt;Object, Object&gt; variables, final ThreadScheduler&lt;T&gt; threadScheduler) {<a name="line.336"></a>
 <FONT color="green">337</FONT>        super();<a name="line.337"></a>
 <FONT color="green">338</FONT>        this.state = State.VIABLE;<a name="line.338"></a>
 <FONT color="green">339</FONT>    <a name="line.339"></a>
@@ -437,11 +437,11 @@
 <FONT color="green">434</FONT>       * the keys they were stored under as a result of the {@link<a name="line.434"></a>
 <FONT color="green">435</FONT>       * #save(Object)} and {@link #stop(Object)} operations<a name="line.435"></a>
 <FONT color="green">436</FONT>       */<a name="line.436"></a>
-<FONT color="green">437</FONT>      public final Map&lt;Object, List&lt;T&gt;&gt; getSubmatches() {<a name="line.437"></a>
+<FONT color="green">437</FONT>      public final Map&lt;Object, List&lt;? extends T&gt;&gt; getSubmatches() {<a name="line.437"></a>
 <FONT color="green">438</FONT>        if (State.MATCH != this.getState()) {<a name="line.438"></a>
 <FONT color="green">439</FONT>          throw new IllegalStateException();<a name="line.439"></a>
 <FONT color="green">440</FONT>        }<a name="line.440"></a>
-<FONT color="green">441</FONT>        Map&lt;Object, List&lt;T&gt;&gt; returnValue = null;<a name="line.441"></a>
+<FONT color="green">441</FONT>        Map&lt;Object, List&lt;? extends T&gt;&gt; returnValue = null;<a name="line.441"></a>
 <FONT color="green">442</FONT>        if (this.captureGroups != null &amp;&amp; !this.captureGroups.isEmpty()) {<a name="line.442"></a>
 <FONT color="green">443</FONT>          final Set&lt;Entry&lt;Object, CaptureGroup&lt;T&gt;&gt;&gt; entries = this.captureGroups.entrySet();<a name="line.443"></a>
 <FONT color="green">444</FONT>          if (entries != null) {<a name="line.444"></a>
@@ -451,7 +451,7 @@
 <FONT color="green">448</FONT>              if (cg != null) {<a name="line.448"></a>
 <FONT color="green">449</FONT>                final Object key = entry.getKey();<a name="line.449"></a>
 <FONT color="green">450</FONT>                if (returnValue == null) {<a name="line.450"></a>
-<FONT color="green">451</FONT>                  returnValue = new HashMap&lt;Object, List&lt;T&gt;&gt;();<a name="line.451"></a>
+<FONT color="green">451</FONT>                  returnValue = new HashMap&lt;Object, List&lt;? extends T&gt;&gt;();<a name="line.451"></a>
 <FONT color="green">452</FONT>                }<a name="line.452"></a>
 <FONT color="green">453</FONT>                returnValue.put(key, cg.getItems());<a name="line.453"></a>
 <FONT color="green">454</FONT>              }<a name="line.454"></a>
@@ -587,7 +587,7 @@
 <FONT color="green">584</FONT>       * {@linkplain #isViable() is not viable}<a name="line.584"></a>
 <FONT color="green">585</FONT>       */<a name="line.585"></a>
 <FONT color="green">586</FONT>      @Override<a name="line.586"></a>
-<FONT color="green">587</FONT>      public final Thread&lt;T&gt; newThread(final Object id, final ProgramCounter&lt;T&gt; programCounter, final List&lt;T&gt; items, final int itemPointer, final Map&lt;Object, CaptureGroup&lt;T&gt;&gt; captureGroups, final Map&lt;Object, Object&gt; variables) {<a name="line.587"></a>
+<FONT color="green">587</FONT>      public final Thread&lt;T&gt; newThread(final Object id, final ProgramCounter&lt;T&gt; programCounter, final List&lt;? extends T&gt; items, final int itemPointer, final Map&lt;Object, CaptureGroup&lt;T&gt;&gt; captureGroups, final Map&lt;Object, Object&gt; variables) {<a name="line.587"></a>
 <FONT color="green">588</FONT>        this.ensureViable();<a name="line.588"></a>
 <FONT color="green">589</FONT>        if (this.threadScheduler == null) {<a name="line.589"></a>
 <FONT color="green">590</FONT>          throw new IllegalStateException("threadScheduler == null");<a name="line.590"></a>
@@ -1038,8 +1038,8 @@
 <FONT color="green">1035</FONT>       *<a name="line.1035"></a>
 <FONT color="green">1036</FONT>       * @return a {@link List} of items; may be {@code null}<a name="line.1036"></a>
 <FONT color="green">1037</FONT>       */<a name="line.1037"></a>
-<FONT color="green">1038</FONT>      public final List&lt;T&gt; getGroup(final Object key) {<a name="line.1038"></a>
-<FONT color="green">1039</FONT>        List&lt;T&gt; result = null;<a name="line.1039"></a>
+<FONT color="green">1038</FONT>      public final List&lt;? extends T&gt; getGroup(final Object key) {<a name="line.1038"></a>
+<FONT color="green">1039</FONT>        List&lt;? extends T&gt; result = null;<a name="line.1039"></a>
 <FONT color="green">1040</FONT>        if (this.captureGroups != null) {<a name="line.1040"></a>
 <FONT color="green">1041</FONT>          final CaptureGroup&lt;T&gt; cg = this.captureGroups.get(key);<a name="line.1041"></a>
 <FONT color="green">1042</FONT>          if (cg != null) {<a name="line.1042"></a>
