@@ -260,7 +260,7 @@
             <goals>
               <goal>site</goal>
             </goals>
-            <phase>site-deploy</phase>
+            <phase>deploy</phase>
           </execution>
         </executions>
       </plugin>
@@ -332,6 +332,7 @@
     <links>http://download.oracle.com/javaee/6/api/,http://mvel.codehaus.org/javadoc/2.0/</links>
     <sourcetab>2</sourcetab>
     <stylesheetfile>styles.css</stylesheetfile>
+
 
     <!-- maven-surefire-plugin Properties -->
     <surefire.useFile>false</surefire.useFile>
