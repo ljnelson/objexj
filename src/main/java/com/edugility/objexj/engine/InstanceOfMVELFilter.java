@@ -266,7 +266,7 @@ public class InstanceOfMVELFilter<T> extends MVELFilter<T> {
    * null}
    */
   @Override
-  public boolean accept(final InstructionContext<T> context) {
+  public boolean accept(final InstructionContext<? extends T> context) {
     if (context == null) {
       throw new IllegalArgumentException("context", new NullPointerException("context == null"));
     }

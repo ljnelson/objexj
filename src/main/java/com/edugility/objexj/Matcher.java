@@ -83,13 +83,13 @@ public class Matcher<T> {
    *
    * @see #getInput()
    */
-  private List<T> input;
+  private List<? extends T> input;
 
   /**
    * A {@link MatchResult} that contains the state of the last match
    * attempt.  This field may be {@code null}.
    */
-  private transient MatchResult<T> matchResult;
+  private transient MatchResult<? extends T> matchResult;
 
   /**
    * Creates a {@link Matcher} with the supplied {@link Pattern} and
@@ -104,7 +104,7 @@ public class Matcher<T> {
    * @exception IllegalArgumentException if {@code pattern} is {@code
    * null}
    */
-  Matcher(final Pattern<T> pattern, final List<T> input) {
+  Matcher(final Pattern<T> pattern, final List<? extends T> input) {
     super();
     if (pattern == null) {
       throw new IllegalArgumentException("pattern", new NullPointerException("pattern"));
@@ -128,7 +128,7 @@ public class Matcher<T> {
    * @see #lookingAt()
    */
   public final boolean matches() {
-    final MatchResult<T> matchResult = this.getMatchResult();
+    final MatchResult<?> matchResult = this.getMatchResult();
     return matchResult != null && matchResult.matches();
   }
 
@@ -148,7 +148,7 @@ public class Matcher<T> {
    * @see #matches()
    */
   public final boolean lookingAt() {
-    final MatchResult<T> matchResult = this.getMatchResult();
+    final MatchResult<?> matchResult = this.getMatchResult();
     return matchResult != null && matchResult.lookingAt();
   }
 
@@ -165,7 +165,7 @@ public class Matcher<T> {
    * Guide</a>
    */
   public final int groupCount() {
-    final MatchResult<T> matchResult = this.getMatchResult();
+    final MatchResult<?> matchResult = this.getMatchResult();
     final int result;
     if (matchResult == null) {
       result = 0;
@@ -191,7 +191,7 @@ public class Matcher<T> {
    * Guide</a>
    */
   public final List<? extends T> group(final int index) {
-    final MatchResult<T> matchResult = this.getMatchResult();
+    final MatchResult<? extends T> matchResult = this.getMatchResult();
     final List<? extends T> result;
     if (matchResult == null) {
       result = null;
@@ -213,7 +213,7 @@ public class Matcher<T> {
    */
   public final Map<?, ?> getVariables() {
     Map<?, ?> result = null;
-    final MatchResult<T> matchResult = this.getMatchResult();
+    final MatchResult<?> matchResult = this.getMatchResult();
     if (matchResult == null) {
       result = Collections.emptyMap();
     } else {
@@ -268,7 +268,7 @@ public class Matcher<T> {
    *
    * @return the input, or {@code null}
    */
-  public final List<T> getInput() {
+  public final List<? extends T> getInput() {
     return this.input;
   }
 
@@ -279,7 +279,7 @@ public class Matcher<T> {
    * @return a {@link MatchResult}, or {@code null} if there was no
    * match
    */
-  private final MatchResult<T> getMatchResult() {
+  private final MatchResult<? extends T> getMatchResult() {
     if (this.matchResult == null) {
       final Pattern<T> pattern = this.getPattern();
       assert pattern != null;

@@ -55,7 +55,7 @@ public class TestCaseEngine {
     final Program<Character> program = parser.parse(sourceCode);
     assertNotNull(program);
     final List<Character> input = Arrays.asList('a', 'b', 'c');
-    final MatchResult<Character> match = engine.run(program, input);
+    final MatchResult<? extends Character> match = engine.run(program, input);
     assertNotNull(match);
     assertTrue(match.matches());
   }

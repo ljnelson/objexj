@@ -141,7 +141,7 @@ public class Jump<T> extends Instruction<T> {
    * null}
    */
   @Override
-  public void execute(final InstructionContext<T> context) {
+  public void execute(final InstructionContext<? extends T> context) {
     if (context == null) {
       throw new IllegalArgumentException("context");
     }

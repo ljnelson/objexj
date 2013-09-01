@@ -87,7 +87,7 @@ public abstract class Instruction<T> implements Serializable {
    * @exception IllegalArgumentException if {@code context} is {@code
    * null}
    */
-  public abstract void execute(final InstructionContext<T> context);
+  public abstract void execute(final InstructionContext<? extends T> context);
 
   /**
    * Loads a {@link Class}.  This implementation uses the {@link

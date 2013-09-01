@@ -154,7 +154,7 @@ public class Split<T> extends Jump<T> {
    * null}
    */
   @Override
-  public final void execute(final InstructionContext<T> context) {
+  public final void execute(final InstructionContext<? extends T> context) {
     if (context == null) {
       throw new IllegalArgumentException("context");
     }

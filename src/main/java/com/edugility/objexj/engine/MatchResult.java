@@ -61,7 +61,7 @@ public class MatchResult<T> implements Serializable {
    *
    * <p>This field may be {@code null}.</p>
    */
-  private final Thread<T> thread;
+  private final Thread<? extends T> thread;
 
   /**
    * Creates a new {@link MatchResult}.
@@ -77,7 +77,7 @@ public class MatchResult<T> implements Serializable {
    * @param thread the {@link Thread} that {@linkplain Thread#match()
    * matched}; may be {@code null}
    */
-  MatchResult(final Thread<T> thread) {
+  MatchResult(final Thread<? extends T> thread) {
     super();
     if (thread != null && Thread.State.MATCH != thread.getState()) {
       throw new IllegalArgumentException(String.format("Thread.State.MATCH != thread.getState(): %s", thread.getState()));

@@ -147,7 +147,7 @@ public class Pattern<T> {
    *
    * @return a new {@link Matcher}; never {@code null}
    */
-  public final Matcher<T> matcher(final List<T> items) {
+  public final Matcher<T> matcher(final List<? extends T> items) {
     return new Matcher<T>(this, items);
   }
 
@@ -192,7 +192,7 @@ public class Pattern<T> {
    */
   @Override
   public String toString() {
-    final Program<T> program = this.getProgram();
+    final Program<?> program = this.getProgram();
     assert program != null;
     final String returnValue;
     final Object source = program.getSource();

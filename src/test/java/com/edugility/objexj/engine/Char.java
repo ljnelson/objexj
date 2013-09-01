@@ -49,7 +49,7 @@ public class Char extends Filter<Character> {
   }
 
   @Override
-  public boolean accept(final InstructionContext<Character> context) {
+  public boolean accept(final InstructionContext<? extends Character> context) {
     boolean returnValue = false;
     if (context != null && context.canRead()) {
       final Character x = context.read();

@@ -75,7 +75,7 @@ public class Filter<T> extends Instruction<T> {
    * @see #accept(InstructionContext)
    */
   @Override
-  public final void execute(final InstructionContext<T> context) {
+  public final void execute(final InstructionContext<? extends T> context) {
     if (context == null) {
       throw new IllegalArgumentException("context", new NullPointerException("context == null"));
     }
@@ -97,7 +97,7 @@ public class Filter<T> extends Instruction<T> {
    * InstructionContext#read() produces an <code>Object</code>} that
    * is not {@code null}; {@code false} in all other cases
    */
-  public boolean accept(final InstructionContext<T> context) {
+  public boolean accept(final InstructionContext<? extends T> context) {
     return context != null && context.canRead() && context.read() != null;
   }
 

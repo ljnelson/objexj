@@ -90,7 +90,7 @@ public class Engine<T> {
    * @exception IllegalArgumentException if {@code program} is {@code
    * null}
    */
-  public MatchResult<T> run(final Program<T> program, final List<T> items) {
+  public MatchResult<? extends T> run(final Program<T> program, final List<? extends T> items) {
     if (program == null) {
       throw new IllegalArgumentException("program", new NullPointerException("program"));
     }
@@ -104,7 +104,7 @@ public class Engine<T> {
                                            0,
                                            null,
                                            null));
-    MatchResult<T> result = null;
+    MatchResult<? extends T> result = null;
     while (!threads.isEmpty()) {
       final Thread<T> thread = threads.remove();
       assert thread != null;

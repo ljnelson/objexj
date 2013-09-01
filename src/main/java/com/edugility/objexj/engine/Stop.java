@@ -97,7 +97,7 @@ public class Stop<T> extends Instruction<T> {
    * @see InstructionContext#stop(Object)
    */
   @Override
-  public final void execute(final InstructionContext<T> context) {
+  public final void execute(final InstructionContext<? extends T> context) {
     if (context == null) {
       throw new IllegalArgumentException("context");
     }
