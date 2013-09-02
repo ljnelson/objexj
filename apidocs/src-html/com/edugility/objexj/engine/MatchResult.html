@@ -64,7 +64,7 @@
 <FONT color="green">061</FONT>       *<a name="line.61"></a>
 <FONT color="green">062</FONT>       * &lt;p&gt;This field may be {@code null}.&lt;/p&gt;<a name="line.62"></a>
 <FONT color="green">063</FONT>       */<a name="line.63"></a>
-<FONT color="green">064</FONT>      private final Thread&lt;T&gt; thread;<a name="line.64"></a>
+<FONT color="green">064</FONT>      private final Thread&lt;? extends T&gt; thread;<a name="line.64"></a>
 <FONT color="green">065</FONT>    <a name="line.65"></a>
 <FONT color="green">066</FONT>      /**<a name="line.66"></a>
 <FONT color="green">067</FONT>       * Creates a new {@link MatchResult}.<a name="line.67"></a>
@@ -80,7 +80,7 @@
 <FONT color="green">077</FONT>       * @param thread the {@link Thread} that {@linkplain Thread#match()<a name="line.77"></a>
 <FONT color="green">078</FONT>       * matched}; may be {@code null}<a name="line.78"></a>
 <FONT color="green">079</FONT>       */<a name="line.79"></a>
-<FONT color="green">080</FONT>      MatchResult(final Thread&lt;T&gt; thread) {<a name="line.80"></a>
+<FONT color="green">080</FONT>      MatchResult(final Thread&lt;? extends T&gt; thread) {<a name="line.80"></a>
 <FONT color="green">081</FONT>        super();<a name="line.81"></a>
 <FONT color="green">082</FONT>        if (thread != null &amp;&amp; Thread.State.MATCH != thread.getState()) {<a name="line.82"></a>
 <FONT color="green">083</FONT>          throw new IllegalArgumentException(String.format("Thread.State.MATCH != thread.getState(): %s", thread.getState()));<a name="line.83"></a>

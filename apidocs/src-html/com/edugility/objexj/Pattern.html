@@ -150,7 +150,7 @@
 <FONT color="green">147</FONT>       *<a name="line.147"></a>
 <FONT color="green">148</FONT>       * @return a new {@link Matcher}; never {@code null}<a name="line.148"></a>
 <FONT color="green">149</FONT>       */<a name="line.149"></a>
-<FONT color="green">150</FONT>      public final Matcher&lt;T&gt; matcher(final List&lt;T&gt; items) {<a name="line.150"></a>
+<FONT color="green">150</FONT>      public final Matcher&lt;T&gt; matcher(final List&lt;? extends T&gt; items) {<a name="line.150"></a>
 <FONT color="green">151</FONT>        return new Matcher&lt;T&gt;(this, items);<a name="line.151"></a>
 <FONT color="green">152</FONT>      }<a name="line.152"></a>
 <FONT color="green">153</FONT>    <a name="line.153"></a>
@@ -195,7 +195,7 @@
 <FONT color="green">192</FONT>       */<a name="line.192"></a>
 <FONT color="green">193</FONT>      @Override<a name="line.193"></a>
 <FONT color="green">194</FONT>      public String toString() {<a name="line.194"></a>
-<FONT color="green">195</FONT>        final Program&lt;T&gt; program = this.getProgram();<a name="line.195"></a>
+<FONT color="green">195</FONT>        final Program&lt;?&gt; program = this.getProgram();<a name="line.195"></a>
 <FONT color="green">196</FONT>        assert program != null;<a name="line.196"></a>
 <FONT color="green">197</FONT>        final String returnValue;<a name="line.197"></a>
 <FONT color="green">198</FONT>        final Object source = program.getSource();<a name="line.198"></a>

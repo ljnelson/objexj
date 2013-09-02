@@ -78,7 +78,7 @@
 <FONT color="green">075</FONT>       * @see #accept(InstructionContext)<a name="line.75"></a>
 <FONT color="green">076</FONT>       */<a name="line.76"></a>
 <FONT color="green">077</FONT>      @Override<a name="line.77"></a>
-<FONT color="green">078</FONT>      public final void execute(final InstructionContext&lt;T&gt; context) {<a name="line.78"></a>
+<FONT color="green">078</FONT>      public final void execute(final InstructionContext&lt;? extends T&gt; context) {<a name="line.78"></a>
 <FONT color="green">079</FONT>        if (context == null) {<a name="line.79"></a>
 <FONT color="green">080</FONT>          throw new IllegalArgumentException("context", new NullPointerException("context == null"));<a name="line.80"></a>
 <FONT color="green">081</FONT>        }<a name="line.81"></a>
@@ -100,7 +100,7 @@
 <FONT color="green">097</FONT>       * InstructionContext#read() produces an &lt;code&gt;Object&lt;/code&gt;} that<a name="line.97"></a>
 <FONT color="green">098</FONT>       * is not {@code null}; {@code false} in all other cases<a name="line.98"></a>
 <FONT color="green">099</FONT>       */<a name="line.99"></a>
-<FONT color="green">100</FONT>      public boolean accept(final InstructionContext&lt;T&gt; context) {<a name="line.100"></a>
+<FONT color="green">100</FONT>      public boolean accept(final InstructionContext&lt;? extends T&gt; context) {<a name="line.100"></a>
 <FONT color="green">101</FONT>        return context != null &amp;&amp; context.canRead() &amp;&amp; context.read() != null;<a name="line.101"></a>
 <FONT color="green">102</FONT>      }<a name="line.102"></a>
 <FONT color="green">103</FONT>    <a name="line.103"></a>

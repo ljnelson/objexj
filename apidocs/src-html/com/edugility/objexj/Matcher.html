@@ -86,13 +86,13 @@
 <FONT color="green">083</FONT>       *<a name="line.83"></a>
 <FONT color="green">084</FONT>       * @see #getInput()<a name="line.84"></a>
 <FONT color="green">085</FONT>       */<a name="line.85"></a>
-<FONT color="green">086</FONT>      private List&lt;T&gt; input;<a name="line.86"></a>
+<FONT color="green">086</FONT>      private List&lt;? extends T&gt; input;<a name="line.86"></a>
 <FONT color="green">087</FONT>    <a name="line.87"></a>
 <FONT color="green">088</FONT>      /**<a name="line.88"></a>
 <FONT color="green">089</FONT>       * A {@link MatchResult} that contains the state of the last match<a name="line.89"></a>
 <FONT color="green">090</FONT>       * attempt.  This field may be {@code null}.<a name="line.90"></a>
 <FONT color="green">091</FONT>       */<a name="line.91"></a>
-<FONT color="green">092</FONT>      private transient MatchResult&lt;T&gt; matchResult;<a name="line.92"></a>
+<FONT color="green">092</FONT>      private transient MatchResult&lt;? extends T&gt; matchResult;<a name="line.92"></a>
 <FONT color="green">093</FONT>    <a name="line.93"></a>
 <FONT color="green">094</FONT>      /**<a name="line.94"></a>
 <FONT color="green">095</FONT>       * Creates a {@link Matcher} with the supplied {@link Pattern} and<a name="line.95"></a>
@@ -107,7 +107,7 @@
 <FONT color="green">104</FONT>       * @exception IllegalArgumentException if {@code pattern} is {@code<a name="line.104"></a>
 <FONT color="green">105</FONT>       * null}<a name="line.105"></a>
 <FONT color="green">106</FONT>       */<a name="line.106"></a>
-<FONT color="green">107</FONT>      Matcher(final Pattern&lt;T&gt; pattern, final List&lt;T&gt; input) {<a name="line.107"></a>
+<FONT color="green">107</FONT>      Matcher(final Pattern&lt;T&gt; pattern, final List&lt;? extends T&gt; input) {<a name="line.107"></a>
 <FONT color="green">108</FONT>        super();<a name="line.108"></a>
 <FONT color="green">109</FONT>        if (pattern == null) {<a name="line.109"></a>
 <FONT color="green">110</FONT>          throw new IllegalArgumentException("pattern", new NullPointerException("pattern"));<a name="line.110"></a>
@@ -131,7 +131,7 @@
 <FONT color="green">128</FONT>       * @see #lookingAt()<a name="line.128"></a>
 <FONT color="green">129</FONT>       */<a name="line.129"></a>
 <FONT color="green">130</FONT>      public final boolean matches() {<a name="line.130"></a>
-<FONT color="green">131</FONT>        final MatchResult&lt;T&gt; matchResult = this.getMatchResult();<a name="line.131"></a>
+<FONT color="green">131</FONT>        final MatchResult&lt;?&gt; matchResult = this.getMatchResult();<a name="line.131"></a>
 <FONT color="green">132</FONT>        return matchResult != null &amp;&amp; matchResult.matches();<a name="line.132"></a>
 <FONT color="green">133</FONT>      }<a name="line.133"></a>
 <FONT color="green">134</FONT>    <a name="line.134"></a>
@@ -151,7 +151,7 @@
 <FONT color="green">148</FONT>       * @see #matches()<a name="line.148"></a>
 <FONT color="green">149</FONT>       */<a name="line.149"></a>
 <FONT color="green">150</FONT>      public final boolean lookingAt() {<a name="line.150"></a>
-<FONT color="green">151</FONT>        final MatchResult&lt;T&gt; matchResult = this.getMatchResult();<a name="line.151"></a>
+<FONT color="green">151</FONT>        final MatchResult&lt;?&gt; matchResult = this.getMatchResult();<a name="line.151"></a>
 <FONT color="green">152</FONT>        return matchResult != null &amp;&amp; matchResult.lookingAt();<a name="line.152"></a>
 <FONT color="green">153</FONT>      }<a name="line.153"></a>
 <FONT color="green">154</FONT>    <a name="line.154"></a>
@@ -168,7 +168,7 @@
 <FONT color="green">165</FONT>       * Guide&lt;/a&gt;<a name="line.165"></a>
 <FONT color="green">166</FONT>       */<a name="line.166"></a>
 <FONT color="green">167</FONT>      public final int groupCount() {<a name="line.167"></a>
-<FONT color="green">168</FONT>        final MatchResult&lt;T&gt; matchResult = this.getMatchResult();<a name="line.168"></a>
+<FONT color="green">168</FONT>        final MatchResult&lt;?&gt; matchResult = this.getMatchResult();<a name="line.168"></a>
 <FONT color="green">169</FONT>        final int result;<a name="line.169"></a>
 <FONT color="green">170</FONT>        if (matchResult == null) {<a name="line.170"></a>
 <FONT color="green">171</FONT>          result = 0;<a name="line.171"></a>
@@ -194,7 +194,7 @@
 <FONT color="green">191</FONT>       * Guide&lt;/a&gt;<a name="line.191"></a>
 <FONT color="green">192</FONT>       */<a name="line.192"></a>
 <FONT color="green">193</FONT>      public final List&lt;? extends T&gt; group(final int index) {<a name="line.193"></a>
-<FONT color="green">194</FONT>        final MatchResult&lt;T&gt; matchResult = this.getMatchResult();<a name="line.194"></a>
+<FONT color="green">194</FONT>        final MatchResult&lt;? extends T&gt; matchResult = this.getMatchResult();<a name="line.194"></a>
 <FONT color="green">195</FONT>        final List&lt;? extends T&gt; result;<a name="line.195"></a>
 <FONT color="green">196</FONT>        if (matchResult == null) {<a name="line.196"></a>
 <FONT color="green">197</FONT>          result = null;<a name="line.197"></a>
@@ -216,7 +216,7 @@
 <FONT color="green">213</FONT>       */<a name="line.213"></a>
 <FONT color="green">214</FONT>      public final Map&lt;?, ?&gt; getVariables() {<a name="line.214"></a>
 <FONT color="green">215</FONT>        Map&lt;?, ?&gt; result = null;<a name="line.215"></a>
-<FONT color="green">216</FONT>        final MatchResult&lt;T&gt; matchResult = this.getMatchResult();<a name="line.216"></a>
+<FONT color="green">216</FONT>        final MatchResult&lt;?&gt; matchResult = this.getMatchResult();<a name="line.216"></a>
 <FONT color="green">217</FONT>        if (matchResult == null) {<a name="line.217"></a>
 <FONT color="green">218</FONT>          result = Collections.emptyMap();<a name="line.218"></a>
 <FONT color="green">219</FONT>        } else {<a name="line.219"></a>
@@ -271,7 +271,7 @@
 <FONT color="green">268</FONT>       *<a name="line.268"></a>
 <FONT color="green">269</FONT>       * @return the input, or {@code null}<a name="line.269"></a>
 <FONT color="green">270</FONT>       */<a name="line.270"></a>
-<FONT color="green">271</FONT>      public final List&lt;T&gt; getInput() {<a name="line.271"></a>
+<FONT color="green">271</FONT>      public final List&lt;? extends T&gt; getInput() {<a name="line.271"></a>
 <FONT color="green">272</FONT>        return this.input;<a name="line.272"></a>
 <FONT color="green">273</FONT>      }<a name="line.273"></a>
 <FONT color="green">274</FONT>    <a name="line.274"></a>
@@ -282,7 +282,7 @@
 <FONT color="green">279</FONT>       * @return a {@link MatchResult}, or {@code null} if there was no<a name="line.279"></a>
 <FONT color="green">280</FONT>       * match<a name="line.280"></a>
 <FONT color="green">281</FONT>       */<a name="line.281"></a>
-<FONT color="green">282</FONT>      private final MatchResult&lt;T&gt; getMatchResult() {<a name="line.282"></a>
+<FONT color="green">282</FONT>      private final MatchResult&lt;? extends T&gt; getMatchResult() {<a name="line.282"></a>
 <FONT color="green">283</FONT>        if (this.matchResult == null) {<a name="line.283"></a>
 <FONT color="green">284</FONT>          final Pattern&lt;T&gt; pattern = this.getPattern();<a name="line.284"></a>
 <FONT color="green">285</FONT>          assert pattern != null;<a name="line.285"></a>

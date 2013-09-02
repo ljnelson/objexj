@@ -269,7 +269,7 @@
 <FONT color="green">266</FONT>       * null}<a name="line.266"></a>
 <FONT color="green">267</FONT>       */<a name="line.267"></a>
 <FONT color="green">268</FONT>      @Override<a name="line.268"></a>
-<FONT color="green">269</FONT>      public boolean accept(final InstructionContext&lt;T&gt; context) {<a name="line.269"></a>
+<FONT color="green">269</FONT>      public boolean accept(final InstructionContext&lt;? extends T&gt; context) {<a name="line.269"></a>
 <FONT color="green">270</FONT>        if (context == null) {<a name="line.270"></a>
 <FONT color="green">271</FONT>          throw new IllegalArgumentException("context", new NullPointerException("context == null"));<a name="line.271"></a>
 <FONT color="green">272</FONT>        }<a name="line.272"></a>

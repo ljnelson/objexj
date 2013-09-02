@@ -93,7 +93,7 @@
 <FONT color="green">090</FONT>       * @exception IllegalArgumentException if {@code program} is {@code<a name="line.90"></a>
 <FONT color="green">091</FONT>       * null}<a name="line.91"></a>
 <FONT color="green">092</FONT>       */<a name="line.92"></a>
-<FONT color="green">093</FONT>      public MatchResult&lt;T&gt; run(final Program&lt;T&gt; program, final List&lt;T&gt; items) {<a name="line.93"></a>
+<FONT color="green">093</FONT>      public MatchResult&lt;? extends T&gt; run(final Program&lt;T&gt; program, final List&lt;? extends T&gt; items) {<a name="line.93"></a>
 <FONT color="green">094</FONT>        if (program == null) {<a name="line.94"></a>
 <FONT color="green">095</FONT>          throw new IllegalArgumentException("program", new NullPointerException("program"));<a name="line.95"></a>
 <FONT color="green">096</FONT>        }<a name="line.96"></a>
@@ -107,7 +107,7 @@
 <FONT color="green">104</FONT>                                               0,<a name="line.104"></a>
 <FONT color="green">105</FONT>                                               null,<a name="line.105"></a>
 <FONT color="green">106</FONT>                                               null));<a name="line.106"></a>
-<FONT color="green">107</FONT>        MatchResult&lt;T&gt; result = null;<a name="line.107"></a>
+<FONT color="green">107</FONT>        MatchResult&lt;? extends T&gt; result = null;<a name="line.107"></a>
 <FONT color="green">108</FONT>        while (!threads.isEmpty()) {<a name="line.108"></a>
 <FONT color="green">109</FONT>          final Thread&lt;T&gt; thread = threads.remove();<a name="line.109"></a>
 <FONT color="green">110</FONT>          assert thread != null;<a name="line.110"></a>

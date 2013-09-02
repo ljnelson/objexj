@@ -70,7 +70,7 @@
 <FONT color="green">067</FONT>       * @exception IllegalArgumentException if {@code context} is {@code null}<a name="line.67"></a>
 <FONT color="green">068</FONT>       */<a name="line.68"></a>
 <FONT color="green">069</FONT>      @Override<a name="line.69"></a>
-<FONT color="green">070</FONT>      public final void execute(final InstructionContext&lt;T&gt; context) {<a name="line.70"></a>
+<FONT color="green">070</FONT>      public final void execute(final InstructionContext&lt;? extends T&gt; context) {<a name="line.70"></a>
 <FONT color="green">071</FONT>        if (context == null) {<a name="line.71"></a>
 <FONT color="green">072</FONT>          throw new IllegalArgumentException("context == null");<a name="line.72"></a>
 <FONT color="green">073</FONT>        }<a name="line.73"></a>

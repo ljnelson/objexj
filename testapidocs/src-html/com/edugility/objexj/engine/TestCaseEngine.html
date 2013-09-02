@@ -58,7 +58,7 @@
 <FONT color="green">055</FONT>        final Program&lt;Character&gt; program = parser.parse(sourceCode);<a name="line.55"></a>
 <FONT color="green">056</FONT>        assertNotNull(program);<a name="line.56"></a>
 <FONT color="green">057</FONT>        final List&lt;Character&gt; input = Arrays.asList('a', 'b', 'c');<a name="line.57"></a>
-<FONT color="green">058</FONT>        final MatchResult&lt;Character&gt; match = engine.run(program, input);<a name="line.58"></a>
+<FONT color="green">058</FONT>        final MatchResult&lt;? extends Character&gt; match = engine.run(program, input);<a name="line.58"></a>
 <FONT color="green">059</FONT>        assertNotNull(match);<a name="line.59"></a>
 <FONT color="green">060</FONT>        assertTrue(match.matches());<a name="line.60"></a>
 <FONT color="green">061</FONT>      }<a name="line.61"></a>

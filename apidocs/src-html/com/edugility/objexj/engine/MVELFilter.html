@@ -131,7 +131,7 @@
 <FONT color="green">128</FONT>       * @see #accept(Object, Map)<a name="line.128"></a>
 <FONT color="green">129</FONT>       */<a name="line.129"></a>
 <FONT color="green">130</FONT>      @Override<a name="line.130"></a>
-<FONT color="green">131</FONT>      public boolean accept(final InstructionContext&lt;T&gt; context) {<a name="line.131"></a>
+<FONT color="green">131</FONT>      public boolean accept(final InstructionContext&lt;? extends T&gt; context) {<a name="line.131"></a>
 <FONT color="green">132</FONT>        if (context == null) {<a name="line.132"></a>
 <FONT color="green">133</FONT>          throw new IllegalArgumentException("context", new NullPointerException("context == null"));<a name="line.133"></a>
 <FONT color="green">134</FONT>        }<a name="line.134"></a>
