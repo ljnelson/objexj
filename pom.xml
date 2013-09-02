@@ -8,7 +8,7 @@
 
   <groupId>com.edugility</groupId>
   <artifactId>objexj</artifactId>
-  <version>1.2.0</version>
+  <version>1.2.1-SNAPSHOT</version>
 
   <parent>
     <groupId>org.sonatype.oss</groupId>
@@ -39,7 +39,7 @@
     <connection>scm:git:git@github.com:ljnelson/${project.artifactId}.git</connection>
     <developerConnection>scm:git:git@github.com:ljnelson/${project.artifactId}.git</developerConnection>
     <url>https://github.com/ljnelson/${project.artifactId}/</url>
-    <tag>objexj-1.2.0</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <developers>
