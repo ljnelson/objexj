@@ -270,9 +270,6 @@ public class InstanceOfMVELFilter<T> extends MVELFilter<T> {
     if (context == null) {
       throw new IllegalArgumentException("context", new NullPointerException("context == null"));
     }
-    if (this.mvelExpression == null) {
-      return super.accept(context);
-    }
     return this.cls != null && context.canRead() && this.accept(context.read(), context.getVariables());
   }
 
@@ -307,7 +304,7 @@ public class InstanceOfMVELFilter<T> extends MVELFilter<T> {
   @Override
   public boolean accept(final T item, Map<Object, Object> variables) {
     return
-      item != null && 
+      item != null &&
       this.cls != null &&
       this.isExact() ? item.getClass().equals(this.cls) : this.cls.isInstance(item) &&
       super.accept(item, variables);
