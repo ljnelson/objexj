@@ -94,53 +94,69 @@
 <FONT color="green">091</FONT>      }<a name="line.91"></a>
 <FONT color="green">092</FONT>    <a name="line.92"></a>
 <FONT color="green">093</FONT>      @Test<a name="line.93"></a>
-<FONT color="green">094</FONT>      public void testDoubleVariableAssignment() throws IOException, ParseException {<a name="line.94"></a>
-<FONT color="green">095</FONT>        final String sourceCode = "^java.lang.Exception(msg = message; return true)*/(java.lang.Exception(msg = message; message == \"third\"))$";<a name="line.95"></a>
+<FONT color="green">094</FONT>      public void testUnanchoredLastException() throws IOException, ParseException {<a name="line.94"></a>
+<FONT color="green">095</FONT>        final String sourceCode = "java.sql.SQLException$";<a name="line.95"></a>
 <FONT color="green">096</FONT>        final Pattern&lt;Exception&gt; pattern = Pattern.compile(sourceCode);<a name="line.96"></a>
 <FONT color="green">097</FONT>        assertNotNull(pattern);<a name="line.97"></a>
-<FONT color="green">098</FONT>        final Program&lt;Exception&gt; program = pattern.getProgram();<a name="line.98"></a>
-<FONT color="green">099</FONT>        assertNotNull(program);<a name="line.99"></a>
-<FONT color="green">100</FONT>        final List&lt;Exception&gt; input = new ArrayList&lt;Exception&gt;();<a name="line.100"></a>
-<FONT color="green">101</FONT>        input.add(new IllegalStateException("first"));<a name="line.101"></a>
-<FONT color="green">102</FONT>        input.add(new IllegalArgumentException("second"));<a name="line.102"></a>
-<FONT color="green">103</FONT>        final Exception third = new RuntimeException("third");<a name="line.103"></a>
-<FONT color="green">104</FONT>        input.add(third);<a name="line.104"></a>
-<FONT color="green">105</FONT>        final Matcher&lt;Exception&gt; matcher = pattern.matcher(input);<a name="line.105"></a>
-<FONT color="green">106</FONT>        assertNotNull(matcher);<a name="line.106"></a>
-<FONT color="green">107</FONT>        assertTrue(matcher.matches());<a name="line.107"></a>
-<FONT color="green">108</FONT>        assertEquals(2, matcher.groupCount());<a name="line.108"></a>
-<FONT color="green">109</FONT>        final List&lt;? extends Exception&gt; group1 = matcher.group(1);<a name="line.109"></a>
-<FONT color="green">110</FONT>        assertNotNull(group1);<a name="line.110"></a>
-<FONT color="green">111</FONT>        assertEquals(1, group1.size());<a name="line.111"></a>
-<FONT color="green">112</FONT>        final Exception group1Exception = group1.get(0);<a name="line.112"></a>
-<FONT color="green">113</FONT>        assertSame(third, group1Exception);<a name="line.113"></a>
-<FONT color="green">114</FONT>        assertEquals(third.getMessage(), matcher.get("msg"));<a name="line.114"></a>
-<FONT color="green">115</FONT>      }<a name="line.115"></a>
-<FONT color="green">116</FONT>    <a name="line.116"></a>
-<FONT color="green">117</FONT>    <a name="line.117"></a>
-<FONT color="green">118</FONT>      @Test<a name="line.118"></a>
-<FONT color="green">119</FONT>      public void testVariables() throws IOException, ParseException {<a name="line.119"></a>
-<FONT color="green">120</FONT>        final String sourceCode = "^java.lang.Exception(msg = message; return true)";<a name="line.120"></a>
-<FONT color="green">121</FONT>        final Pattern&lt;Exception&gt; pattern = Pattern.compile(sourceCode);<a name="line.121"></a>
-<FONT color="green">122</FONT>        assertNotNull(pattern);<a name="line.122"></a>
-<FONT color="green">123</FONT>        final Program&lt;Exception&gt; program = pattern.getProgram();<a name="line.123"></a>
-<FONT color="green">124</FONT>        assertNotNull(program);<a name="line.124"></a>
-<FONT color="green">125</FONT>        final List&lt;Exception&gt; input = new ArrayList&lt;Exception&gt;();<a name="line.125"></a>
-<FONT color="green">126</FONT>        final Exception first = new IllegalStateException("first");<a name="line.126"></a>
-<FONT color="green">127</FONT>        input.add(first);<a name="line.127"></a>
-<FONT color="green">128</FONT>        final Matcher&lt;Exception&gt; matcher = pattern.matcher(input);<a name="line.128"></a>
-<FONT color="green">129</FONT>        assertNotNull(matcher);<a name="line.129"></a>
-<FONT color="green">130</FONT>        assertTrue(matcher.matches());<a name="line.130"></a>
-<FONT color="green">131</FONT>        assertEquals(1, matcher.groupCount());<a name="line.131"></a>
-<FONT color="green">132</FONT>        final List&lt;? extends Exception&gt; group1 = matcher.group(0);<a name="line.132"></a>
-<FONT color="green">133</FONT>        assertNotNull(group1);<a name="line.133"></a>
-<FONT color="green">134</FONT>        assertEquals(1, group1.size());<a name="line.134"></a>
-<FONT color="green">135</FONT>        final Exception group1Exception = group1.get(0);<a name="line.135"></a>
-<FONT color="green">136</FONT>        assertSame(first, group1Exception);<a name="line.136"></a>
-<FONT color="green">137</FONT>        assertEquals(first.getMessage(), matcher.get("msg"));<a name="line.137"></a>
-<FONT color="green">138</FONT>      }<a name="line.138"></a>
-<FONT color="green">139</FONT>    <a name="line.139"></a>
-<FONT color="green">140</FONT>    }<a name="line.140"></a>
+<FONT color="green">098</FONT>        final List&lt;Exception&gt; input = new ArrayList&lt;Exception&gt;();<a name="line.98"></a>
+<FONT color="green">099</FONT>        input.add(new IllegalStateException("first"));<a name="line.99"></a>
+<FONT color="green">100</FONT>        input.add(new IllegalArgumentException("second"));<a name="line.100"></a>
+<FONT color="green">101</FONT>        final Exception third = new RuntimeException("third");<a name="line.101"></a>
+<FONT color="green">102</FONT>        input.add(third);<a name="line.102"></a>
+<FONT color="green">103</FONT>        final Matcher&lt;Exception&gt; matcher = pattern.matcher(input);<a name="line.103"></a>
+<FONT color="green">104</FONT>        assertNotNull(matcher);<a name="line.104"></a>
+<FONT color="green">105</FONT>        assertFalse(matcher.matches());<a name="line.105"></a>
+<FONT color="green">106</FONT>        assertFalse(matcher.lookingAt());<a name="line.106"></a>
+<FONT color="green">107</FONT>      }<a name="line.107"></a>
+<FONT color="green">108</FONT>    <a name="line.108"></a>
+<FONT color="green">109</FONT>      @Test<a name="line.109"></a>
+<FONT color="green">110</FONT>      public void testDoubleVariableAssignment() throws IOException, ParseException {<a name="line.110"></a>
+<FONT color="green">111</FONT>        final String sourceCode = "^java.lang.Exception(msg = message; return true)*/(java.lang.Exception(msg = message; message == \"third\"))$";<a name="line.111"></a>
+<FONT color="green">112</FONT>        final Pattern&lt;Exception&gt; pattern = Pattern.compile(sourceCode);<a name="line.112"></a>
+<FONT color="green">113</FONT>        assertNotNull(pattern);<a name="line.113"></a>
+<FONT color="green">114</FONT>        final Program&lt;Exception&gt; program = pattern.getProgram();<a name="line.114"></a>
+<FONT color="green">115</FONT>        assertNotNull(program);<a name="line.115"></a>
+<FONT color="green">116</FONT>        final List&lt;Exception&gt; input = new ArrayList&lt;Exception&gt;();<a name="line.116"></a>
+<FONT color="green">117</FONT>        input.add(new IllegalStateException("first"));<a name="line.117"></a>
+<FONT color="green">118</FONT>        input.add(new IllegalArgumentException("second"));<a name="line.118"></a>
+<FONT color="green">119</FONT>        final Exception third = new RuntimeException("third");<a name="line.119"></a>
+<FONT color="green">120</FONT>        input.add(third);<a name="line.120"></a>
+<FONT color="green">121</FONT>        final Matcher&lt;Exception&gt; matcher = pattern.matcher(input);<a name="line.121"></a>
+<FONT color="green">122</FONT>        assertNotNull(matcher);<a name="line.122"></a>
+<FONT color="green">123</FONT>        assertTrue(matcher.matches());<a name="line.123"></a>
+<FONT color="green">124</FONT>        assertEquals(2, matcher.groupCount());<a name="line.124"></a>
+<FONT color="green">125</FONT>        final List&lt;? extends Exception&gt; group1 = matcher.group(1);<a name="line.125"></a>
+<FONT color="green">126</FONT>        assertNotNull(group1);<a name="line.126"></a>
+<FONT color="green">127</FONT>        assertEquals(1, group1.size());<a name="line.127"></a>
+<FONT color="green">128</FONT>        final Exception group1Exception = group1.get(0);<a name="line.128"></a>
+<FONT color="green">129</FONT>        assertSame(third, group1Exception);<a name="line.129"></a>
+<FONT color="green">130</FONT>        assertEquals(third.getMessage(), matcher.get("msg"));<a name="line.130"></a>
+<FONT color="green">131</FONT>      }<a name="line.131"></a>
+<FONT color="green">132</FONT>    <a name="line.132"></a>
+<FONT color="green">133</FONT>    <a name="line.133"></a>
+<FONT color="green">134</FONT>      @Test<a name="line.134"></a>
+<FONT color="green">135</FONT>      public void testVariables() throws IOException, ParseException {<a name="line.135"></a>
+<FONT color="green">136</FONT>        final String sourceCode = "^java.lang.Exception(msg = message; return true)";<a name="line.136"></a>
+<FONT color="green">137</FONT>        final Pattern&lt;Exception&gt; pattern = Pattern.compile(sourceCode);<a name="line.137"></a>
+<FONT color="green">138</FONT>        assertNotNull(pattern);<a name="line.138"></a>
+<FONT color="green">139</FONT>        final Program&lt;Exception&gt; program = pattern.getProgram();<a name="line.139"></a>
+<FONT color="green">140</FONT>        assertNotNull(program);<a name="line.140"></a>
+<FONT color="green">141</FONT>        final List&lt;Exception&gt; input = new ArrayList&lt;Exception&gt;();<a name="line.141"></a>
+<FONT color="green">142</FONT>        final Exception first = new IllegalStateException("first");<a name="line.142"></a>
+<FONT color="green">143</FONT>        input.add(first);<a name="line.143"></a>
+<FONT color="green">144</FONT>        final Matcher&lt;Exception&gt; matcher = pattern.matcher(input);<a name="line.144"></a>
+<FONT color="green">145</FONT>        assertNotNull(matcher);<a name="line.145"></a>
+<FONT color="green">146</FONT>        assertTrue(matcher.matches());<a name="line.146"></a>
+<FONT color="green">147</FONT>        assertEquals(1, matcher.groupCount());<a name="line.147"></a>
+<FONT color="green">148</FONT>        final List&lt;? extends Exception&gt; group1 = matcher.group(0);<a name="line.148"></a>
+<FONT color="green">149</FONT>        assertNotNull(group1);<a name="line.149"></a>
+<FONT color="green">150</FONT>        assertEquals(1, group1.size());<a name="line.150"></a>
+<FONT color="green">151</FONT>        final Exception group1Exception = group1.get(0);<a name="line.151"></a>
+<FONT color="green">152</FONT>        assertSame(first, group1Exception);<a name="line.152"></a>
+<FONT color="green">153</FONT>        assertEquals(first.getMessage(), matcher.get("msg"));<a name="line.153"></a>
+<FONT color="green">154</FONT>      }<a name="line.154"></a>
+<FONT color="green">155</FONT>    <a name="line.155"></a>
+<FONT color="green">156</FONT>    }<a name="line.156"></a>
 
 
 

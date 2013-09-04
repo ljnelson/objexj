@@ -452,23 +452,25 @@
 <FONT color="green">449</FONT>        if (program == null) {<a name="line.449"></a>
 <FONT color="green">450</FONT>          sb.append("null");<a name="line.450"></a>
 <FONT color="green">451</FONT>        } else {<a name="line.451"></a>
-<FONT color="green">452</FONT>          sb.append(program.toString());<a name="line.452"></a>
+<FONT color="green">452</FONT>          sb.append(program.toString(this.getIndex()));<a name="line.452"></a>
 <FONT color="green">453</FONT>        }<a name="line.453"></a>
-<FONT color="green">454</FONT>        sb.append(" ");<a name="line.454"></a>
-<FONT color="green">455</FONT>        final int index = this.getIndex();<a name="line.455"></a>
-<FONT color="green">456</FONT>        sb.append(index);<a name="line.456"></a>
-<FONT color="green">457</FONT>        <a name="line.457"></a>
-<FONT color="green">458</FONT>        final Object instruction = program.get(index);<a name="line.458"></a>
-<FONT color="green">459</FONT>        if (instruction == null) {<a name="line.459"></a>
-<FONT color="green">460</FONT>          sb.append(" (null)");<a name="line.460"></a>
-<FONT color="green">461</FONT>        } else {<a name="line.461"></a>
-<FONT color="green">462</FONT>          sb.append(" (").append(instruction).append(")");<a name="line.462"></a>
-<FONT color="green">463</FONT>        }<a name="line.463"></a>
-<FONT color="green">464</FONT>    <a name="line.464"></a>
-<FONT color="green">465</FONT>        return sb.toString();<a name="line.465"></a>
-<FONT color="green">466</FONT>      }<a name="line.466"></a>
-<FONT color="green">467</FONT>    <a name="line.467"></a>
-<FONT color="green">468</FONT>    }<a name="line.468"></a>
+<FONT color="green">454</FONT>        /*<a name="line.454"></a>
+<FONT color="green">455</FONT>        sb.append(" ");<a name="line.455"></a>
+<FONT color="green">456</FONT>        final int index = this.getIndex();<a name="line.456"></a>
+<FONT color="green">457</FONT>        sb.append(index);<a name="line.457"></a>
+<FONT color="green">458</FONT>        <a name="line.458"></a>
+<FONT color="green">459</FONT>        final Object instruction = program.get(index);<a name="line.459"></a>
+<FONT color="green">460</FONT>        if (instruction == null) {<a name="line.460"></a>
+<FONT color="green">461</FONT>          sb.append(" (null)");<a name="line.461"></a>
+<FONT color="green">462</FONT>        } else {<a name="line.462"></a>
+<FONT color="green">463</FONT>          sb.append(" (").append(instruction).append(")");<a name="line.463"></a>
+<FONT color="green">464</FONT>          }<a name="line.464"></a>
+<FONT color="green">465</FONT>        */<a name="line.465"></a>
+<FONT color="green">466</FONT>    <a name="line.466"></a>
+<FONT color="green">467</FONT>        return sb.toString();<a name="line.467"></a>
+<FONT color="green">468</FONT>      }<a name="line.468"></a>
+<FONT color="green">469</FONT>    <a name="line.469"></a>
+<FONT color="green">470</FONT>    }<a name="line.470"></a>
 
 
 
