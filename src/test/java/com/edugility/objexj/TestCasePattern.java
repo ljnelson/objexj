@@ -91,6 +91,21 @@ public class TestCasePattern {
   }
 
   @Test
+  public void testUnanchoredLastException() throws IOException, ParseException {
+    final String sourceCode = "java.sql.SQLException$";
+    final Pattern<Exception> pattern = Pattern.compile(sourceCode);
+    assertNotNull(pattern);
+    final List<Exception> input = new ArrayList<Exception>();
+    input.add(new IllegalStateException("first"));
+    input.add(new IllegalArgumentException("second"));
+    final Exception third = new RuntimeException("third");
+    input.add(third);
+    final Matcher<Exception> matcher = pattern.matcher(input);
+    assertNotNull(matcher);
+    assertFalse(matcher.matches());
+  }
+
+  @Test
   public void testDoubleVariableAssignment() throws IOException, ParseException {
     final String sourceCode = "^java.lang.Exception(msg = message; return true)*/(java.lang.Exception(msg = message; message == \"third\"))$";
     final Pattern<Exception> pattern = Pattern.compile(sourceCode);

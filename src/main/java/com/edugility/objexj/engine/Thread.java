@@ -50,7 +50,7 @@ import java.util.logging.Logger;
  * <li><strong>{@linkplain State#VIABLE Viable}</strong>.  A {@link
  * Thread} is <em>viable</em> when its {@linkplain #getState() state}
  * is {@link State#VIABLE VIABLE} and when it {@linkplain
- * #getProgramCounter has a valid program counter}.</li>
+ * #getProgramCounter() has a valid program counter}.</li>
  *
  * <li><strong>{@linkplain State#DEAD Dead}</strong>.  A {@link
  * Thread} is <em>{@linkplain State#DEAD dead}</em> when its
@@ -749,7 +749,8 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
 
   /**
    * Returns this {@link Thread}'s associated {@link ProgramCounter}.
-   * This method never returns {@code null}.
+   *
+   * <p>This method never returns {@code null}.</p>
    *
    * <p>This method may be invoked only when {@link #isViable()}
    * returns {@code true}.</p>
