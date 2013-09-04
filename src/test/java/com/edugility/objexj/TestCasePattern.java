@@ -103,6 +103,7 @@ public class TestCasePattern {
     final Matcher<Exception> matcher = pattern.matcher(input);
     assertNotNull(matcher);
     assertFalse(matcher.matches());
+    assertFalse(matcher.lookingAt());
   }
 
   @Test

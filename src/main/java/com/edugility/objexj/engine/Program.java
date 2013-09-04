@@ -350,6 +350,21 @@ public final class Program<T> extends LinkedList<Instruction<T>> {
    */
   @Override
   public String toString() {
+    return this.toString(Integer.MIN_VALUE);
+  }
+
+  /**
+   * Returns a non-{@code null} textual representation of this {@link
+   * Program} with the instruction at the given zero-based index
+   * highlighted in some way.
+   *
+   * @param highlightThisInstruction the index of the instruction to
+   * highlight; if negative or greater than or equal to the size of
+   * this program, no highlighting occurs
+   *
+   * @return a non-{@code null} {@link String}
+   */
+  String toString(final int highlightThisInstruction) {
     final StringBuilder sb = new StringBuilder();
     final String name = this.getName();
     if (name != null) {
@@ -360,6 +375,9 @@ public final class Program<T> extends LinkedList<Instruction<T>> {
     if (iterator.hasNext()) {
       for (int i = 0; iterator.hasNext(); i++) {
         sb.append(String.format("%3d: %s", i, iterator.next()));
+        if (highlightThisInstruction == i) {
+          sb.append(" <--");
+        }
         if (iterator.hasNext()) {
           sb.append(LS);
         }

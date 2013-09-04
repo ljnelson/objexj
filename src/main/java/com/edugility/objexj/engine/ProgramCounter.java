@@ -449,8 +449,9 @@ public class ProgramCounter<T> implements Cloneable, Serializable, Iterable<Inst
     if (program == null) {
       sb.append("null");
     } else {
-      sb.append(program.toString());
+      sb.append(program.toString(this.getIndex()));
     }
+    /*
     sb.append(" ");
     final int index = this.getIndex();
     sb.append(index);
@@ -460,7 +461,8 @@ public class ProgramCounter<T> implements Cloneable, Serializable, Iterable<Inst
       sb.append(" (null)");
     } else {
       sb.append(" (").append(instruction).append(")");
-    }
+      }
+    */
 
     return sb.toString();
   }
