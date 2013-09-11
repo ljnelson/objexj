@@ -27,6 +27,9 @@
  */
 package com.edugility.objexj.engine;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * An {@link Instruction} that causes an {@link InstructionContext} to
  * be {@linkplain InstructionContext#match() placed into the match
@@ -68,10 +71,19 @@ public class Match<T> extends Instruction<T> {
    */
   @Override
   public final void execute(final InstructionContext<? extends T> context) {
+    final String className = this.getClass().getName();
+    final Logger logger = this.getLogger();
+    final boolean finer = logger != null && logger.isLoggable(Level.FINER);
+    if (finer) {
+      logger.entering(className, "execute", context);
+    }
     if (context == null) {
       throw new IllegalArgumentException("context == null");
     }
     context.match();
+    if (finer) {
+      logger.exiting(className, "execute");
+    }
   }
 
 }

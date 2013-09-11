@@ -133,7 +133,7 @@ public class TestCasePattern {
 
   @Test
   public void testVariables() throws IOException, ParseException {
-    final String sourceCode = "^java.lang.Exception(msg = message; return true)";
+    final String sourceCode = "^java.lang.Exception(msg = message)"; // Note: non-Boolean-returning MVEL expression; that's OK; will match
     final Pattern<Exception> pattern = Pattern.compile(sourceCode);
     assertNotNull(pattern);
     final Program<Exception> program = pattern.getProgram();

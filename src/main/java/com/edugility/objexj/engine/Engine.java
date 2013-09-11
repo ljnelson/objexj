@@ -67,12 +67,24 @@ import com.edugility.objexj.parser.Parser;
  */
 public class Engine<T> {
 
+
+  /*
+   * Constructors.
+   */
+
+
   /**
    * Creates a new {@link Engine}.
    */
   public Engine() {
     super();
   }
+
+
+  /*
+   * Instance methods.
+   */
+
 
   /**
    * Runs the supplied {@link Program} against the supplied {@link
@@ -107,15 +119,22 @@ public class Engine<T> {
     MatchResult<? extends T> result = null;
     while (!threads.isEmpty()) {
       final Thread<T> thread = threads.remove();
-      assert thread != null;
-      thread.run();
-      if (Thread.State.MATCH == thread.getState()) {
-        result = new MatchResult<T>(thread);
-        break;
+      if (thread != null) {
+        thread.run();
+        if (Thread.State.MATCH == thread.getState()) {
+          result = new MatchResult<T>(thread);
+          break;
+        }
       }
     }
     return result;
   }
+
+
+  /*
+   * Inner and nested classes.
+   */
+
 
   /**
    * A {@link ThreadScheduler} that schedules {@link Thread}s in a
@@ -139,12 +158,6 @@ public class Engine<T> {
     private final AtomicInteger idGenerator;
 
     /**
-     * A {@link Logger} to log messages.  This field is never {@code
-     * null}.
-     */
-    private final Logger logger;
-
-    /**
      * Creates a new {@link Scheduler}.
      *
      * @param threads a {@lik Queue} of {@link Thread}s; may be {@code
@@ -165,7 +178,6 @@ public class Engine<T> {
      */
     private Scheduler(final Queue<Thread<T>> threads, final AtomicInteger idGenerator) {
       super();
-      this.logger = Logger.getLogger(this.getClass().getName());
       this.threads = threads;
       if (idGenerator == null) {
         this.idGenerator = new AtomicInteger();
@@ -208,16 +220,19 @@ public class Engine<T> {
      */
     @Override
     public final Thread<T> newThread(Object id, final ProgramCounter<T> programCounter, final List<? extends T> items, final int itemPointer, final Map<Object, CaptureGroup<T>> captureGroups, final Map<Object, Object> variables) {
-      if (this.logger != null && this.logger.isLoggable(Level.FINER)) {
-        this.logger.entering(this.getClass().getName(), "newThread", new Object[] { id, programCounter, items, itemPointer, captureGroups, variables });
+      final String className = this.getClass().getName();
+      final Logger logger = Logger.getLogger(className);
+      final boolean finer = logger != null && logger.isLoggable(Level.FINER);
+      if (finer) {
+        logger.entering(className, "newThread", new Object[] { id, programCounter, items, itemPointer, captureGroups, variables });
       }      
       if (id == null) {
         id = String.format("T%d", this.idGenerator.getAndIncrement());
       }
       final Thread<T> returnValue = new Thread<T>(id, programCounter, items, itemPointer, captureGroups, variables, this);
-      if (this.logger != null && this.logger.isLoggable(Level.FINER)) {
-        this.logger.exiting(this.getClass().getName(), "newThread", returnValue);
-      }      
+      if (finer) {
+        logger.exiting(className, "newThread", returnValue);
+      }
       return returnValue;
     }
       
@@ -240,18 +255,21 @@ public class Engine<T> {
      */
     @Override
     public final boolean schedule(final Thread<T> t) {
-      if (this.logger != null && this.logger.isLoggable(Level.FINER)) {
-        this.logger.entering(this.getClass().getName(), "schedule", t);
+      final String className = this.getClass().getName();
+      final Logger logger = Logger.getLogger(className);
+      final boolean finer = logger != null && logger.isLoggable(Level.FINER);
+      if (finer) {
+        logger.entering(className, "schedule", t);
       }
       if (t == null) {
         throw new IllegalArgumentException("t", new NullPointerException("t"));
       }
-      if (this.logger != null && this.logger.isLoggable(Level.FINER)) {
-        this.logger.logp(Level.FINER, this.getClass().getName(), "schedule", "Scheduling thread {0}", t);
+      if (finer) {
+        logger.logp(Level.FINER, className, "schedule", "Scheduling thread {0}", t);
       }
       final boolean returnValue = this.threads != null && this.threads.add(t);
-      if (this.logger != null && this.logger.isLoggable(Level.FINER)) {
-        this.logger.exiting(this.getClass().getName(), "schedule", Boolean.valueOf(returnValue));
+      if (finer) {
+        logger.exiting(className, "schedule", Boolean.valueOf(returnValue));
       }
       return returnValue;
     }

@@ -34,6 +34,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.edugility.objexj.engine.Thread;
 
 /**
@@ -86,6 +89,18 @@ public class MatchResult<T> implements Serializable {
   }
 
   /**
+   * Returns a non-{@code null} {@link Logger} for logging messages
+   * from this class.
+   *
+   * <p>This method never returns {@code null}.</p>
+   *
+   * @return a non-{@code null} {@link Logger}
+   */
+  protected Logger getLogger() {
+    return Logger.getLogger(this.getClass().getName());
+  }
+
+  /**
    * Returns {@code true} if the {@link #lookingAt()} method returns
    * {@code true} and if the underlying {@link Thread} was {@linkplain
    * Thread#atEnd() at the end of its input} when the match occurred.
@@ -128,10 +143,19 @@ public class MatchResult<T> implements Serializable {
    * @see Thread#getGroup(Object)
    */
   public List<? extends T> getGroup(final Object key) {
+    final String className = this.getClass().getName();
+    final Logger logger = this.getLogger();
+    final boolean finer = logger != null && logger.isLoggable(Level.FINER);
+    if (finer) {
+      logger.entering(className, "getGroup", key);
+    }      
     List<? extends T> result = null;
     if (this.thread != null) {
       result = thread.getGroup(key);
     }
+    if (finer) {
+      logger.exiting(className, "getGroup", result);
+    }      
     return result;
   }
 
@@ -148,11 +172,20 @@ public class MatchResult<T> implements Serializable {
    * @see Thread#getGroupCount()
    */
   public int getGroupCount() {
+    final String className = this.getClass().getName();
+    final Logger logger = this.getLogger();
+    final boolean finer = logger != null && logger.isLoggable(Level.FINER);
+    if (finer) {
+      logger.entering(className, "getGroupCount");
+    }
     final int result;
     if (this.thread == null) {
       result = 0;
     } else {
       result = this.thread.getGroupCount();
+    }
+    if (finer) {
+      logger.exiting(className, "getGroupCount", Integer.valueOf(result));
     }
     return result;
   }
@@ -165,16 +198,25 @@ public class MatchResult<T> implements Serializable {
    *
    * <p>This method never returns {@code null}.</p>
    *
-   * @return a non-{@code null} {@link Set} of keys each element of
+   * @return a non-{@code null} {@link Set} of keys, each element of
    * which can be used as an argument to the {@link #getGroup(Object)}
    * method
    */
   public Set<?> getGroupKeySet() {
+    final String className = this.getClass().getName();
+    final Logger logger = this.getLogger();
+    final boolean finer = logger != null && logger.isLoggable(Level.FINER);
+    if (finer) {
+      logger.entering(className, "getGroupKeySet");
+    }
     final Set<?> returnValue;
     if (this.thread == null) {
       returnValue = Collections.emptySet();
     } else {
       returnValue = this.thread.getGroupKeySet();
+    }
+    if (finer) {
+      logger.exiting(className, "getGroupKeySet", returnValue);
     }
     return returnValue;
   }
@@ -193,12 +235,21 @@ public class MatchResult<T> implements Serializable {
    * @see #getVariables()
    */
   public Object getVariable(final Object key) {
+    final String className = this.getClass().getName();
+    final Logger logger = this.getLogger();
+    final boolean finer = logger != null && logger.isLoggable(Level.FINER);
+    if (finer) {
+      logger.entering(className, "getVariable", key);
+    }
     Object result = null;
     if (this.thread != null) {
       final Map<?, ?> variables = this.getVariables();
       if (variables != null) {
         result = variables.get(key);
       }
+    }
+    if (finer) {
+      logger.exiting(className, "getVariable", result);
     }
     return result;
   }
@@ -213,9 +264,18 @@ public class MatchResult<T> implements Serializable {
    * @return a {@link Map} of variables, or {@code null}
    */
   public Map<?, ?> getVariables() {
+    final String className = this.getClass().getName();
+    final Logger logger = this.getLogger();
+    final boolean finer = logger != null && logger.isLoggable(Level.FINER);
+    if (finer) {
+      logger.entering(className, "getVariables");
+    }
     Map<?, ?> result = null;
     if (this.thread != null) {
       result = this.thread.getVariables();
+    }
+    if (finer) {
+      logger.exiting(className, "getVariables", result);
     }
     return result;
   }

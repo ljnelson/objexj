@@ -30,7 +30,7 @@ object whose class is equal to `java.lang.RuntimeException`:
 Notably this filter does not match, for example,
 `java.lang.IllegalArgumentException` instances or
 `java.lang.IllegalStateException` instances, because although such
-instances are instances of `java.lang.RuntimeException` their classes
+objects are instances of `java.lang.RuntimeException` their classes
 are not equal to `java.lang.RuntimeException`.
 
 #### Expressions
@@ -45,6 +45,11 @@ both is an instance of `java.lang.RuntimeException` and has a
 method&#8212;equal to "`fred`":
 
     java.lang.RuntimeException(message == "fred")
+
+[MVEL][1] expressions as used by `objexj` need not return `boolean`
+values.  If they return anything other than a `boolean` or a
+`Boolean`, then it is presumed that they are being evaluated for their
+side effects only (e.g. variable assignments) and hence will match.
 
 <h3 id="groups">Groups</h3>
 
@@ -65,8 +70,8 @@ Two patterns may be concatenated into a single pattern by joining them
 together with a solidus (slash) character ('`/`').  The result is a
 pattern that is applied in order to sequences of objects returned by a
 `List`'s `Iterator`.  For example, the following pattern matches any
-`java.lang.RuntimeException` instance followed in a list's iteration
-by a `java.lang.Exception` instance:
+`java.lang.RuntimeException` instance followed immediately in a list's
+iteration by a `java.lang.Exception` instance:
 
     java.lang.RuntimeException/java.lang.Exception
     
@@ -132,16 +137,21 @@ retrieved by name later.  For example, the following atom has an
 expression that sets a variable named `foo` to the value of the
 particular `RuntimeException`'s `message` property:
 
-    java.lang.RuntimeException(foo = message; return true;)
+    java.lang.RuntimeException(foo = message)
     
-(The MVEL expression in this case returns `true` so that no further
-conditions are placed on the match.)
+(The MVEL expression in this case returns the last value encountered,
+which in this case is the value of the `RuntimeException`'s `message`
+property itself.  Recall that in `objexj` expressions that return
+values other than `boolean`s or `Boolean`s behave as though they
+actually returned `true`.)
 
 Variables are almost like capture groups but are inherently scalar and
 thus do not necessarily return `List`s, and when specified in
 different parts of the overall pattern may overwrite previous
 assignments.  They are good for simple, one-shot assignments that
 capture a particular portion of a single object matched by an atom.
+Do not conduct black magic with them as it is almost guaranteed that
+you will receive unexpected results.
 
 ## Anchors
 
@@ -166,6 +176,9 @@ string.  Here is an example:
     
 This pattern matches a `RuntimeException` instance if and only if it
 appears in the last position of the input `List` being matched.
+
+Anchored expressions are more efficient as a general rule than
+unanchored ones.
 
 [1]: http://mvel.codehaus.org/
 [2]: #capture_groups

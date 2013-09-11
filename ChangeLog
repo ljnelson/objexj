@@ -1,8 +1,23 @@
+2013-09-11  Laird Nelson  <ljnelson@gmail.com>
+
+	* src/main/java/com/edugility/objexj/engine/Instruction.java:
+	Added getLogger() method.  Added logging in general to all
+	instruction classes.
+
+	* src/main/java/com/edugility/objexj/engine/MVELFilter.java: Made
+	it so that MVEL expressions that return anything (including null)
+	other than a boolean or a Boolean behave as though they returned
+	true.  (Issue #6).
+
 2013-09-04  Laird Nelson  <ljnelson@gmail.com>
 
-	* src/main/java/com/edugility/objexj/engine/Program.java: Added toString(int) method to allow instruction highlighting for debugging purposes.
+	* src/main/java/com/edugility/objexj/engine/Program.java: Added
+	toString(int) method to allow instruction highlighting for
+	debugging purposes.
 
-	* src/main/java/com/edugility/objexj/engine/ProgramCounter.java: Formatted toString() a little more nicely.
+	* src/main/java/com/edugility/objexj/engine/ProgramCounter.java:
+	Formatted toString() a little more nicely.
 
-	* src/main/java/com/edugility/objexj/engine/InstanceOfMVELFilter.java: Fixed issue #5 (https://github.com/ljnelson/objexj/issues/5).
+	* src/main/java/com/edugility/objexj/engine/InstanceOfMVELFilter.java:
+	Fixed issue #5 (https://github.com/ljnelson/objexj/issues/5).
 

@@ -30,6 +30,9 @@ package com.edugility.objexj.engine;
 import java.util.HashMap;
 import java.util.Map;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.mvel2.CompileException; // for javadoc only
 import org.mvel2.MVEL;
 
@@ -89,7 +92,7 @@ public class MVELFilter<T> extends Filter<T> {
   protected MVELFilter() {
     super();
   }
-  
+
   /**
    * Creates a new {@link MVELFilter}.
    *
@@ -129,6 +132,12 @@ public class MVELFilter<T> extends Filter<T> {
    */
   @Override
   public boolean accept(final InstructionContext<? extends T> context) {
+    final String className = this.getClass().getName();
+    final Logger logger = this.getLogger();
+    final boolean finer = logger != null && logger.isLoggable(Level.FINER);
+    if (finer) {
+      logger.entering(className, "accept", context);
+    }
     if (context == null) {
       throw new IllegalArgumentException("context", new NullPointerException("context == null"));
     }
@@ -137,6 +146,9 @@ public class MVELFilter<T> extends Filter<T> {
       returnValue = context.canRead(); // no MVEL expression means no additional constraints
     } else {
       returnValue = context.canRead() && this.accept(context.read(), context.getVariables());
+    }
+    if (finer) {
+      logger.exiting(className, "accept", Boolean.valueOf(returnValue));
     }
     return returnValue;
   }
@@ -158,7 +170,7 @@ public class MVELFilter<T> extends Filter<T> {
    * by the {@linkplain #mvelExpression MVEL expression} associated
    * with this {@link MVELFilter}; may be {@code null} in which case a
    * new {@link HashMap} will be used instead
-   * 
+   *
    * @return {@code true} if the {@linkplain
    * MVEL#executeExpression(Object, Object, VariableResolverFactory)
    * execution} of the {@linkplain #mvelExpression MVEL expression}
@@ -176,6 +188,12 @@ public class MVELFilter<T> extends Filter<T> {
    * method
    */
   public boolean accept(final T item, Map<Object, Object> variables) {
+    final String className = this.getClass().getName();
+    final Logger logger = this.getLogger();
+    final boolean finer = logger != null && logger.isLoggable(Level.FINER);
+    if (finer) {
+      logger.entering(className, "accept", new Object[] { item, variables });
+    }
     if (variables == null) {
       variables = new HashMap<Object, Object>();
     }
@@ -184,7 +202,17 @@ public class MVELFilter<T> extends Filter<T> {
       returnValue = true;
     } else {
       final Object executionResult = MVEL.executeExpression(this.mvelExpression, item, new MapVariableResolverFactory(variables));
-      returnValue = executionResult instanceof Boolean && ((Boolean)executionResult).booleanValue();
+      if (finer) {
+        logger.logp(Level.FINER, className, "accept", "Execution result: {0}", executionResult);
+      }
+      if (executionResult instanceof Boolean) {
+        returnValue = ((Boolean)executionResult).booleanValue();
+      } else {
+        returnValue = true;
+      }
+    }
+    if (finer) {
+      logger.exiting(className, "accept", Boolean.valueOf(returnValue));
     }
     return returnValue;
   }

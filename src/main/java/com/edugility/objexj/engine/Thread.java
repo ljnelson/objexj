@@ -255,6 +255,12 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
    */
   private InstructionContext<T> ic;
 
+
+  /*
+   * Constructors.
+   */
+
+
   /**
    * Creates a new {@link Thread} without any {@link CaptureGroup}s or
    * variables.
@@ -386,6 +392,21 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
       throw new IllegalArgumentException("itemPointer > items.size(): " + itemPointer + " > " + this.items.size());
     }
     this.itemPointer = itemPointer;
+  }
+
+
+  /*
+   * Instance methods.
+   */
+
+  /**
+   * Returns a non-{@code null} {@link Logger} for logging messages
+   * from this class.
+   *
+   * @return a non-{@code null} {@link Logger}
+   */
+  protected Logger getLogger() {
+    return Logger.getLogger(this.getClass().getName());
   }
 
   /**
@@ -688,6 +709,12 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
    * @see #canRead()
    */
   public final T read() {
+    final String className = this.getClass().getName();
+    final Logger logger = this.getLogger();
+    final boolean finer = logger != null && logger.isLoggable(Level.FINER);
+    if (finer) {
+      logger.entering(className, "read");
+    }
     if (!this.canRead()) {
       throw new IllegalStateException("Thread cannot read");
     }
@@ -699,7 +726,11 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
       return null;
     }
     assert this.getItemPointer() >= 0 && this.getItemPointer() < this.items.size();
-    return this.items.get(this.getItemPointer());
+    final T returnValue = this.items.get(this.getItemPointer());
+    if (finer) {
+      logger.exiting(className, "read", returnValue);
+    }
+    return returnValue;
   }
 
   /**
@@ -901,27 +932,32 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
    */
   @Override
   public final void run() {
+    final String className = this.getClass().getName();
+    final Logger logger = this.getLogger();
+    final boolean finer = logger != null && logger.isLoggable(Level.FINER);
+    if (finer) {
+      logger.entering(className, "run");
+    }
     this.ensureViable();
-    final Logger logger = Logger.getLogger(this.getClass().getName());
-    assert logger != null;
-    final boolean finer = logger.isLoggable(Level.FINER);
     final ProgramCounter<T> pc = this.getProgramCounter();
     assert pc != null;
     while (this.isViable()) {
       final Instruction<T> currentInstruction = pc.getInstruction();
       assert currentInstruction != null;
       if (finer) {
-        final int index = pc.getIndex();
-        logger.logp(Level.FINER, this.getClass().getName(), "run", "Before running {0} {1} ({2}) at input position {3}", new Object[] { this, currentInstruction, Integer.valueOf(index), Integer.valueOf(this.getItemPointer()) });
+        logger.logp(Level.FINER, className, "run", "Before running Thread {0} {1} ({2}) at input position {3}", new Object[] { this, currentInstruction, Integer.valueOf(pc.getIndex()), Integer.valueOf(this.getItemPointer()) });
       }
       this.step();
       if (finer) {
         if (this.isViable()) {
-          logger.logp(Level.FINER, this.getClass().getName(), "run", "After running {0} {1}; input position is now {2}", new Object[] { this, currentInstruction, Integer.valueOf(this.getItemPointer()) });
+          logger.logp(Level.FINER, className, "run", "After running Thread {0} {1}; input position is now {2}", new Object[] { this, currentInstruction, Integer.valueOf(this.getItemPointer()) });
         } else {
-          logger.logp(Level.FINER, this.getClass().getName(), "run", "Thread {0} is no longer viable", this);
+          logger.logp(Level.FINER, className, "run", "Thread {0} is no longer viable", this);
         }
       }
+    }
+    if (finer) {
+      logger.exiting(className, "run");
     }
   }
 

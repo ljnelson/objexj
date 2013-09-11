@@ -29,6 +29,9 @@ package com.edugility.objexj.engine;
 
 import java.util.Map;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -267,10 +270,20 @@ public class InstanceOfMVELFilter<T> extends MVELFilter<T> {
    */
   @Override
   public boolean accept(final InstructionContext<? extends T> context) {
+    final Logger logger = this.getLogger();
+    final boolean finer = logger != null && logger.isLoggable(Level.FINER);
+    final String className = this.getClass().getName();
+    if (finer) {
+      logger.entering(className, "accept", context);
+    }
     if (context == null) {
       throw new IllegalArgumentException("context", new NullPointerException("context == null"));
     }
-    return this.cls != null && context.canRead() && this.accept(context.read(), context.getVariables());
+    final boolean returnValue = this.cls != null && context.canRead() && this.accept(context.read(), context.getVariables());
+    if (finer) {
+      logger.exiting(className, "accept", Boolean.valueOf(returnValue));
+    }
+    return returnValue;
   }
 
   /**
@@ -303,11 +316,21 @@ public class InstanceOfMVELFilter<T> extends MVELFilter<T> {
    */
   @Override
   public boolean accept(final T item, Map<Object, Object> variables) {
-    return
+    final Logger logger = this.getLogger();
+    final boolean finer = logger != null && logger.isLoggable(Level.FINER);
+    final String className = this.getClass().getName();
+    if (finer) {
+      logger.entering(className, "accept", new Object[] { item, variables });
+    }
+    final boolean returnValue =
       item != null &&
       this.cls != null &&
       this.isExact() ? item.getClass().equals(this.cls) : this.cls.isInstance(item) &&
       super.accept(item, variables);
+    if (finer) {
+      logger.exiting(className, "accept", Boolean.valueOf(returnValue));
+    }
+    return returnValue;
   }
 
   /**

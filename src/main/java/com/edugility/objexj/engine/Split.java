@@ -31,6 +31,9 @@ import java.io.Serializable;
 
 import java.util.List;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -155,11 +158,20 @@ public class Split<T> extends Jump<T> {
    */
   @Override
   public final void execute(final InstructionContext<? extends T> context) {
+    final String className = this.getClass().getName();
+    final Logger logger = this.getLogger();
+    final boolean finer = logger != null && logger.isLoggable(Level.FINER);
+    if (finer) {
+      logger.entering(className, "execute", context);
+    }
     if (context == null) {
       throw new IllegalArgumentException("context");
     }
     context.scheduleNewThread(this.newThreadProgramLocation, this.relative);
     super.execute(context);
+    if (finer) {
+      logger.exiting(className, "execute");
+    }
   }
 
   /**

@@ -29,6 +29,9 @@ package com.edugility.objexj.engine;
 
 import java.util.List;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -142,10 +145,19 @@ public class Jump<T> extends Instruction<T> {
    */
   @Override
   public void execute(final InstructionContext<? extends T> context) {
+    final String className = this.getClass().getName();
+    final Logger logger = this.getLogger();
+    final boolean finer = logger != null && logger.isLoggable(Level.FINER);
+    if (finer) {
+      logger.entering(className, "execute", context);
+    }      
     if (context == null) {
       throw new IllegalArgumentException("context");
     }
     context.jump(this.programLocation, this.relative);
+    if (finer) {
+      logger.exiting(className, "execute");
+    }
   }
 
   /**

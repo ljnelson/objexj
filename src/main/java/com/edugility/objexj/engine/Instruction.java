@@ -32,6 +32,9 @@ import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,6 +58,12 @@ import java.util.regex.Pattern;
  */
 public abstract class Instruction<T> implements Serializable {
 
+  
+  /*
+   * Static fields.
+   */
+
+
   /**
    * The version of this class for serialization purposes.
    *
@@ -70,12 +79,24 @@ public abstract class Instruction<T> implements Serializable {
    */
   private static final Pattern LINE_PATTERN = Pattern.compile("^([^\\s]+)(?:\\s+?(.*))?$");
 
+
+  /*
+   * Constructors.
+   */
+
+
   /**
    * Creates a new {@link Instruction}.
    */
   protected Instruction() {
     super();
   }
+
+
+  /*
+   * Instance methods.
+   */
+
 
   /**
    * Executes this {@link Instruction} in the context of the supplied
@@ -116,6 +137,22 @@ public abstract class Instruction<T> implements Serializable {
   }
 
   /**
+   * Returns a {@link Logger} suitable for logging messages from this
+   * {@link Instruction} implementation.
+   *
+   * <p>This method never returns {@code null}.</p>
+   *
+   * <p>Overrides of this method must never return {@code null}.</p>
+   *
+   * <p>Overrides of this method must be extremely performant.</p>
+   *
+   * @return a non-{@code null} {@link Logger}
+   */
+  protected Logger getLogger() {
+    return Logger.getLogger(this.getClass().getName());
+  }
+
+  /**
    * Checks to see if the supplied {@link Object} is equal to this
    * {@link Instruction}.  This implementation returns {@code true} if
    * and only if the supplied {@link Object} is non-{@code null} and
@@ -130,7 +167,7 @@ public abstract class Instruction<T> implements Serializable {
    */
   @Override
   public boolean equals(final Object other) {
-    return other == this || this.getClass().equals(other.getClass());
+    return this == other || (other != null && this.getClass().equals(other.getClass()));
   }
 
   /**

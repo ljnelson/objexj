@@ -31,6 +31,9 @@ import java.io.Serializable; // for javadoc only
 
 import java.util.List;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * An {@link Instruction} that {@linkplain
  * InstructionContext#advanceProgramCounter() advances the program
@@ -74,6 +77,12 @@ public class EndInput<T> extends Instruction<T> {
    */
   @Override
   public final void execute(final InstructionContext<? extends T> context) {
+    final Logger logger = this.getLogger();
+    final boolean finer = logger != null && logger.isLoggable(Level.FINER);
+    final String className = this.getClass().getName();
+    if (finer) {
+      logger.entering(className, "execute", context);
+    }
     if (context == null) {
       throw new IllegalArgumentException("context");
     }
@@ -81,6 +90,9 @@ public class EndInput<T> extends Instruction<T> {
       context.advanceProgramCounter();
     } else {
       context.die();
+    }
+    if (finer) {
+      logger.exiting(className, "execute");
     }
   }
 
