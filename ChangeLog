@@ -1,5 +1,8 @@
 2013-09-11  Laird Nelson  <ljnelson@gmail.com>
 
+	* src/main/java/com/edugility/objexj/engine/MVELFilter.java: Fixed
+	issue #4; failed matches no longer pollute variable space.
+
 	* src/main/java/com/edugility/objexj/engine/Instruction.java:
 	Added getLogger() method.  Added logging in general to all
 	instruction classes.

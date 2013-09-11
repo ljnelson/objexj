@@ -91,10 +91,14 @@ public class InstructionContext<T> implements Serializable {
   }
 
   /**
-   * Returns this {@link InstructionContext}'s associated {@link Map}
-   * of variables.
+   * Returns this {@link InstructionContext}'s associated non-{@code
+   * null} {@link Map} of variables.
    *
-   * <p>This method may return {@code null}.</p>
+   * <p>This method never returns {@code null}.</p>
+   *
+   * <p>Overrides of this method must not return {@code null}.</p>
+   *
+   * <p>The {@link Map} returned by this method must be mutable.</p>
    *
    * <p>The {@link Map} this method returns is returned by reference,
    * so modifications made to it will be visible to consumers of the
@@ -102,7 +106,7 @@ public class InstructionContext<T> implements Serializable {
    * Subclasses must preserve these semantics if they override this
    * method.</p>
    *
-   * @return a {@link Map} of variables; may be {@code null}
+   * @return a non-{@code null}, mutable {@link Map} of variables
    *
    * @see Thread#getVariables()
    */

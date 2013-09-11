@@ -497,6 +497,12 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
    * Returns a non-{@code null} {@link Map} of variables associated
    * with this {@link Thread}.
    *
+   * <p>This method never returns {@code null}.</p>
+   *
+   * <p>Overrides of this method must not return {@code null}.</p>
+   *
+   * <p>The {@link Map} returned by this method must be mutable.</p>
+   *
    * <p>The {@link Map} that is returned is returned by reference, and
    * modifications to it are visible to other consumers of this
    * method.  If subclasses choose to override this method, they must
@@ -836,9 +842,14 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
    * <p>This method may be invoked only when {@link #isViable()}
    * returns {@code true}.</p>
    *
-   * @param programCounter
+   * @param programCounter the index that this {@link Thread}'s
+   * {@linkplain #getProgramCounter() affiliated
+   * <code>ProgramCounter</code>} should be set to
    *
-   * @param relative
+   * @param relative if the supplied {@code programCounter} parameter
+   * is relative to this {@link Thread}'s {@linkplain
+   * #getProgramCounter() affiliated <code>ProgramCounter</code>}'s
+   * {@linkplain ProgramCounter#getIndex() current index}
    *
    * @return {@code true} if the program counter was actually set;
    * {@code false} if it was not (thus indicating that this {@link
@@ -898,19 +909,30 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
 
   /**
    * Retrieves the current {@link Instruction} and {@linkplain
-   * Instruction#execute(InstructionContext) executes} it.
-   *
-   * <p>If the {@link #isViable()} method returns {@code false},
-   * then invoking this method will cause the {@link #die()} method to
-   * be invoked and no further action will take place.</p>
+   * Instruction#execute(InstructionContext) executes} it, passing it
+   * an {@link InstructionContext} that effectively represents this
+   * {@link Thread} in a safe manner to be manipulated by the {@link
+   * Instruction} in question.
    *
    * <p>This method may be invoked only when {@link #isViable()}
    * returns {@code true}.</p>
    *
+   * <p>This method is called by the {@link #run()} method.</p>
+   *
    * @exception IllegalStateException if this {@link Thread}
    * {@linkplain #isViable() is not viable}
+   *
+   * @see Instruction#execute(InstructionContext)
+   *
+   * @see InstructionContext
    */
   public final void step() {
+    final String className = this.getClass().getName();
+    final Logger logger = this.getLogger();
+    final boolean finer = logger != null && logger.isLoggable(Level.FINER);
+    if (finer) {
+      logger.entering(className, "step");
+    }
     this.ensureViable();
     final Instruction<T> instruction = this.getInstruction();
     assert instruction != null;
@@ -918,17 +940,42 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
       this.ic = new InstructionContext<T>(this);
     }
     instruction.execute(this.ic);
+    if (finer) {
+      logger.exiting(className, "step");
+    }
   }
 
   /**
    * Repeatedly calls the {@link #step()} method until this {@link
-   * Thread} has completed execution.
+   * Thread} has completed execution.  It follows from this that the
+   * {@link #step()} method is expected to change this {@link
+   * Thread}'s inner state in some way on each call, by doing exactly
+   * one of the following:
+   *
+   * <ul>
+   *
+   * <li>{@linkplain #advanceProgramCounter() Advancing} the {@link
+   * #getProgramCounter() ProgramCounter} while leaving this {@link
+   * Thread} in a {@linkplain #isViable() viable state}</li>
+   *
+   * <li>{@linkplain #die() Killing} this {@link Thread} but not
+   * {@linkplain #advanceProgramCounter() advancing} the {@link
+   * #getProgramCounter ProgramCounter}</li>
+   *
+   * <li>{@linkplain #match() Causing this <code>Thread</code> to
+   * match} but not {@linkplain #advanceProgramCounter() advancing}
+   * the {@link #getProgramCounter ProgramCounter}</li>
+   *
+   * </ul>
    *
    * <p>This method may be invoked only when {@link #isViable()}
    * returns {@code true}.</p>
    *
    * @exception IllegalStateException if this {@link Thread}
-   * {@linkplain #isViable() is not viable}
+   * {@linkplain #isViable() is not viable}, or if an infinite loop is
+   * detected
+   *
+   * @see #step()
    */
   @Override
   public final void run() {
@@ -944,8 +991,9 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
     while (this.isViable()) {
       final Instruction<T> currentInstruction = pc.getInstruction();
       assert currentInstruction != null;
+      final int oldIndex = pc.getIndex();
       if (finer) {
-        logger.logp(Level.FINER, className, "run", "Before running Thread {0} {1} ({2}) at input position {3}", new Object[] { this, currentInstruction, Integer.valueOf(pc.getIndex()), Integer.valueOf(this.getItemPointer()) });
+        logger.logp(Level.FINER, className, "run", "Before running Thread {0} {1} ({2}) at input position {3}", new Object[] { this, currentInstruction, Integer.valueOf(oldIndex), Integer.valueOf(this.getItemPointer()) });
       }
       this.step();
       if (finer) {
@@ -954,6 +1002,9 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
         } else {
           logger.logp(Level.FINER, className, "run", "Thread {0} is no longer viable", this);
         }
+      }
+      if (this.isViable() && oldIndex == pc.getIndex()) {
+        throw new IllegalStateException("Infinite loop detected");
       }
     }
     if (finer) {

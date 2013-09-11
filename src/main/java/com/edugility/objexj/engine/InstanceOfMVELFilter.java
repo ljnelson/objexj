@@ -279,7 +279,11 @@ public class InstanceOfMVELFilter<T> extends MVELFilter<T> {
     if (context == null) {
       throw new IllegalArgumentException("context", new NullPointerException("context == null"));
     }
-    final boolean returnValue = this.cls != null && context.canRead() && this.accept(context.read(), context.getVariables());
+    final Map<Object, Object> variables = context.getVariables();
+    if (variables == null) {
+      throw new IllegalArgumentException("context", new IllegalStateException("context.getVariables()", new NullPointerException("context.getVariables() == null")));
+    }
+    final boolean returnValue = this.cls != null && context.canRead() && this.accept(context.read(), variables);
     if (finer) {
       logger.exiting(className, "accept", Boolean.valueOf(returnValue));
     }

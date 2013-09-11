@@ -255,13 +255,16 @@ public class MatchResult<T> implements Serializable {
   }
 
   /**
-   * Returns an {@linkplain Collections#unmodifiableMap(Map)
-   * unmodifiable <code>Map</code>} of the variables set on the {@link
-   * Thread} that this {@link MatchResult} wraps.
+   * Returns a non-{@code null} {@linkplain
+   * Collections#unmodifiableMap(Map) unmodifiable <code>Map</code>}
+   * of the variables set on the {@link Thread} that this {@link
+   * MatchResult} wraps.
    *
-   * <p>This method may return {@code null}.</p>
+   * <p>This method never returns {@code null}.</p>
    *
-   * @return a {@link Map} of variables, or {@code null}
+   * <p>Overrides of this method must never return {@code null}.</p>
+   *
+   * @return a non-{@code null} {@link Map} of variables, or {@code null}
    */
   public Map<?, ?> getVariables() {
     final String className = this.getClass().getName();

@@ -187,7 +187,7 @@ public class ProgramCounter<T> implements Cloneable, Serializable, Iterable<Inst
    * {@linkplain #isValid(int) valid}.  Subclasses who choose to
    * override this method must preserve these semantics.</p>
    *
-   * @return the index managed by this {@link ProgramCounter}
+   * @return the (valid) index managed by this {@link ProgramCounter}
    *
    * @see #setIndex(int)
    */

@@ -123,7 +123,8 @@ public class MVELFilter<T> extends Filter<T> {
    * {@link MVELFilter} is running; must not be {@code null}
    *
    * @exception IllegalArgumentException if {@code context} is {@code
-   * null}
+   * null}, or if the return value of the {@link
+   * InstructionContext#getVariables()} method is {@code null}
    *
    * @exception CompileException if the {@link #accept(Object, Map)}
    * method throws a {@link CompileException}
@@ -145,7 +146,11 @@ public class MVELFilter<T> extends Filter<T> {
     if (this.mvelExpression == null) {
       returnValue = context.canRead(); // no MVEL expression means no additional constraints
     } else {
-      returnValue = context.canRead() && this.accept(context.read(), context.getVariables());
+      final Map<Object, Object> variables = context.getVariables();
+      if (variables == null) {
+        throw new IllegalArgumentException("context", new IllegalStateException("context.getVariables()", new NullPointerException("context.getVariables()")));
+      }
+      returnValue = context.canRead() && this.accept(context.read(), variables);
     }
     if (finer) {
       logger.exiting(className, "accept", Boolean.valueOf(returnValue));
@@ -168,8 +173,7 @@ public class MVELFilter<T> extends Filter<T> {
    *
    * @param variables a {@link Map} of variables that may be affected
    * by the {@linkplain #mvelExpression MVEL expression} associated
-   * with this {@link MVELFilter}; may be {@code null} in which case a
-   * new {@link HashMap} will be used instead
+   * with this {@link MVELFilter}; must not be {@code null}
    *
    * @return {@code true} if the {@linkplain
    * MVEL#executeExpression(Object, Object, VariableResolverFactory)
@@ -186,8 +190,11 @@ public class MVELFilter<T> extends Filter<T> {
    * Object, VariableResolverFactory) execution}; thrown by the {@link
    * MVEL#executeExpression(Object, Object, VariableResolverFactory)}
    * method
+   *
+   * @exception IllegalArgumentException if {@code variables} is
+   * {@code null}
    */
-  public boolean accept(final T item, Map<Object, Object> variables) {
+  public boolean accept(final T item, final Map<Object, Object> variables) {
     final String className = this.getClass().getName();
     final Logger logger = this.getLogger();
     final boolean finer = logger != null && logger.isLoggable(Level.FINER);
@@ -195,20 +202,32 @@ public class MVELFilter<T> extends Filter<T> {
       logger.entering(className, "accept", new Object[] { item, variables });
     }
     if (variables == null) {
-      variables = new HashMap<Object, Object>();
+      throw new IllegalArgumentException("variables", new NullPointerException("variables"));
     }
     final boolean returnValue;
     if (this.mvelExpression == null) {
       returnValue = true;
     } else {
+      final Map<Object, Object> oldVariables;
+      if (!variables.isEmpty()) {
+        oldVariables = new HashMap<Object, Object>(variables);
+      } else {
+        oldVariables = null;
+      }
       final Object executionResult = MVEL.executeExpression(this.mvelExpression, item, new MapVariableResolverFactory(variables));
       if (finer) {
-        logger.logp(Level.FINER, className, "accept", "Execution result: {0}", executionResult);
+        logger.logp(Level.FINER, className, "accept", "Execution result: {0}; variables after execution: {1}", new Object[] { executionResult, variables });
       }
       if (executionResult instanceof Boolean) {
         returnValue = ((Boolean)executionResult).booleanValue();
       } else {
         returnValue = true;
+      }
+      if (!returnValue) {
+        variables.clear();
+        if (oldVariables != null && !oldVariables.isEmpty()) {
+          variables.putAll(oldVariables);
+        }
       }
     }
     if (finer) {

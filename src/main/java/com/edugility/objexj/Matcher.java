@@ -202,11 +202,17 @@ public class Matcher<T> {
   }
 
   /**
-   * Returns a {@link Map} representing the variables set by this
-   * {@link Matcher} during its execution.  Variables may be set from
-   * within a {@link Pattern}'s parsed expression.
+   * Returns a non-{@code null}, {@linkplain
+   * Collections#unmodifiableMap(Map) unmodifiable} {@link Map}
+   * representing the variables set by this {@link Matcher} during its
+   * execution.  Variables may be set from within a {@link Pattern}'s
+   * parsed expression.
    *
-   * @return a non-{@code null} {@link Map} of variables
+   * <p>This method never returns {@code null}.</p>
+   *
+   * @return a non-{@code null} {@linkplain
+   * Collections#unmodifiableMap(Map) unmodifiable} {@link Map} of
+   * variables
    *
    * @see <a href="../../../../syntax.html" target="_parent">Syntax
    * Guide</a>
