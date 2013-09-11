@@ -136,7 +136,7 @@
 <FONT color="green">133</FONT>    <a name="line.133"></a>
 <FONT color="green">134</FONT>      @Test<a name="line.134"></a>
 <FONT color="green">135</FONT>      public void testVariables() throws IOException, ParseException {<a name="line.135"></a>
-<FONT color="green">136</FONT>        final String sourceCode = "^java.lang.Exception(msg = message; return true)";<a name="line.136"></a>
+<FONT color="green">136</FONT>        final String sourceCode = "^java.lang.Exception(msg = message)"; // Note: non-Boolean-returning MVEL expression; that's OK; will match<a name="line.136"></a>
 <FONT color="green">137</FONT>        final Pattern&lt;Exception&gt; pattern = Pattern.compile(sourceCode);<a name="line.137"></a>
 <FONT color="green">138</FONT>        assertNotNull(pattern);<a name="line.138"></a>
 <FONT color="green">139</FONT>        final Program&lt;Exception&gt; program = pattern.getProgram();<a name="line.139"></a>
