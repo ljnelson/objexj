@@ -1,5 +1,7 @@
 2013-09-11  Laird Nelson  <ljnelson@gmail.com>
 
+	* pom.xml: Releasing version 1.3.0.
+
 	* src/main/java/com/edugility/objexj/engine/MVELFilter.java: Fixed
 	issue #4; failed matches no longer pollute variable space.
 
