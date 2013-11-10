@@ -199,7 +199,7 @@ public class Split<T> extends Jump<T> {
     if (other == this) {
       return true;
     } else if (super.equals(other)) {
-      final Split him = (Split)other;
+      final Split<?> him = (Split<?>)other;
       return this.newThreadProgramLocation == him.newThreadProgramLocation && this.relative == him.relative;
     } else {
       return false;

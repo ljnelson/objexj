@@ -416,7 +416,7 @@ public class ProgramCounter<T> implements Cloneable, Serializable, Iterable<Inst
     if (other == this) {
       return true;
     } else if (other != null && other.getClass().equals(this.getClass())) {
-      final ProgramCounter him = (ProgramCounter)other;
+      final ProgramCounter<?> him = (ProgramCounter<?>)other;
       final int myIndex = this.getIndex();
       if (myIndex != him.getIndex()) {
         return false;

@@ -290,15 +290,15 @@
     <mavenCleanPluginVersion>2.5</mavenCleanPluginVersion>
     <mavenCompilerPluginVersion>3.1</mavenCompilerPluginVersion>
     <mavenDependencyPluginVersion>2.8</mavenDependencyPluginVersion>
-    <mavenDeployPluginVersion>2.7</mavenDeployPluginVersion>
+    <mavenDeployPluginVersion>2.8.1</mavenDeployPluginVersion>
     <mavenEnforcerPluginVersion>1.3.1</mavenEnforcerPluginVersion>
     <mavenGpgPluginVersion>1.4</mavenGpgPluginVersion>
-    <mavenInstallPluginVersion>2.4</mavenInstallPluginVersion>
+    <mavenInstallPluginVersion>2.5.1</mavenInstallPluginVersion>
     <mavenJarPluginVersion>2.4</mavenJarPluginVersion>
     <mavenJavadocPluginVersion>2.9.1</mavenJavadocPluginVersion>
     <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
     <mavenProjectInfoReportsPlugin>2.7</mavenProjectInfoReportsPlugin>
-    <mavenReleasePluginVersion>2.4.1</mavenReleasePluginVersion>
+    <mavenReleasePluginVersion>2.4.2</mavenReleasePluginVersion>
     <mavenResourcesPluginVersion>2.6</mavenResourcesPluginVersion>
     <mavenScmManagerPlexusVersion>${mavenScmPluginVersion}</mavenScmManagerPlexusVersion>
     <mavenScmPluginVersion>1.8.1</mavenScmPluginVersion>

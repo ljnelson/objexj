@@ -1242,7 +1242,7 @@ public class Thread<T> implements Cloneable, Runnable, ThreadScheduler<T> {
     if (other == this) {
       return true;
     } else if (this.getClass().equals(other.getClass())) {
-      final Thread him = (Thread)other;
+      final Thread<?> him = (Thread<?>)other;
 
       final int myItemPointer = this.getItemPointer();
       if (him.getItemPointer() != myItemPointer) {

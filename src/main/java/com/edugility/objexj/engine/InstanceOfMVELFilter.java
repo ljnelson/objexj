@@ -368,7 +368,7 @@ public class InstanceOfMVELFilter<T> extends MVELFilter<T> {
     if (other == this) {
       return true;
     } else if (super.equals(other)) {
-      final InstanceOfMVELFilter him = (InstanceOfMVELFilter)other;
+      final InstanceOfMVELFilter<?> him = (InstanceOfMVELFilter<?>)other;
       return this.exact == him.exact && this.cls.equals(him.cls);
     } else {
       return false;

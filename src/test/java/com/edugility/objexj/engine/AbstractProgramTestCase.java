@@ -100,7 +100,7 @@ public abstract class AbstractProgramTestCase<T> implements ThreadScheduler<T> {
     } else {
       inputPointer = 0;
     }
-    final Thread<T> t = this.newThread(String.format("T%d", this.ids.getAndIncrement()), new ProgramCounter<T>(this.program), input, inputPointer, null, null);
+    final Thread<T> t = this.newThread(String.format("T%d", ids.getAndIncrement()), new ProgramCounter<T>(this.program), input, inputPointer, null, null);
     assertNotNull(t);
     return t;
   }

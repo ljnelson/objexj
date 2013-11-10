@@ -315,7 +315,7 @@ public class Token implements Comparable<Token>, Serializable {
       throw new IllegalArgumentException("type", new NullPointerException("type"));
     }
     this.type = type;
-    if (type.FILTER == type) {
+    if (Type.FILTER == type) {
       this.filterType = value;
     } else if (!type.hasValue() && value != null) {
       throw new IllegalArgumentException("value");

@@ -261,7 +261,7 @@ public class MVELFilter<T> extends Filter<T> {
     if (other == this) {
       return true;
     } else if (super.equals(other)) {
-      final MVELFilter him = (MVELFilter)other;
+      final MVELFilter<?> him = (MVELFilter<?>)other;
       if (this.mvelExpressionSource == null) {
         return him.mvelExpressionSource == null;
       }

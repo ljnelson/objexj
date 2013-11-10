@@ -182,7 +182,7 @@ public class Jump<T> extends Instruction<T> {
     if (other == this) {
       return true;
     } else if (super.equals(other)) {
-      final Jump him = (Jump)other;
+      final Jump<?> him = (Jump<?>)other;
       return this.programLocation == him.programLocation && this.relative == him.relative;
     } else {
       return false;

@@ -233,7 +233,7 @@ public final class CaptureGroup<T> implements Cloneable, Serializable {
     if (other == this) {
       return true;
     } else if (this.getClass().equals(other.getClass())) {
-      final CaptureGroup him = (CaptureGroup)other;
+      final CaptureGroup<?> him = (CaptureGroup<?>)other;
         
       // startIndex
       if (this.startIndex != him.startIndex) {
